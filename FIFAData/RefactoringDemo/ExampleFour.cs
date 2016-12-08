@@ -14,9 +14,7 @@ namespace FIFAData
         {
             var teamAssignments = new List<TeamAssignment>();
 
-            if (particpantNames == null)
-                return teamAssignments;
-            if (!particpantNames.Any())
+            if (IsNoParticipants(particpantNames))
                 return teamAssignments;
 
             var players = GetAllPlayersParticipating(particpantNames);
@@ -31,20 +29,32 @@ namespace FIFAData
             return teamAssignments;
         }
 
-        private IEnumerable<TeamAssignment> GetFourStarAssignmentsForNewPlayers(IEnumerable<Player> players, IEnumerable<FifaTeam> teams)
+        private bool IsNoParticipants(IEnumerable<string> participants)
+        {
+            if (participants == null)
+                return true;
+            if (!participants.Any())
+                return true;
+
+            return false;
+        }
+
+        private IEnumerable<TeamAssignment> GetFourStarAssignmentsForNewPlayers(IEnumerable<Player> players, 
+            IEnumerable<FifaTeam> teams)
         {
             var assigner = new FourStarTeamAssigner(players, teams);
 
-            return assigner.Assign();
+            return assigner.GetAssignments();
         }
 
-        private IEnumerable<TeamAssignment> GetHandicapedAssignmentsForRankedPlayers(IEnumerable<Player> players, IEnumerable<FifaTeam> teams)
+        private IEnumerable<TeamAssignment> GetHandicapedAssignmentsForRankedPlayers(IEnumerable<Player> players, 
+            IEnumerable<FifaTeam> teams)
         {
             var possibleTeamRatings = GetPossibleTeamRatings();
 
             var assigner = new HandicappedTeamAssigner(players, teams, possibleTeamRatings);
 
-            return assigner.Assign();
+            return assigner.GetAssignments();
         }
 
         private IEnumerable<int> GetPossibleTeamRatings()
@@ -59,46 +69,24 @@ namespace FIFAData
                     .ToList();
             }
         }
-    }
 
-    private class TeamAssignmentService
-    {
-        private readonly IDocumentStore _database;
-        private IEnumerable<FifaTeam> _teams;
-        private IEnumerable<Player> _players;
-        private IEnumerable<TeamAssignment> _assignments;
-
-        public TeamAssignmentService(IDocumentStore database)
+        private IEnumerable<Player> GetAllPlayersParticipating(IEnumerable<string> particpantNames)
         {
-            _database = database;
-        }
-
-        public IEnumerable<TeamAssignment> Assign(IEnumerable<string> particpantNames)
-        {
-            GetAllTeams();
-            GetPlayersFromParticipantNames(particpantNames);
-
-            return _assignments;
-        }
-
-        private void GetAllTeams()
-        {
-            using (var session = _database.OpenSession())
+            using (var session = _db.OpenSession())
             {
-                _teams = session.Query<FifaTeam>()
-                    .ToList();
-            }
-        }
-
-        private void GetPlayersFromParticipantNames(IEnumerable<string> particpantNames)
-        {
-            using (var session = _database.OpenSession())
-            {
-                _players = session.Query<Player>()
+                return session.Query<Player>()
                     .Where(p => p.Name.In(particpantNames))
                     .ToList();
             }
         }
 
+        private IEnumerable<FifaTeam> GetAllTeams()
+        {
+            using (var session = _db.OpenSession())
+            {
+                return session.Query<FifaTeam>()
+                    .ToList();
+            }
+        }
     }
 }

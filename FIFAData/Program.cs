@@ -23,66 +23,66 @@ namespace FIFAData
             //InstallTeams();
             //InstallParticipants();
 
-            AssignPlayersToTeams(":neil:", 
-                ":daveb:", 
-                ":mattw:", 
-                ":tristan:", 
-                ":dom:", 
-                ":matt:", 
-                ":liam:", 
-                ":james:", 
-                ":louie:", 
-                ":dave:", 
-                ":craig:", 
-                ":ash:", 
-                ":jakub:", 
-                ":mogg:", 
-                ":luke:");
+            //AssignPlayersToTeams(":neil:", 
+            //    ":daveb:", 
+            //    ":mattw:", 
+            //    ":tristan:", 
+            //    ":dom:", 
+            //    ":matt:", 
+            //    ":liam:", 
+            //    ":james:", 
+            //    ":louie:", 
+            //    ":dave:", 
+            //    ":craig:", 
+            //    ":ash:", 
+            //    ":jakub:", 
+            //    ":mogg:", 
+            //    ":luke:");
 
             Console.Read();
         }
 
-        private static void AssignPlayersToTeams(params string[] playerNames)
-        {
-            var players = GetParticipantsByName(playerNames);
-            var newPlayers = players.Where(p => p.IsNew).ToList();
-            var ratedPlayers = players.Where(p => !p.IsNew).ToList();
+        //private static void AssignPlayersToTeams(params string[] playerNames)
+        //{
+        //    var players = GetParticipantsByName(playerNames);
+        //    var newPlayers = players.Where(p => p.IsNew).ToList();
+        //    var ratedPlayers = players.Where(p => !p.IsNew).ToList();
 
-            var possibleRatings = GetDistinctTeamRatings();
+        //    var possibleRatings = GetDistinctTeamRatings();
 
-            var helper = new HandicappedTeamAssigner(ratedPlayers, possibleRatings);
+        //    var helper = new HandicappedTeamAssigner(ratedPlayers, possibleRatings);
 
-            var autoAssignments = helper.GetTeamAssignments();
+        //    var autoAssignments = helper.GetTeamAssignments();
 
-            var alreadyAssignedTeams = new List<FifaTeam>();
+        //    var alreadyAssignedTeams = new List<FifaTeam>();
 
 
-            Console.WriteLine("Handicaped Team Assignments:");
-            Console.WriteLine("______________________________________________________________________________");
+        //    Console.WriteLine("Handicaped Team Assignments:");
+        //    Console.WriteLine("______________________________________________________________________________");
 
-            foreach (var assignment in autoAssignments)
-            {
-                var ratings = string.Join(",", assignment.Value.Select(r => r.ToString()).ToArray());
-                var team = GetRandomTeamForRating(assignment.Value);
+        //    foreach (var assignment in autoAssignments)
+        //    {
+        //        var ratings = string.Join(",", assignment.Value.Select(r => r.ToString()).ToArray());
+        //        var team = GetRandomTeamForRating(assignment.Value);
 
-                alreadyAssignedTeams.Add(team);
+        //        alreadyAssignedTeams.Add(team);
 
-                Console.WriteLine($"{assignment.Key.Name} - {ratings} - {team.TeamName} ({team.OverallRating}) ");
-            }
+        //        Console.WriteLine($"{assignment.Key.Name} - {ratings} - {team.TeamName} ({team.OverallRating}) ");
+        //    }
 
-            var fourStarAssignments = AssignFourStarTeamsToNewbies(newPlayers, alreadyAssignedTeams);
+        //    var fourStarAssignments = AssignFourStarTeamsToNewbies(newPlayers, alreadyAssignedTeams);
 
-            Console.WriteLine("");
-            Console.WriteLine("");
+        //    Console.WriteLine("");
+        //    Console.WriteLine("");
 
-            Console.WriteLine("New Players 4 Star Team Assignments:");
-            Console.WriteLine("______________________________________________________________________________");
+        //    Console.WriteLine("New Players 4 Star Team Assignments:");
+        //    Console.WriteLine("______________________________________________________________________________");
 
-            foreach (var assignment in fourStarAssignments)
-            {
-                Console.WriteLine($"{assignment.Key.Name} - {assignment.Value.TeamName} ({assignment.Value.OverallRating}) ");
-            }
-        }
+        //    foreach (var assignment in fourStarAssignments)
+        //    {
+        //        Console.WriteLine($"{assignment.Key.Name} - {assignment.Value.TeamName} ({assignment.Value.OverallRating}) ");
+        //    }
+        //}
 
         private static Dictionary<FIFAData.Player, FifaTeam> AssignFourStarTeamsToNewbies(List<FIFAData.Player> newbies, List<FifaTeam> alreadySelectedTeams)
         {
@@ -123,14 +123,14 @@ namespace FIFAData
         {
             var alreadySelectedTeamNames = alreadySelectedTeams.Select(t => t.TeamName);
 
-            var eligableTeams 
+            var eligibleTeams 
                 = teams.Where(t => !t.TeamName.In<string>(alreadySelectedTeamNames))
                 .ToList();
 
             var rnd = new Random();
-            var randomTeamIndex = rnd.Next(eligableTeams.Count - 1);
+            var randomTeamIndex = rnd.Next(eligibleTeams.Count - 1);
 
-            var team = eligableTeams[randomTeamIndex];
+            var team = eligibleTeams[randomTeamIndex];
 
             alreadySelectedTeams.Add(team);
 
@@ -317,47 +317,6 @@ namespace FIFAData
 
             return documentStore;
         }
-
-
-        private static void AssignPlayersToTeamsForNewLeagueBad(params string[] playerNamesForNewLeague)
-        {
-            var allParticipants = GetParticipants();
-
-            var facesAsLowerCase = playerNamesForNewLeague.Select(n => n.ToLower());
-
-            var participants = allParticipants
-                .Where(p => facesAsLowerCase.Contains(p.Face.ToLower()))
-                .ToList();
-
-            var newPlayers = participants.Where(p => p.IsNew).ToList();
-            var ratedPlayers = participants.Where(p => !p.IsNew).ToList();
-            var allPossibleTeamRatings = GetDistinctTeamRatings();
-
-            var teamFinder = new HandicappedTeamAssigner(ratedPlayers, allPossibleTeamRatings);
-
-            var teamAssignments = teamFinder.GetTeamAssignments();
-
-            var alreadyAssignedTeams = new List<FifaTeam>();
-
-            foreach (var assignment in teamAssignments)
-            {
-                var ratings = string.Join(",", assignment.Value.Select(r => r.ToString()).ToArray());
-                var team = GetRandomTeamForRating(assignment.Value);
-
-                alreadyAssignedTeams.Add(team);
-
-                Console.WriteLine($"{assignment.Key.Name} - {ratings} - {team.TeamName} ({team.OverallRating}) ");
-            }
-
-            var fourStarAssignments = AssignFourStarTeamsToNewbies(newPlayers, alreadyAssignedTeams);
-
-            foreach (var assignment in fourStarAssignments)
-            {
-                Console.WriteLine($"{assignment.Key.Name} - {assignment.Value.TeamName} ({assignment.Value.OverallRating}) ");
-            }
-        }
-
-        
 
 
     }
