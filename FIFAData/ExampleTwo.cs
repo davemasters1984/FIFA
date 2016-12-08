@@ -1,12 +1,8 @@
-﻿using HtmlAgilityPack;
-using Raven.Client;
-using Raven.Client.Document;
+﻿using Raven.Client;
 using Raven.Client.Linq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net.Http;
-using System.Text;
 
 
 namespace FIFAData
