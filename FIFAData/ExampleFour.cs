@@ -47,25 +47,6 @@ namespace FIFAData
             return assigner.Assign();
         }
 
-        private IEnumerable<Player> GetAllPlayersParticipating(IEnumerable<string> particpantNames)
-        {
-            using (var session = _db.OpenSession())
-            {
-                return session.Query<Player>()
-                    .Where(p => p.Name.In(particpantNames))
-                    .ToList();
-            }
-        }
-
-        private IEnumerable<FifaTeam> GetAllTeams()
-        {
-            using (var session = _db.OpenSession())
-            {
-                return session.Query<FifaTeam>()
-                    .ToList();
-            }
-        }
-
         private IEnumerable<int> GetPossibleTeamRatings()
         {
             using (var session = _db.OpenSession())
@@ -78,5 +59,46 @@ namespace FIFAData
                     .ToList();
             }
         }
+    }
+
+    private class TeamAssignmentService
+    {
+        private readonly IDocumentStore _database;
+        private IEnumerable<FifaTeam> _teams;
+        private IEnumerable<Player> _players;
+        private IEnumerable<TeamAssignment> _assignments;
+
+        public TeamAssignmentService(IDocumentStore database)
+        {
+            _database = database;
+        }
+
+        public IEnumerable<TeamAssignment> Assign(IEnumerable<string> particpantNames)
+        {
+            GetAllTeams();
+            GetPlayersFromParticipantNames(particpantNames);
+
+            return _assignments;
+        }
+
+        private void GetAllTeams()
+        {
+            using (var session = _database.OpenSession())
+            {
+                _teams = session.Query<FifaTeam>()
+                    .ToList();
+            }
+        }
+
+        private void GetPlayersFromParticipantNames(IEnumerable<string> particpantNames)
+        {
+            using (var session = _database.OpenSession())
+            {
+                _players = session.Query<Player>()
+                    .Where(p => p.Name.In(particpantNames))
+                    .ToList();
+            }
+        }
+
     }
 }
