@@ -18,7 +18,7 @@ namespace FIFAData
 
         public bool IsPlayerBanned { get; set; }
 
-        public static List<Player> Participants
+        public static List<Player> AllPlayers
         {
             get
             {

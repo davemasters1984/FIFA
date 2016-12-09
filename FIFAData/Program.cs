@@ -1,323 +1,134 @@
-﻿using FileHelpers;
-using HtmlAgilityPack;
+﻿using FIFAData.DataImport;
 using Raven.Client;
 using Raven.Client.Document;
 using Raven.Client.Linq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net.Http;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace FIFAData
 {
     class Program
     {
-        static IDocumentStore _db;
+        static IDocumentStore _documentStore;
+        static IEnumerable<TeamAssignment> _assignments;
+        static IEnumerable<string> _participantNames;
 
         static void Main(string[] args)
         {
-            _db = CreateDocumentStore();
+            CreateDocumentStore();
 
-            //InstallTeams();
-            //InstallParticipants();
+            //InstallAllPlayers();
 
-            //AssignPlayersToTeams(":neil:", 
-            //    ":daveb:", 
-            //    ":mattw:", 
-            //    ":tristan:", 
-            //    ":dom:", 
-            //    ":matt:", 
-            //    ":liam:", 
-            //    ":james:", 
-            //    ":louie:", 
-            //    ":dave:", 
-            //    ":craig:", 
-            //    ":ash:", 
-            //    ":jakub:", 
-            //    ":mogg:", 
-            //    ":luke:");
+            //ImportTeams();
+
+            SetParticipantNames();
+
+            GenerateAssignmentsForParticipants();
+
+            OutputAssignmentsToConsole();
 
             Console.Read();
         }
 
-        //private static void AssignPlayersToTeams(params string[] playerNames)
-        //{
-        //    var players = GetParticipantsByName(playerNames);
-        //    var newPlayers = players.Where(p => p.IsNew).ToList();
-        //    var ratedPlayers = players.Where(p => !p.IsNew).ToList();
-
-        //    var possibleRatings = GetDistinctTeamRatings();
-
-        //    var helper = new HandicappedTeamAssigner(ratedPlayers, possibleRatings);
-
-        //    var autoAssignments = helper.GetTeamAssignments();
-
-        //    var alreadyAssignedTeams = new List<FifaTeam>();
-
-
-        //    Console.WriteLine("Handicaped Team Assignments:");
-        //    Console.WriteLine("______________________________________________________________________________");
-
-        //    foreach (var assignment in autoAssignments)
-        //    {
-        //        var ratings = string.Join(",", assignment.Value.Select(r => r.ToString()).ToArray());
-        //        var team = GetRandomTeamForRating(assignment.Value);
-
-        //        alreadyAssignedTeams.Add(team);
-
-        //        Console.WriteLine($"{assignment.Key.Name} - {ratings} - {team.TeamName} ({team.OverallRating}) ");
-        //    }
-
-        //    var fourStarAssignments = AssignFourStarTeamsToNewbies(newPlayers, alreadyAssignedTeams);
-
-        //    Console.WriteLine("");
-        //    Console.WriteLine("");
-
-        //    Console.WriteLine("New Players 4 Star Team Assignments:");
-        //    Console.WriteLine("______________________________________________________________________________");
-
-        //    foreach (var assignment in fourStarAssignments)
-        //    {
-        //        Console.WriteLine($"{assignment.Key.Name} - {assignment.Value.TeamName} ({assignment.Value.OverallRating}) ");
-        //    }
-        //}
-
-        private static Dictionary<FIFAData.Player, FifaTeam> AssignFourStarTeamsToNewbies(List<FIFAData.Player> newbies, List<FifaTeam> alreadySelectedTeams)
+        private static void SetParticipantNames()
         {
-            var newbieAssignments = new Dictionary<FIFAData.Player, FifaTeam>();
-
-            using (var session = _db.OpenSession())
+            _participantNames = new string[] 
             {
-                var fourStarTeams = session.Query<FifaTeam>()
-                    .Where(t => t.Stars == 4m)
-                    .ToList();
-
-                
-                foreach(var n00b in newbies)
-                {
-                    FifaTeam randomFourStarTeam = GetRandomTeam(fourStarTeams, alreadySelectedTeams);
-
-                    alreadySelectedTeams.Add(randomFourStarTeam);
-
-                    newbieAssignments.Add(n00b, randomFourStarTeam);
-                }
-            }
-
-            return newbieAssignments;
-                
+                ":neil:",
+                ":daveb:",
+                ":mattw:",
+                ":tristan:",
+                ":dom:",
+                ":matt:",
+                ":liam:",
+                ":james:",
+                ":louie:",
+                ":dave:",
+                ":craig:",
+                ":ash:",
+                ":jakub:",
+                ":mogg:",
+                ":luke:"
+            };
         }
 
-        private static List<FIFAData.Player> GetParticipantsByName(params string[] faces)
+        private static void GenerateAssignmentsForParticipants()
         {
-            var allPlayers = GetParticipants();
-            var facesAsLowerCase = faces.Select(n => n.ToLower());
+            var teamAssigner = new TeamAssigner(_documentStore);
 
-            return allPlayers
-                .Where(p => facesAsLowerCase.Contains(p.Face.ToLower()))
-                .ToList();
+            _assignments = teamAssigner.GetAssignments(_participantNames);
         }
 
-        private static FifaTeam GetRandomTeam(List<FifaTeam> teams, List<FifaTeam> alreadySelectedTeams)
+        private static void OutputAssignmentsToConsole()
         {
-            var alreadySelectedTeamNames = alreadySelectedTeams.Select(t => t.TeamName);
+            OutputHanicappedAssignmentsToConsole();
 
-            var eligibleTeams 
-                = teams.Where(t => !t.TeamName.In<string>(alreadySelectedTeamNames))
-                .ToList();
-
-            var rnd = new Random();
-            var randomTeamIndex = rnd.Next(eligibleTeams.Count - 1);
-
-            var team = eligibleTeams[randomTeamIndex];
-
-            alreadySelectedTeams.Add(team);
-
-            return team;
+            OutputFourStarAssignmentsToConsole();
         }
 
-        private static Dictionary<FIFAData.Player, FifaTeam> GetParticipantsAssignedToTeams()
+        private static void OutputHanicappedAssignmentsToConsole()
         {
-            var assignments = new Dictionary<FIFAData.Player, FifaTeam>();
+            Console.WriteLine("Handicaped Team Assignments:");
+            Console.WriteLine("______________________________________________________________________________");
 
-            IDictionary<FIFAData.Player, int> participantsWithAssignedTeamRatings 
-                = GetParticipantsWithAssignedTeamRatings();
-
-            foreach (KeyValuePair<FIFAData.Player, int> participant in participantsWithAssignedTeamRatings)
+            foreach (var assignment in _assignments.Where(a => !a.Player.IsNew))
             {
-                FifaTeam team = GetRandomTeamForRating(participant.Value);
-                assignments.Add(participant.Key, team);
-            }
+                string ratings = GetCommaDeliminatedEligableRatings(assignment.EligibleTeamRatings);
 
-            return assignments;
-        }
-
-        private static FifaTeam GetRandomTeamForRating(List<int> teamRating)
-        {
-            using (var session = _db.OpenSession())
-            {
-                var teams = session.Query<FifaTeam>()
-                    .Where(t => t.OverallRating.In<int>(teamRating))
-                    .ToList();
-
-                var rnd = new Random();
-                var randomTeamIndex = rnd.Next(teams.Count - 1);
-
-                return teams[randomTeamIndex];
+                Console.WriteLine($"{assignment.Player.Name} - {ratings} - {assignment.Team.TeamName} ({assignment.Team.OverallRating}) ");
             }
         }
 
-        private static FifaTeam GetRandomTeamForRating(int teamRating)
+        private static void OutputFourStarAssignmentsToConsole()
         {
-            using (var session = _db.OpenSession())
+            Console.WriteLine("");
+            Console.WriteLine("");
+
+            Console.WriteLine("New Players 4 Star Team Assignments:");
+            Console.WriteLine("______________________________________________________________________________");
+
+            foreach (var assignment in _assignments.Where(a => a.Player.IsNew))
             {
-                var teams = session.Query<FifaTeam>()
-                    .Where(t => t.OverallRating == teamRating)
-                    .ToList();
-
-                var rnd = new Random();
-                var randomTeamIndex = rnd.Next(teams.Count - 1);
-
-                return teams[randomTeamIndex];
-            }
-        }
-            
-        private static Dictionary<FIFAData.Player, int> GetParticipantsWithAssignedTeamRatings()
-        {
-            var participants = GetParticipantsByPositionPercentages();
-            var distinctTeamRatings = GetTeamsRatingsByPositionPercentages();
-            var participantsWithAssignedRating = new Dictionary<FIFAData.Player, int>();
-
-            foreach(var partipant in participants)
-            {
-                var participantsAssignedRating
-                    = GetTeamRatingByClosestPositionalPercentage(partipant.Value, distinctTeamRatings);
-
-                participantsWithAssignedRating.Add(partipant.Key, participantsAssignedRating);
-            }
-
-            return participantsWithAssignedRating;
-        }
-
-        private static int GetTeamRatingByClosestPositionalPercentage(decimal number, 
-            Dictionary<decimal, int> distinctTeamRatings)
-        {
-            decimal closestPercentage 
-                = distinctTeamRatings.Keys.Aggregate((x, y) => Math.Abs(x - number) < Math.Abs(y - number) ? x : y);
-
-            return distinctTeamRatings[closestPercentage];
-        }
-
-        private static List<FIFAData.Player> GetParticipants()
-        {
-            using (var session = _db.OpenSession())
-            {
-                var participants = session.Query<Player>()
-                    .ToList();
-
-                return participants;
+                Console.WriteLine($"{assignment.Player.Name} - {assignment.Team.TeamName} ({assignment.Team.OverallRating}) ");
             }
         }
 
-        private static List<int> GetDistinctTeamRatings()
+        private static string GetCommaDeliminatedEligableRatings(IEnumerable<int> eligibleTeamRatings)
         {
-            using (var session = _db.OpenSession())
-            {
-                var distinctRatings = session.Query<FifaTeam>()
-                    .Select(t => t.OverallRating)
-                    .Distinct()
-                    .ToList();
-
-                return distinctRatings;
-            }
+            return string.Join(",",
+                eligibleTeamRatings
+                    .Select(r => r.ToString())
+                    .ToArray());
         }
 
-        private static Dictionary<decimal, int> GetTeamsRatingsByPositionPercentages()
+        private static void InstallAllPlayers()
         {
-            var teamRatings = GetDistinctTeamRatings();
-
-            teamRatings.Remove(0);
-
-            var orderedTeamRatings = teamRatings
-                .OrderByDescending(r => r)
-                .ToList();
-
-            var dict = new Dictionary<decimal, int>();
-
-            foreach (var rating in orderedTeamRatings.OrderBy(r => r))
+            using (var session = _documentStore.OpenSession())
             {
-                var position
-                    = (orderedTeamRatings.IndexOf(rating) + 1);
-
-                decimal ratingAsPositionalPercentage
-                    = ((decimal)position / (decimal)orderedTeamRatings.Count) * 100;
-
-                dict.Add(ratingAsPositionalPercentage, rating);
-            }
-
-            return dict;
-        }
-
-        private static IDictionary<FIFAData.Player, decimal> GetParticipantsByPositionPercentages()
-        {
-            var participants = GetParticipants();
-            var dict = new Dictionary<FIFAData.Player, decimal>();
-
-            var orderedParticipants = participants
-                .OrderByDescending(p => p.OverallScore)
-                .ToList();
-
-            foreach (var participant in orderedParticipants)
-            {
-                var positionInOveralStandings 
-                    = (orderedParticipants.IndexOf(participant) + 1);
-
-                decimal participantsPositionalPercentage
-                    = ((decimal)positionInOveralStandings / (decimal)orderedParticipants.Count) * 100;
-
-                dict.Add(participant, 100-participantsPositionalPercentage);
-            }
-
-            return dict;
-        }    
-
-        private static void InstallTeams()
-        {
-            var engine = new FileHelperEngine<FifaTeamCsvItem>();
-            var records = engine.ReadFile("C:\\Users\\davemasters\\Desktop\\FIFA.csv");
-
-            using (var session = _db.OpenSession())
-            {
-                foreach (var team in records)
-                    session.Store(team.ToFifaTeam());
-
-                session.SaveChanges();
-            }
-        }
-
-        private static void InstallParticipants()
-        {
-            using (var session = _db.OpenSession())
-            {
-                foreach (var participant in FIFAData.Player.Participants)
+                foreach (var participant in Player.AllPlayers)
                     session.Store(participant);
 
                 session.SaveChanges();
             }
         }
 
-        public static IDocumentStore CreateDocumentStore()
+        private static void ImportTeams()
         {
-            var documentStore = new DocumentStore();
-
-            documentStore.Url = "http://localhost";
-            documentStore.DefaultDatabase = "FIFA";
-            documentStore.Initialize();
-
-            return documentStore;
+            FIFATeamImporter.Import(_documentStore,
+                @"C:\Git\FIFA\FIFAData\DataImport\FIFA.csv");
         }
 
+        public static void CreateDocumentStore()
+        {
+            _documentStore = new DocumentStore
+            {
+                Url = "http://localhost",
+                DefaultDatabase = "FIFA",
+                
+            };
 
+            _documentStore.Initialize();
+        }
     }
 }

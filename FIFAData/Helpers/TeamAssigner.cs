@@ -20,6 +20,8 @@ namespace FIFAData
 
         public IEnumerable<TeamAssignment> GetAssignments(IEnumerable<string> particpantNames)
         {
+            ClearAnyPreviousAssignments();
+
             FetchRequiredData(particpantNames);
 
             AssignFourStarTeamsToNewPlayers();
@@ -27,6 +29,11 @@ namespace FIFAData
             AssignHandicappedTeamsToRankedPlayers();
 
             return _assignments;
+        }
+
+        private void ClearAnyPreviousAssignments()
+        {
+            _assignments.Clear();
         }
 
         private void FetchRequiredData(IEnumerable<string> particpantNames)
@@ -42,7 +49,8 @@ namespace FIFAData
         {
             using (var session = _database.OpenSession())
             {
-                _teams = session.Query<FifaTeam>()
+                session.Advanced.MaxNumberOfRequestsPerSession = 1000;
+                _teams = session.GetAll<FifaTeam>()
                     .ToList();
             }
         }
@@ -52,19 +60,20 @@ namespace FIFAData
             using (var session = _database.OpenSession())
             {
                 _players = session.Query<Player>()
-                    .Where(p => p.Name.In(particpantNames))
+                    .Where(p => p.Face.In(particpantNames))
                     .ToList();
             }
         }
 
-        private IEnumerable<int> FetchPossibleTeamRatings()
+        private void FetchPossibleTeamRatings()
         {
             using (var session = _database.OpenSession())
             {
-                return session.Query<FifaTeam>()
+                _possibleTeamRankings = session.Query<FifaTeam>()
                     .Where(tr => tr.OverallRating != 0)
                     .Select(t => t.OverallRating)
                     .Distinct()
+                    .ToList()
                     .OrderBy(r => r)
                     .ToList();
             }
@@ -87,6 +96,35 @@ namespace FIFAData
             var handicappedAssignments = handicapedAssigner.GetAssignments();
 
             _assignments.AddRange(handicappedAssignments);
+        }
+    }
+
+    public static class RavenExtensions
+    {
+        public static List<T> GetAll<T>(this IDocumentSession session)
+        {
+            const int size = 1024;
+            int page = 0;
+
+            RavenQueryStatistics stats;
+            List<T> objects = session.Query<T>()
+                                  .Statistics(out stats)
+                                  .Skip(page * size)
+                                  .Take(size)
+                                  .ToList();
+
+            page++;
+
+            while ((page * size) <= stats.TotalResults)
+            {
+                objects.AddRange(session.Query<T>()
+                             .Skip(page * size)
+                             .Take(size)
+                             .ToList());
+                page++;
+            }
+
+            return objects;
         }
     }
 }
