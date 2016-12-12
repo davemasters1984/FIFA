@@ -61,6 +61,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DataImport\FIFATeamImporter.cs" />
+    <Compile Include="RavenExtensions\Paging.cs" />
     <Compile Include="RefactoringDemo\ExampleFive.cs" />
     <Compile Include="RefactoringDemo\ExampleOne.cs" />
     <Compile Include="RefactoringDemo\ExampleFour.cs" />
