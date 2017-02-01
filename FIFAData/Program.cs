@@ -13,6 +13,8 @@ namespace FIFAData
         static IDocumentStore _documentStore;
         static IEnumerable<TeamAssignment> _assignments;
         static IEnumerable<string> _participantNames;
+        
+        static League _newLeague;
 
         static void Main(string[] args)
         {
@@ -25,6 +27,10 @@ namespace FIFAData
             SetParticipantNames();
 
             GenerateAssignmentsForParticipants();
+
+            CreateLeagueFromAssignments();
+
+            SaveLeague();
 
             OutputAssignmentsToConsole();
 
@@ -59,6 +65,33 @@ namespace FIFAData
 
             _assignments = teamAssigner.GetAssignments(_participantNames);
         }
+
+        private static void CreateLeagueFromAssignments()
+        {
+            _newLeague = new League();
+
+            _newLeague.Participants = new List<LeagueParticipant>();
+
+            foreach(var assignment in _assignments)
+            {
+                _newLeague.Participants.Add(new LeagueParticipant
+                {
+                    ParticipantId = assignment.Player.Id,
+                    TeamId = assignment.Team.Id
+                });
+            }
+
+        }
+
+        private static void SaveLeague()
+        {
+            using (var session = _documentStore.OpenSession())
+            {
+                session.Store(_newLeague);
+
+                session.SaveChanges();
+            }
+        }        
 
         private static void OutputAssignmentsToConsole()
         {

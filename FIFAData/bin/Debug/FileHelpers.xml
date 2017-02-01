@@ -9680,11 +9680,6 @@ engine.WriteFile("TestOut.txt", res);
 		</code>
 		</example><param name="fileName">The file path to be written at end.</param><param name="records">The array of records to write.</param><returns>True if the operation is successful. False otherwise.</returns>
         </member>
-        <member name="P:FileHelpers.MasterDetail.MasterDetailEngine`2.MasterOptions">
-            <summary>
-            Allows you to change some record layout options at runtime
-            </summary>
-        </member>
         <member name="P:FileHelpers.MasterDetail.MasterDetailEngine`2.MasterType">
             <summary>
             the type of the master records handled by this engine.

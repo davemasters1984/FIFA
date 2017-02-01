@@ -15,8 +15,8 @@ namespace FIFAData
 
     public class LeagueParticipant
     {
-        public int ParticipantId { get; set; }
+        public string ParticipantId { get; set; }
 
-        public int TeamId { get; set; }
+        public string TeamId { get; set; }
     }
 }

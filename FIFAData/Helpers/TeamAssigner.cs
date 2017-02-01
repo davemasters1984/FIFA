@@ -12,6 +12,7 @@ namespace FIFAData
         private IEnumerable<FifaTeam> _teams;
         private IEnumerable<Player> _players;
         private IEnumerable<int> _possibleTeamRankings;
+        private IEnumerable<League> _previousLeagues;
 
         public TeamAssigner(IDocumentStore database)
         {
@@ -40,6 +41,8 @@ namespace FIFAData
         {
             FetchTeams();
 
+            FetchPreviousLeagues();
+
             FetchPossibleTeamRatings();
 
             FetchPlayersMatchingParticipantNames(particpantNames);
@@ -53,6 +56,12 @@ namespace FIFAData
                 _teams = session.GetAll<FifaTeam>()
                     .ToList();
             }
+        }
+
+        private void FetchPreviousLeagues()
+        {
+            using (var session = _database.OpenSession())
+                _previousLeagues = session.Query<League>().ToList();
         }
 
         private void FetchPlayersMatchingParticipantNames(IEnumerable<string> particpantNames)
@@ -91,7 +100,7 @@ namespace FIFAData
         private void AssignHandicappedTeamsToRankedPlayers()
         {
             var handicapedAssigner
-                = new HandicappedTeamAssigner(_players, _teams, _possibleTeamRankings);
+                = new HandicappedTeamAssigner(_players, _teams, _possibleTeamRankings, _previousLeagues);
 
             var handicappedAssignments = handicapedAssigner.GetAssignments();
 

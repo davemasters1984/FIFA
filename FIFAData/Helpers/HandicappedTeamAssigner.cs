@@ -11,16 +11,19 @@ namespace FIFAData
         private readonly IEnumerable<int> _possibleTeamRatings;
         private readonly IDictionary<Player, List<int>> _ratingRangesForPlayers = new Dictionary<Player, List<int>>();
         private readonly List<TeamAssignment> _assignments = new List<TeamAssignment>();
+        private IEnumerable<League> _previousLeagues;
         private decimal _ratingsRangeIncrement;
         private decimal _ratingRangeFrom;
         private decimal _ratingRangeTo;
 
         public HandicappedTeamAssigner(IEnumerable<Player> players, 
             IEnumerable<FifaTeam> teams, 
-            IEnumerable<int> possibleTeamRatings)
+            IEnumerable<int> possibleTeamRatings,
+            IEnumerable<League> previousLeagues)
         {
             _teams = teams;
             _possibleTeamRatings = possibleTeamRatings;
+            _previousLeagues = previousLeagues;
 
             _playersOrderedByOverallRanking = players
                 .Where(p => !p.IsNew)
@@ -80,11 +83,20 @@ namespace FIFAData
         private TeamAssignment GetTeamAssignmentForPlayerFromEligibleRatings(Player player, 
             List<int> eligibleTeamRatings)
         {
-            var eligibleTeamsForPlayer 
+            var eligibleTeamsFromAssignedRatings 
                 = GetEligibleTeamsFromPlayersAssignedRatings(eligibleTeamRatings);
 
+            var eligibleTeamsNotPreviouslyAssignedToPlayer
+                = eligibleTeamsFromAssignedRatings
+                    .Where(team => !IsPreviouslyAssignedToPlayer(player, team))
+                    .ToList();
+
+            var eligableTeams = (eligibleTeamsNotPreviouslyAssignedToPlayer.Any())
+                ? eligibleTeamsNotPreviouslyAssignedToPlayer
+                : eligibleTeamsFromAssignedRatings;
+
             var randomEligibleTeam
-                = GetRandomTeamFromEligibleTeams(eligibleTeamsForPlayer);
+                = GetRandomTeamFromEligibleTeams(eligableTeams);
 
             return new TeamAssignment
             {
@@ -92,6 +104,15 @@ namespace FIFAData
                 EligibleTeamRatings = eligibleTeamRatings,
                 Team = randomEligibleTeam
             };
+        }
+
+        private bool IsPreviouslyAssignedToPlayer(Player player, FifaTeam team)
+        {
+            foreach(var league in _previousLeagues)
+                if (league.Participants.Any(p => p.ParticipantId == player.Id && p.TeamId == team.Id))
+                    return true;
+
+            return false;
         }
 
         private List<FifaTeam> GetEligibleTeamsFromPlayersAssignedRatings(List<int> playersAssignedRatings)

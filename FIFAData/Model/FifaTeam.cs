@@ -8,6 +8,8 @@ namespace FIFAData
 {
     public class FifaTeam
     {
+        public string Id { get; set; }
+
         public decimal Stars { get; set; }
 
         public string LogoUrl { get; set; }
