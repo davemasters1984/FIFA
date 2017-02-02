@@ -20,9 +20,9 @@ namespace FIFAData
         {
             CreateDocumentStore();
 
-            //InstallAllPlayers();
+            InstallAllPlayers();
 
-            //ImportTeams();
+            ImportTeams();
 
             SetParticipantNames();
 
@@ -156,9 +156,8 @@ namespace FIFAData
         {
             _documentStore = new DocumentStore
             {
-                Url = "http://localhost",
-                DefaultDatabase = "FIFA",
-                
+                ConnectionStringName = "RavenHQ",
+                DefaultDatabase = "Porcupine-FIFA",
             };
 
             _documentStore.Initialize();
