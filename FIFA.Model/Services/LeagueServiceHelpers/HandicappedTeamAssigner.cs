@@ -55,9 +55,6 @@ namespace FIFA.Model.Assigners
         {
             foreach (Player player in _playersOrderedByOverallRanking)
             {
-                if (player.IsPlayerBanned)
-                    continue;
-
                 var eligibleTeamRatingsForPlayer = _possibleTeamRatings
                     .Where(IsWithinCurrentRatingsRange)
                     .ToList();
@@ -109,7 +106,7 @@ namespace FIFA.Model.Assigners
         private bool IsPreviouslyAssignedToPlayer(Player player, Team team)
         {
             foreach(var league in _previousLeagues)
-                if (league.Participants.Any(p => p.ParticipantId == player.Id && p.TeamId == team.Id))
+                if (league.Participants.Any(p => p.PlayerId == player.Id && p.TeamId == team.Id))
                     return true;
 
             return false;

@@ -89,7 +89,7 @@ namespace FIFAData
             {
                 _newLeague.Participants.Add(new Participant
                 {
-                    ParticipantId = assignment.Player.Id,
+                    PlayerId = assignment.Player.Id,
                     TeamId = assignment.Team.Id,
                     EligibleTeamRatings = assignment.EligibleTeamRatings
                 });

@@ -10,7 +10,7 @@ using System.Linq;
 
 namespace FIFA.WebApi.Helpers
 {
-    public class LeagueGenerator
+    public class CreateLeagueHelper
     {
         private IDocumentStore _documentStore;
         private IEnumerable<TeamAssignment> _assignments;
@@ -19,9 +19,8 @@ namespace FIFA.WebApi.Helpers
         private IEnumerable<Team> _teams;
         private IEnumerable<League> _previousLeagues;
         private IEnumerable<int> _possibleTeamRatings;
-        private League _newLeague;
 
-        public League Generate(IEnumerable<string> participantNames)
+        public CreateLeagueArgs CreateLeagueArgs(IEnumerable<string> participantNames)
         {
             CreateDocumentStore();
 
@@ -29,59 +28,18 @@ namespace FIFA.WebApi.Helpers
 
             FetchRequiredData();
 
-            GenerateAssignmentsForParticipants();
-
-            CreateLeagueFromAssignments();
-
-            SaveLeague();
-
-            return _newLeague;
-        }
-
-        private void GenerateAssignmentsForParticipants()
-        {
-            var teamAssigner = new TeamAssigner(new TeamAssigner.TeamAssignerArgs
+            return new CreateLeagueArgs
             {
                 Players = _players,
-                Teams = _teams,
                 PossibleTeamRatings = _possibleTeamRatings,
-                PreviousLeagues = _previousLeagues
-            });
-
-            _assignments = teamAssigner.GetAssignments(_participantNames);
+                PreviousLeagues = _previousLeagues,
+                Teams = _teams,
+            };
         }
 
         private void SetParticipantNames(IEnumerable<string> participantNames)
         {
             _participantNames = participantNames;
-        }
-
-        private void CreateLeagueFromAssignments()
-        {
-            _newLeague = new League();
-            _newLeague.Name = DateTime.Now.ToString("dd MMM yyyy");
-            _newLeague.Participants = new List<Participant>();
-
-            foreach (var assignment in _assignments)
-            {
-                _newLeague.Participants.Add(new Participant
-                {
-                    ParticipantId = assignment.Player.Id,
-                    TeamId = assignment.Team.Id,
-                    EligibleTeamRatings = assignment.EligibleTeamRatings
-                });
-            }
-
-        }
-
-        private void SaveLeague()
-        {
-            using (var session = _documentStore.OpenSession())
-            {
-                session.Store(_newLeague);
-
-                session.SaveChanges();
-            }
         }
 
         private  string GetCommaDeliminatedEligableRatings(IEnumerable<int> eligibleTeamRatings)
@@ -90,17 +48,6 @@ namespace FIFA.WebApi.Helpers
                 eligibleTeamRatings
                     .Select(r => r.ToString())
                     .ToArray());
-        }
-
-        private void InstallAllPlayers()
-        {
-            using (var session = _documentStore.OpenSession())
-            {
-                foreach (var participant in Player.AllPlayers)
-                    session.Store(participant);
-
-                session.SaveChanges();
-            }
         }
 
         public void CreateDocumentStore()

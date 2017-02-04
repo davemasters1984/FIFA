@@ -18,8 +18,6 @@ namespace FIFA.Model
 
         public bool IsNew { get; set; }
 
-        public bool IsPlayerBanned { get; set; }
-
         public static List<Player> AllPlayers
         {
             get

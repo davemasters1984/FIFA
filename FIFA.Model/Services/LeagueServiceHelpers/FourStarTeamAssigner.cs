@@ -36,9 +36,6 @@ namespace FIFA.Model.Assigners
         {
             foreach (var newPlayer in _newPlayers)
             {
-                if (newPlayer.IsPlayerBanned)
-                    continue;
-
                 var randomFourStarTeamAssignment = GetRandomFourStarTeamAssignment(newPlayer);
 
                 _assignments.Add(randomFourStarTeamAssignment);

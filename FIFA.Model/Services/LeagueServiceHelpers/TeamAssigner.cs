@@ -10,18 +10,7 @@ namespace FIFA.Model.Assigners
         private IEnumerable<int> _possibleTeamRankings;
         private IEnumerable<League> _previousLeagues;
 
-        public class TeamAssignerArgs
-        {
-            public IEnumerable<Team> Teams { get; set; }
-
-            public IEnumerable<Player> Players { get; set; }
-
-            public IEnumerable<int> PossibleTeamRatings { get; set; }
-
-            public IEnumerable<League> PreviousLeagues { get; set; }
-        }
-
-        public TeamAssigner(TeamAssignerArgs args)
+        public TeamAssigner(CreateLeagueArgs args)
         {
             _teams = args.Teams;
             _players = args.Players;
@@ -29,7 +18,7 @@ namespace FIFA.Model.Assigners
             _previousLeagues = args.PreviousLeagues;
         }
 
-        public IEnumerable<TeamAssignment> GetAssignments(IEnumerable<string> particpantNames)
+        public IEnumerable<TeamAssignment> GetAssignments()
         {
             ClearAnyPreviousAssignments();
 

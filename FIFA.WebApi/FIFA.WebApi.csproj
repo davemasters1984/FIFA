@@ -124,14 +124,21 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App_Start\WebApiConfig.cs" />
+    <Compile Include="Controllers\BaseController.cs" />
     <Compile Include="Controllers\LeagueController.cs" />
+    <Compile Include="Controllers\PlayersController.cs" />
+    <Compile Include="Controllers\TeamsController.cs" />
     <Compile Include="Extensions\RavenPagingExtension.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="Helpers\LeagueGenerator.cs" />
-    <Compile Include="Helpers\LeagueRepository.cs" />
+    <Compile Include="Helpers\CreateLeagueHelper.cs" />
+    <Compile Include="Infrastructure\LeagueSummaryIndex.cs" />
+    <Compile Include="Infrastructure\ResultsIndex.cs" />
     <Compile Include="Infrastructure\LeagueTableIndex.cs" />
+    <Compile Include="Models\LeagueSummary.cs" />
+    <Compile Include="Models\LeagueTableRow.cs" />
+    <Compile Include="Models\ResultSummary.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -149,9 +156,7 @@
       <DependentUpon>Web.config</DependentUpon>
     </None>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Models\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <WCFMetadata Include="Service References\" />
   </ItemGroup>

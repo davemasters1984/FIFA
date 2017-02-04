@@ -1,18 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Web;
 
-namespace FIFA.Model
+namespace FIFA.WebApi.Models
 {
-    public class Participant
+    public class LeagueTableRow
     {
-        public string PlayerId { get; set; }
+        public string LeagueId { get; set; }
 
-        public string TeamId { get; set; }
+        public string PlayerName { get; set; }
 
-        public IEnumerable<int> EligibleTeamRatings { get; set; }
+        public string TeamName { get; set; }
 
         public int Position { get; set; }
 
