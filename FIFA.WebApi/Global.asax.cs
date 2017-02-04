@@ -1,4 +1,6 @@
-﻿using System;
+﻿using FIFA.WebApi.Infrastructure;
+using Raven.Client.Document;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
@@ -12,6 +14,21 @@ namespace FIFA.WebApi
         protected void Application_Start()
         {
             GlobalConfiguration.Configure(WebApiConfig.Register);
+
+            DeployIndexes();
+        }
+
+        protected void DeployIndexes()
+        {
+            var documentStore = new DocumentStore
+            {
+                ConnectionStringName = "RavenHQ",
+                DefaultDatabase = "FIFA",
+            };
+
+            documentStore.Initialize();
+
+            new LeagueTableIndex().Execute(documentStore);
         }
     }
 }

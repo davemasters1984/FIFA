@@ -32,3 +32,5 @@ C:\GIT\FIFA\FIFAData\bin\Debug\Raven.Client.Lightweight.xml
 C:\GIT\FIFA\FIFAData\obj\Debug\FIFAData.csprojResolveAssemblyReference.cache
 C:\GIT\FIFA\FIFAData\obj\Debug\FIFAData.exe
 C:\GIT\FIFA\FIFAData\obj\Debug\FIFAData.pdb
+C:\GIT\FIFA\FIFAData\bin\Debug\FIFA.Model.dll
+C:\GIT\FIFA\FIFAData\bin\Debug\FIFA.Model.pdb

@@ -62,21 +62,20 @@
   <ItemGroup>
     <Compile Include="DataImport\FIFATeamImporter.cs" />
     <Compile Include="RavenExtensions\Paging.cs" />
-    <Compile Include="Model\FifaTeam.cs" />
     <Compile Include="DataImport\FifaTeamCsvItem.cs" />
-    <Compile Include="Model\League.cs" />
-    <Compile Include="Model\Player.cs" />
-    <Compile Include="Helpers\HandicappedTeamAssigner.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Model\TeamAssignment.cs" />
-    <Compile Include="Helpers\TeamAssigner.cs" />
-    <Compile Include="Helpers\FourStarTeamAssigner.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
     <None Include="DataImport\FIFA.csv" />
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\FIFA.Model\FIFA.Model.csproj">
+      <Project>{631ea0f9-1f8f-4908-9221-fbad745f3b1f}</Project>
+      <Name>FIFA.Model</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

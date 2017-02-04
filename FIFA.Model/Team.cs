@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace FIFA.Model
 {
-    public class FifaTeam
+    public class Team
     {
         public string Id { get; set; }
 

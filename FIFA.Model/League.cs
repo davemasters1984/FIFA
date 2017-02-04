@@ -10,13 +10,9 @@ namespace FIFA.Model
     {
         public string Name { get; set; }
 
-        public List<LeagueParticipant> Participants { get; set; }
+        public List<Participant> Participants { get; set; }
     }
 
-    public class LeagueParticipant
-    {
-        public string ParticipantId { get; set; }
+    
 
-        public string TeamId { get; set; }
-    }
 }

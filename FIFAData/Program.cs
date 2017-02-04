@@ -1,4 +1,6 @@
-﻿using FIFAData.DataImport;
+﻿using FIFA.Model;
+using FIFA.Model.Assigners;
+using FIFAData.DataImport;
 using Raven.Client;
 using Raven.Client.Document;
 using Raven.Client.Linq;
@@ -13,7 +15,10 @@ namespace FIFAData
         static IDocumentStore _documentStore;
         static IEnumerable<TeamAssignment> _assignments;
         static IEnumerable<string> _participantNames;
-        
+        static IEnumerable<Player> _players;
+        static IEnumerable<Team> _teams;
+        static IEnumerable<League> _previousLeagues;
+        static IEnumerable<int> _possibleTeamRatings;
         static League _newLeague;
 
         static void Main(string[] args)
@@ -24,15 +29,17 @@ namespace FIFAData
 
             ImportTeams();
 
-            SetParticipantNames();
+            //SetParticipantNames();
 
-            GenerateAssignmentsForParticipants();
+            //FetchRequiredData();
 
-            CreateLeagueFromAssignments();
+            //GenerateAssignmentsForParticipants();
 
-            SaveLeague();
+            //CreateLeagueFromAssignments();
 
-            OutputAssignmentsToConsole();
+            //SaveLeague();
+
+            //OutputAssignmentsToConsole();
 
             Console.Read();
         }
@@ -61,7 +68,13 @@ namespace FIFAData
 
         private static void GenerateAssignmentsForParticipants()
         {
-            var teamAssigner = new TeamAssigner(_documentStore);
+            var teamAssigner = new TeamAssigner(new TeamAssigner.TeamAssignerArgs
+            {
+                Players = _players,
+                Teams = _teams,
+                PossibleTeamRatings = _possibleTeamRatings,
+                PreviousLeagues = _previousLeagues
+            });
 
             _assignments = teamAssigner.GetAssignments(_participantNames);
         }
@@ -70,14 +83,15 @@ namespace FIFAData
         {
             _newLeague = new League();
 
-            _newLeague.Participants = new List<LeagueParticipant>();
+            _newLeague.Participants = new List<Participant>();
 
-            foreach(var assignment in _assignments)
+            foreach (var assignment in _assignments)
             {
-                _newLeague.Participants.Add(new LeagueParticipant
+                _newLeague.Participants.Add(new Participant
                 {
                     ParticipantId = assignment.Player.Id,
-                    TeamId = assignment.Team.Id
+                    TeamId = assignment.Team.Id,
+                    EligibleTeamRatings = assignment.EligibleTeamRatings
                 });
             }
 
@@ -157,10 +171,61 @@ namespace FIFAData
             _documentStore = new DocumentStore
             {
                 ConnectionStringName = "RavenHQ",
-                DefaultDatabase = "Porcupine-FIFA",
+                DefaultDatabase = "FIFA",
             };
 
             _documentStore.Initialize();
+        }
+
+        private static void FetchRequiredData()
+        {
+            FetchTeams();
+
+            FetchPreviousLeagues();
+
+            FetchPossibleTeamRatings();
+
+            FetchPlayersMatchingParticipantNames();
+        }
+
+        private static void FetchTeams()
+        {
+            using (var session = _documentStore.OpenSession())
+            {
+                session.Advanced.MaxNumberOfRequestsPerSession = 1000;
+                _teams = session.GetAll<Team>()
+                    .ToList();
+            }
+        }
+
+        private static void FetchPreviousLeagues()
+        {
+            using (var session = _documentStore.OpenSession())
+                _previousLeagues = session.Query<League>().ToList();
+        }
+
+        private static void FetchPlayersMatchingParticipantNames()
+        {
+            using (var session = _documentStore.OpenSession())
+            {
+                _players = session.Query<Player>()
+                    .Where(p => p.Face.In(_participantNames))
+                    .ToList();
+            }
+        }
+
+        private static void FetchPossibleTeamRatings()
+        {
+            using (var session = _documentStore.OpenSession())
+            {
+                _possibleTeamRatings = session.Query<Team>()
+                    .Where(tr => tr.OverallRating != 0)
+                    .Select(t => t.OverallRating)
+                    .Distinct()
+                    .ToList()
+                    .OrderBy(r => r)
+                    .ToList();
+            }
         }
     }
 }
