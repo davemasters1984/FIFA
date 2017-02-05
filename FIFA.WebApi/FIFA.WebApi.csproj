@@ -133,9 +133,9 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Helpers\CreateLeagueHelper.cs" />
-    <Compile Include="Infrastructure\LeagueSummaryIndex.cs" />
-    <Compile Include="Infrastructure\ResultsIndex.cs" />
-    <Compile Include="Infrastructure\LeagueTableIndex.cs" />
+    <Compile Include="Infrastructure\Raven\LeagueSummaryIndex.cs" />
+    <Compile Include="Infrastructure\Raven\ResultsIndex.cs" />
+    <Compile Include="Infrastructure\Raven\LeagueTableIndex.cs" />
     <Compile Include="Models\LeagueSummary.cs" />
     <Compile Include="Models\LeagueTableRow.cs" />
     <Compile Include="Models\ResultSummary.cs" />

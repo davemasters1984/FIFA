@@ -13,6 +13,16 @@ namespace FIFA.WebApi.Controllers
     {
         protected IDocumentStore DocumentStore;
 
+        protected string TranslateId<T>(int id)
+        {
+            return DocumentStore.Conventions.FindFullDocumentKeyFromNonStringIdentifier(id, typeof(T), false);
+        }
+
+        protected string TranslateId<T>(string id)
+        {
+            return DocumentStore.Conventions.FindFullDocumentKeyFromNonStringIdentifier(id, typeof(T), false);
+        }
+
         protected BaseController()
         {
             DocumentStore = new DocumentStore

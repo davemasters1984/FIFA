@@ -57,6 +57,8 @@
     <Compile Include="Fixture.cs" />
     <Compile Include="Participant.cs" />
     <Compile Include="Result.cs" />
+    <Compile Include="Services\PostResultArgs.cs" />
+    <Compile Include="Services\ResultService.cs" />
     <Compile Include="Team.cs" />
     <Compile Include="League.cs" />
     <Compile Include="Player.cs" />

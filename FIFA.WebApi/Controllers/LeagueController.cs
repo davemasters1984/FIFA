@@ -1,5 +1,6 @@
 ﻿using FIFA.Model;
 using FIFA.Model.Assigners;
+using FIFA.Model.Services;
 using FIFA.WebApi.Helpers;
 using FIFA.WebApi.Infrastructure;
 using FIFA.WebApi.Models;
@@ -71,7 +72,7 @@ namespace FIFA.WebApi.Controllers
         [ResponseType(typeof(string))]
         public IHttpActionResult GetLeagueResults(int id)
         {
-            var key = DocumentStore.Conventions.FindFullDocumentKeyFromNonStringIdentifier(id, typeof(League), false);
+            var key = TranslateId<League>(id);
 
             using (var session = DocumentStore.OpenSession())
             {
@@ -122,26 +123,15 @@ namespace FIFA.WebApi.Controllers
         [HttpPost]
         [Route("{id:int}/results")]
         [ResponseType(typeof(string))]
-        public IHttpActionResult PostLeagueResult(int id, [FromBody] Result result)
+        public IHttpActionResult PostLeagueResult(int id, [FromBody] PostResultArgs args)
         {
-            result.LeagueId = DocumentStore.Conventions.FindFullDocumentKeyFromNonStringIdentifier(id, typeof(League), false);
-            result.AwayPlayerId = DocumentStore.Conventions.FindFullDocumentKeyFromNonStringIdentifier(result.AwayPlayerId, typeof(Player), false);
-            result.HomePlayerId = DocumentStore.Conventions.FindFullDocumentKeyFromNonStringIdentifier(result.HomePlayerId, typeof(Player), false);
+            var resultService = new ResultService(DocumentStore);
 
-            using (var session = DocumentStore.OpenSession())
-            {
-                session.Store(result);
+            args.LeagueId = TranslateId<League>(id);
+            args.AwayPlayerId = TranslateId<Player>(args.AwayPlayerId);
+            args.HomePlayerId = TranslateId<Player>(args.HomePlayerId);
 
-                var league = session.Load<League>(result.LeagueId);
-
-                if (league.ResultIds == null)
-                    league.ResultIds = new List<string>();
-
-                league.ResultIds.Add(result.Id);
-
-                session.Store(league);
-                session.SaveChanges();
-            }
+            resultService.PostResult(args);
 
             return Ok("Result posted successfully");
         }
