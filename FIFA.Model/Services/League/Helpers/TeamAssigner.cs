@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace FIFA.Model.Assigners
+namespace FIFA.Model.Services
 {
     public class TeamAssigner
     {

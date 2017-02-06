@@ -128,11 +128,9 @@
     <Compile Include="Controllers\LeagueController.cs" />
     <Compile Include="Controllers\PlayersController.cs" />
     <Compile Include="Controllers\TeamsController.cs" />
-    <Compile Include="Extensions\RavenPagingExtension.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="Helpers\CreateLeagueHelper.cs" />
     <Compile Include="Infrastructure\Raven\LeagueSummaryIndex.cs" />
     <Compile Include="Infrastructure\Raven\ResultsIndex.cs" />
     <Compile Include="Infrastructure\Raven\LeagueTableIndex.cs" />
@@ -156,11 +154,18 @@
       <DependentUpon>Web.config</DependentUpon>
     </None>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Extensions\" />
+    <Folder Include="Helpers\" />
+  </ItemGroup>
   <ItemGroup>
     <WCFMetadata Include="Service References\" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\FIFA.CommandServices.Interface\FIFA.CommandServices.Interface.csproj">
+      <Project>{796383de-ba60-4517-9f89-58212a8e1479}</Project>
+      <Name>FIFA.CommandServices.Interface</Name>
+    </ProjectReference>
     <ProjectReference Include="..\FIFA.Model\FIFA.Model.csproj">
       <Project>{631ea0f9-1f8f-4908-9221-fbad745f3b1f}</Project>
       <Name>FIFA.Model</Name>

@@ -1,5 +1,5 @@
 ﻿using FIFA.Model;
-using FIFA.Model.Assigners;
+using FIFA.Model.Services;
 using FIFAData.DataImport;
 using Raven.Client;
 using Raven.Client.Document;
@@ -68,15 +68,15 @@ namespace FIFAData
 
         private static void GenerateAssignmentsForParticipants()
         {
-            var teamAssigner = new TeamAssigner(new TeamAssigner.TeamAssignerArgs
+            var teamAssigner = new TeamAssigner(new CreateLeagueArgs
             {
                 Players = _players,
                 Teams = _teams,
                 PossibleTeamRatings = _possibleTeamRatings,
-                PreviousLeagues = _previousLeagues
+                PreviousLeagues = _previousLeagues,
             });
 
-            _assignments = teamAssigner.GetAssignments(_participantNames);
+            _assignments = teamAssigner.GetAssignments();
         }
 
         private static void CreateLeagueFromAssignments()

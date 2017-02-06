@@ -1,10 +1,7 @@
-﻿using FIFA.Model;
-using FIFA.Model.Assigners;
-using FIFA.Model.Services;
-using FIFA.WebApi.Helpers;
+﻿using FIFA.CommandServices.Interface;
+using FIFA.Model;
 using FIFA.WebApi.Infrastructure;
 using FIFA.WebApi.Models;
-using System.Collections.Generic;
 using System.Linq;
 using System.Web.Http;
 using System.Web.Http.Description;
@@ -14,6 +11,13 @@ namespace FIFA.WebApi.Controllers
     [RoutePrefix("api/leagues")]
     public class LeaguesController : BaseController
     {
+        private ILeagueCommandService _leagueCommandService;
+
+        public LeaguesController(ILeagueCommandService leagueCommandService)
+        {
+            _leagueCommandService = leagueCommandService;
+        }
+
         private string[] _participantNames = new string[]
         {
             ":neil:",
@@ -103,35 +107,24 @@ namespace FIFA.WebApi.Controllers
         [Route("")]
         public IHttpActionResult Create()
         {
-            var helper = new CreateLeagueHelper();
-
-            var args = helper.CreateLeagueArgs(_participantNames);
-
-            var leagueService = new LeagueService();
-
-            var league = leagueService.CreateNewLeague(args);
-
-            using (var session = DocumentStore.OpenSession())
+            _leagueCommandService.CreateLeague(new CreateLeagueCommand
             {
-                session.Store(league);
-                session.SaveChanges();
-            }
+                ParticipantFaces = _participantNames
+            });
 
-            return Ok(league);
+            return Ok("League Created Successfully");
         }
 
         [HttpPost]
         [Route("{id:int}/results")]
         [ResponseType(typeof(string))]
-        public IHttpActionResult PostLeagueResult(int id, [FromBody] PostResultArgs args)
+        public IHttpActionResult PostLeagueResult(int id, [FromBody] PostResultCommand command)
         {
-            var resultService = new ResultService(DocumentStore);
+            command.LeagueId = TranslateId<League>(id);
+            command.AwayPlayerId = TranslateId<Player>(command.AwayPlayerId);
+            command.HomePlayerId = TranslateId<Player>(command.HomePlayerId);
 
-            args.LeagueId = TranslateId<League>(id);
-            args.AwayPlayerId = TranslateId<Player>(args.AwayPlayerId);
-            args.HomePlayerId = TranslateId<Player>(args.HomePlayerId);
-
-            resultService.PostResult(args);
+            _leagueCommandService.PostResult(command);
 
             return Ok("Result posted successfully");
         }

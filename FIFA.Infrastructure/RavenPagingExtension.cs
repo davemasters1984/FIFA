@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace FIFA.WebApi.Extensions
+namespace FIFA.Infrastructure
 {
     public static class RavenPagingExtension
     {

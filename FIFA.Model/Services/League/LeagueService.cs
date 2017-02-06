@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FIFA.Model.Assigners
+namespace FIFA.Model.Services
 {
     public class LeagueService
     {

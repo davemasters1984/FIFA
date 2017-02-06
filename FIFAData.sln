@@ -11,6 +11,12 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FIFA.WebApi.Tests", "FIFA.W
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FIFA.Model", "FIFA.Model\FIFA.Model.csproj", "{631EA0F9-1F8F-4908-9221-FBAD745F3B1F}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FIFA.CommandServices", "FIFA.CommandServices\FIFA.CommandServices.csproj", "{A8F413D8-DBFF-47F1-972E-B0F20F50CC3D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FIFA.CommandServices.Interface", "FIFA.CommandServices.Interface\FIFA.CommandServices.Interface.csproj", "{796383DE-BA60-4517-9F89-58212A8E1479}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FIFA.Infrastructure", "FIFA.Infrastructure\FIFA.Infrastructure.csproj", "{24C14F81-9784-4052-8518-E25C3749761A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,6 +39,18 @@ Global
 		{631EA0F9-1F8F-4908-9221-FBAD745F3B1F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{631EA0F9-1F8F-4908-9221-FBAD745F3B1F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{631EA0F9-1F8F-4908-9221-FBAD745F3B1F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A8F413D8-DBFF-47F1-972E-B0F20F50CC3D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A8F413D8-DBFF-47F1-972E-B0F20F50CC3D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A8F413D8-DBFF-47F1-972E-B0F20F50CC3D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A8F413D8-DBFF-47F1-972E-B0F20F50CC3D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{796383DE-BA60-4517-9F89-58212A8E1479}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{796383DE-BA60-4517-9F89-58212A8E1479}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{796383DE-BA60-4517-9F89-58212A8E1479}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{796383DE-BA60-4517-9F89-58212A8E1479}.Release|Any CPU.Build.0 = Release|Any CPU
+		{24C14F81-9784-4052-8518-E25C3749761A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{24C14F81-9784-4052-8518-E25C3749761A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{24C14F81-9784-4052-8518-E25C3749761A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{24C14F81-9784-4052-8518-E25C3749761A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

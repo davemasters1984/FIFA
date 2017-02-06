@@ -1,14 +1,11 @@
-﻿using FIFA.Model;
-using FIFA.Model.Assigners;
-using FIFA.WebApi.Extensions;
+﻿using FIFA.Infrastructure;
 using Raven.Client;
 using Raven.Client.Document;
 using Raven.Client.Linq;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace FIFA.WebApi.Helpers
+namespace FIFA.Model.Services
 {
     public class CreateLeagueHelper
     {

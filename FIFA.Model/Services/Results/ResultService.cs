@@ -1,45 +1,53 @@
-﻿using Raven.Client;
+﻿using FIFA.Infrastructure;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace FIFA.Model.Services
 {
     public class ResultService
     {
-        private IDocumentStore _documentStore;
+        #region Private Fields
 
-        public ResultService(IDocumentStore documentStore)
+        private IRepository _repository;
+
+        #endregion
+
+        #region Constructor
+
+        public ResultService(IRepository repository)
         {
-            _documentStore = documentStore;
+            _repository = repository;
         }
+
+        #endregion
+
+        #region Public Methods
 
         public void PostResult(PostResultArgs args)
         {
-            using (var session = _documentStore.OpenSession())
-            {
-                ValidateArgs(args, session);
+            ValidateArgs(args);
 
-                var league = session.Load<League>(args.LeagueId);
-                var result = CreateResult(args);
+            var league = _repository.Load<League>(args.LeagueId);
+            var result = CreateResult(args);
 
-                session.Store(result);
+            _repository.Store(result);
 
-                league.PostResult(result);
+            league.PostResult(result);
 
-                session.Store(league);
-                session.SaveChanges();
-            }
+            _repository.Store(league);
         }
 
-        private void ValidateArgs(PostResultArgs args, IDocumentSession session)
+        #endregion
+
+        #region Private Methods
+
+        private void ValidateArgs(PostResultArgs args)
         {
-            var resultsForFixture = GetLeagueResultsForFixture(args, session);
+            var resultsForFixture = GetLeagueResultsForFixture(args);
 
             if (IsFixtureAlreadyBeenPlayedHomeAndAway(resultsForFixture))
-                throw new Exception("This fixture has already been played twi fceor the home and away games.");
+                throw new Exception("This fixture has already been played twice for the home and away games.");
 
             if (DoesHomeAndAwayPlayersNeedSwapping(resultsForFixture, args))
                 SwapHomeAndAwayPlayers(args);
@@ -68,9 +76,9 @@ namespace FIFA.Model.Services
             args.AwayPlayerGoals = originalHomeGoals;
         }
 
-        private IEnumerable<Result> GetLeagueResultsForFixture(PostResultArgs args, IDocumentSession session)
+        private IEnumerable<Result> GetLeagueResultsForFixture(PostResultArgs args)
         {
-            var leagueResults = session.Query<Result>()
+            var leagueResults = _repository.Query<Result>()
                 .Where(r => r.LeagueId == args.LeagueId)
                 .Where(r => r.HomePlayerId == args.HomePlayerId && r.AwayPlayerId == args.AwayPlayerId
                         || r.HomePlayerId == args.AwayPlayerId && r.AwayPlayerId == args.HomePlayerId)
@@ -92,13 +100,6 @@ namespace FIFA.Model.Services
             };
         }
 
-        protected string TranslateId<T>(int id)
-        {
-            return _documentStore.Conventions.FindFullDocumentKeyFromNonStringIdentifier(id, typeof(T), false);
-        }
-        protected string TranslateId<T>(string id)
-        {
-            return _documentStore.Conventions.FindFullDocumentKeyFromNonStringIdentifier(id, typeof(T), false);
-        }
+        #endregion
     }
 }

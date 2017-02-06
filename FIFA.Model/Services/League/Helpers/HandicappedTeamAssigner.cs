@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace FIFA.Model.Assigners
+namespace FIFA.Model.Services
 {
     public class HandicappedTeamAssigner
     {
