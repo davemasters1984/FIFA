@@ -13,13 +13,7 @@ namespace FIFAData
     class Program
     {
         static IDocumentStore _documentStore;
-        static IEnumerable<TeamAssignment> _assignments;
         static IEnumerable<string> _participantNames;
-        static IEnumerable<Player> _players;
-        static IEnumerable<Team> _teams;
-        static IEnumerable<League> _previousLeagues;
-        static IEnumerable<int> _possibleTeamRatings;
-        static League _newLeague;
 
         static void Main(string[] args)
         {
