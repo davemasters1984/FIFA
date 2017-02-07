@@ -10,6 +10,8 @@ namespace FIFA.Infrastructure
     {
         T Load<T>(string id);
 
+        T Load<T>(int id);
+
         IQueryable<T> Query<T>();
 
         void Store<T>(T entity);

@@ -22,6 +22,12 @@ namespace FIFA.Model
 
         public int GoalsAgainst { get; set; }
 
+        public int GamesWon { get; set; }
+
+        public int GamesDrawn { get; set; }
+
+        public int GamesLost { get; set; }
+
         public void PostResultAsHomePlayer(Result result)
         {
             Points += result.HomePoints;

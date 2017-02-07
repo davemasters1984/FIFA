@@ -25,6 +25,11 @@ namespace FIFA.Infrastructure
             return Session.Load<T>(id);
         }
 
+        public T Load<T>(int id)
+        {
+            return Session.Load<T>(id);
+        }
+
         public IQueryable<T> Query<T>()
         {
             return Session.Query<T>();
