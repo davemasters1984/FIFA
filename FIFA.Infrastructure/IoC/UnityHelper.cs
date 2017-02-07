@@ -9,23 +9,14 @@ namespace FIFA.Infrastructure.IoC
 {
     public class UnityHelper
     {
-        private static IUnityContainer _container;
-
         public static IUnityContainer Container
         {
-            get { return _container; }
+            get; private set;
         }
 
-        public static IUnityContainer GetFluentlyConfiguredContainer(Action<IUnityContainer> registerServiceMethod)
+        public static void SetContainer(IUnityContainer container)
         {
-            if (_container != null)
-                return _container;
-
-            _container = new UnityContainer();
-
-            registerServiceMethod(_container);
-
-            return _container;
+            Container = container;
         }
     }
 }

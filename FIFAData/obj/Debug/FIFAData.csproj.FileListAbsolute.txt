@@ -34,3 +34,15 @@ C:\GIT\FIFA\FIFAData\obj\Debug\FIFAData.exe
 C:\GIT\FIFA\FIFAData\obj\Debug\FIFAData.pdb
 C:\GIT\FIFA\FIFAData\bin\Debug\FIFA.Model.dll
 C:\GIT\FIFA\FIFAData\bin\Debug\FIFA.Model.pdb
+C:\Git\FIFA\FIFAData\bin\Debug\FIFA.Infrastructure.dll
+C:\Git\FIFA\FIFAData\bin\Debug\Microsoft.Practices.Unity.dll
+C:\Git\FIFA\FIFAData\bin\Debug\Microsoft.Practices.ServiceLocation.dll
+C:\Git\FIFA\FIFAData\bin\Debug\FIFA.Infrastructure.pdb
+C:\Git\FIFA\FIFAData\bin\Debug\Microsoft.Practices.Unity.xml
+C:\Git\FIFA\FIFAData\bin\Debug\Microsoft.Practices.ServiceLocation.pdb
+C:\Git\FIFA\FIFAData\bin\Debug\Microsoft.Practices.ServiceLocation.xml
+C:\Git\FIFA\FIFAData\obj\Debug\FIFAData.csproj.FIFAData.exe.config
+C:\Git\FIFA\FIFAData\bin\Debug\FIFA.CommandServices.dll
+C:\Git\FIFA\FIFAData\bin\Debug\FIFA.CommandServices.Interface.dll
+C:\Git\FIFA\FIFAData\bin\Debug\FIFA.CommandServices.Interface.pdb
+C:\Git\FIFA\FIFAData\bin\Debug\FIFA.CommandServices.pdb

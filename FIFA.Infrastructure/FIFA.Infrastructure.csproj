@@ -66,6 +66,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DocumentStoreFactory.cs" />
     <Compile Include="ILocalData.cs" />
     <Compile Include="IoC\UnityHelper.cs" />
     <Compile Include="IRepository.cs" />

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace FIFA.Model.Services
 {
-    public class LeagueService
+    public class LeagueService : ILeagueService
     {
         public League CreateNewLeague(CreateLeagueArgs args)
         {

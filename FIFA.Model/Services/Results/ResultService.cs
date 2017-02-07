@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace FIFA.Model.Services
 {
-    public class ResultService
+    public class ResultService : IResultService
     {
         #region Private Fields
 

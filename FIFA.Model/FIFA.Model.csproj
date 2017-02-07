@@ -52,6 +52,7 @@
     <Compile Include="Services\League\CreateLeagueArgs.cs" />
     <Compile Include="Services\League\Helpers\FourStarTeamAssigner.cs" />
     <Compile Include="Services\League\Helpers\HandicappedTeamAssigner.cs" />
+    <Compile Include="Services\League\ILeagueService.cs" />
     <Compile Include="Services\League\LeagueService.cs" />
     <Compile Include="Services\League\Helpers\TeamAssigner.cs" />
     <Compile Include="League\Fixture.cs" />

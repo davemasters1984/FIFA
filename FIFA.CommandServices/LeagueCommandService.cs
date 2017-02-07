@@ -12,8 +12,16 @@ namespace FIFA.CommandServices
 {
     public class LeagueCommandService : BaseCommandService, ILeagueCommandService
     {
+        private ILeagueService _leagueService;
         private IResultService _resultService;
         private IRepository _repository;
+
+        public LeagueCommandService(IRepository repository, ILeagueService leagueService, IResultService resultService)
+        {
+            _repository = repository;
+            _leagueService = leagueService;
+            _resultService = resultService;
+        }
 
         public void CreateLeague(CreateLeagueCommand command)
         {

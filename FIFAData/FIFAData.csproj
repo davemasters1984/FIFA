@@ -72,8 +72,20 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\FIFA.CommandServices.Interface\FIFA.CommandServices.Interface.csproj">
+      <Project>{796383de-ba60-4517-9f89-58212a8e1479}</Project>
+      <Name>FIFA.CommandServices.Interface</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\FIFA.CommandServices\FIFA.CommandServices.csproj">
+      <Project>{a8f413d8-dbff-47f1-972e-b0f20f50cc3d}</Project>
+      <Name>FIFA.CommandServices</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\FIFA.Infrastructure\FIFA.Infrastructure.csproj">
+      <Project>{24c14f81-9784-4052-8518-e25c3749761a}</Project>
+      <Name>FIFA.Infrastructure</Name>
+    </ProjectReference>
     <ProjectReference Include="..\FIFA.Model\FIFA.Model.csproj">
-      <Project>{631ea0f9-1f8f-4908-9221-fbad745f3b1f}</Project>
+      <Project>{631EA0F9-1F8F-4908-9221-FBAD745F3B1F}</Project>
       <Name>FIFA.Model</Name>
     </ProjectReference>
   </ItemGroup>
