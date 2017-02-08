@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FIFAData
+namespace FIFA.Model
 {
-    public class FifaTeam
+    public class Team
     {
         public string Id { get; set; }
 

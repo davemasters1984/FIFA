@@ -1,9 +1,10 @@
-﻿using FileHelpers;
+﻿using FIFA.Model;
+using FileHelpers;
 
 namespace FIFAData
 {
     [DelimitedRecord(",")]
-    public class FifaTeamCsvItem
+    public class TeamCsvItem
     {
         [FieldConverter(ConverterKind.Decimal, ".")]
         public decimal Stars;
@@ -17,9 +18,9 @@ namespace FIFAData
         [FieldConverter(ConverterKind.Int32)]
         public int OverallRating;
 
-        public FifaTeam ToFifaTeam()
+        public Team ToTeam()
         {
-            return new FifaTeam
+            return new Team
             {
                 Stars = this.Stars,
                 LogoUrl = this.LogoUrl,

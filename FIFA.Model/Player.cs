@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FIFAData
+namespace FIFA.Model
 {
     public class Player
     {
@@ -17,8 +17,6 @@ namespace FIFAData
         public decimal OverallScore { get; set; }
 
         public bool IsNew { get; set; }
-
-        public bool IsPlayerBanned { get; set; }
 
         public static List<Player> AllPlayers
         {

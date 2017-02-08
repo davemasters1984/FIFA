@@ -1,14 +1,13 @@
 ﻿using System.Collections.Generic;
 
-namespace FIFAData
+namespace FIFA.Model.Services
 {
     public class TeamAssignment
     {
-        public FifaTeam Team { get; set; }
+        public Team Team { get; set; }
 
         public Player Player { get; set; }
 
         public IEnumerable<int> EligibleTeamRatings { get; set; }
     }
-
 }

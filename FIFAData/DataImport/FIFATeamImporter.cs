@@ -7,13 +7,13 @@ namespace FIFAData.DataImport
     {
         public static void Import(IDocumentStore documentStore, string csvFilePath)
         {
-            var engine = new FileHelperEngine<FifaTeamCsvItem>();
+            var engine = new FileHelperEngine<TeamCsvItem>();
             var records = engine.ReadFile(csvFilePath);
 
             using (var session = documentStore.OpenSession())
             {
                 foreach (var team in records)
-                    session.Store(team.ToFifaTeam());
+                    session.Store(team.ToTeam());
 
                 session.SaveChanges();
             }

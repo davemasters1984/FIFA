@@ -2,17 +2,17 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace FIFAData
+namespace FIFA.Model.Services
 {
     public class FourStarTeamAssigner
     {
         private readonly IEnumerable<Player> _newPlayers;
-        private readonly IEnumerable<FifaTeam> _fourStarTeams;
+        private readonly IEnumerable<Team> _fourStarTeams;
         private readonly List<TeamAssignment> _assignments 
             = new List<TeamAssignment>();
 
         public FourStarTeamAssigner(IEnumerable<Player> players, 
-            IEnumerable<FifaTeam> teams)
+            IEnumerable<Team> teams)
         {
             _fourStarTeams = teams.Where(t => t.Stars == 4m);
             _newPlayers = players.Where(p => p.IsNew);
@@ -36,9 +36,6 @@ namespace FIFAData
         {
             foreach (var newPlayer in _newPlayers)
             {
-                if (newPlayer.IsPlayerBanned)
-                    continue;
-
                 var randomFourStarTeamAssignment = GetRandomFourStarTeamAssignment(newPlayer);
 
                 _assignments.Add(randomFourStarTeamAssignment);
@@ -61,7 +58,7 @@ namespace FIFAData
             };
         }
 
-        private FifaTeam GetRandomTeamFromEligibleTeams(List<FifaTeam> eligibleTeams)
+        private Team GetRandomTeamFromEligibleTeams(List<Team> eligibleTeams)
         {
             var rnd = new Random();
             var randomTeamIndex = rnd.Next(eligibleTeams.Count - 1);
@@ -69,7 +66,7 @@ namespace FIFAData
             return eligibleTeams[randomTeamIndex];
         }
 
-        private bool TeamNotInExistingAssignments(FifaTeam teamToTest)
+        private bool TeamNotInExistingAssignments(Team teamToTest)
         {
             return !_assignments.Any(a => a.Team.TeamName == teamToTest.TeamName);
         }
