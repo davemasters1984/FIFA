@@ -57,7 +57,7 @@
     <Compile Include="Services\League\Helpers\TeamAssigner.cs" />
     <Compile Include="League\Fixture.cs" />
     <Compile Include="League\Participant.cs" />
-    <Compile Include="Result.cs" />
+    <Compile Include="League\Result.cs" />
     <Compile Include="Services\League\CreateLeagueHelper.cs" />
     <Compile Include="Services\Results\IResultService.cs" />
     <Compile Include="Services\Results\PostResultArgs.cs" />

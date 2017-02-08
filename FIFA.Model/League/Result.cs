@@ -8,8 +8,6 @@ namespace FIFA.Model
 {
     public class Result
     {
-        public string Id { get; set; }
-
         public string LeagueId { get; set; }
 
         public DateTime Date { get; set; }
