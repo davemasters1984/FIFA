@@ -1,14 +1,18 @@
 ﻿using FIFA.Model;
-using System;
-using System.Collections.Generic;
+using Raven.Client;
 using System.Linq;
-using System.Web;
 using System.Web.Http;
 
 namespace FIFA.WebApi.Controllers
 {
-    public class PlayersController :BaseController
+    public class PlayersController : BaseController
     {
+        public PlayersController(IDocumentStore documentStore)
+            :base(documentStore)
+        {
+
+        }
+
         public IHttpActionResult Get()
         {
             using (var session = DocumentStore.OpenSession())

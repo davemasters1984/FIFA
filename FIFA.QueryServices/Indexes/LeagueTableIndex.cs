@@ -19,6 +19,7 @@ namespace FIFA.QueryServices.Indexes
                 {
                     LeagueId = league.Id,
                     PlayerName = player.Name,
+                    PlayerFace = player.Face,
                     TeamName = team.TeamName,
                     GoalsAgainst = p.GoalsAgainst,
                     GoalsFor = p.GoalsFor,
@@ -34,6 +35,7 @@ namespace FIFA.QueryServices.Indexes
                            {
                                LeagueId = r.LeagueId,
                                Name = r.PlayerName,
+                               PlayerFace = r.PlayerFace,
                                TeamName = r.TeamName,
                                GoalsAgainst = r.GoalsAgainst,
                                GoalsFor = r.GoalsFor,
@@ -47,6 +49,7 @@ namespace FIFA.QueryServices.Indexes
                            {
                                LeagueId = g.Key.LeagueId,
                                PlayerName = g.Key.Name,
+                               PlayerFace = g.Key.PlayerFace,
                                TeamName = g.Key.TeamName,
                                GoalsAgainst = g.Key.GoalsAgainst,
                                GoalsFor = g.Key.GoalsFor,

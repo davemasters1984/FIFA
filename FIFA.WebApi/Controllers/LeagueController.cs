@@ -2,6 +2,7 @@
 using FIFA.Model;
 using FIFA.QueryServices.Indexes;
 using FIFA.QueryServices.Models;
+using Raven.Client;
 using System.Linq;
 using System.Web.Http;
 using System.Web.Http.Description;
@@ -13,7 +14,9 @@ namespace FIFA.WebApi.Controllers
     {
         private ILeagueCommandService _leagueCommandService;
 
-        public LeaguesController(ILeagueCommandService leagueCommandService)
+        public LeaguesController(ILeagueCommandService leagueCommandService, 
+            IDocumentStore documentStore)
+            :base(documentStore)
         {
             _leagueCommandService = leagueCommandService;
         }
@@ -76,7 +79,6 @@ namespace FIFA.WebApi.Controllers
         }
 
         [Route("{id:int}/results")]
-        [ResponseType(typeof(string))]
         public IHttpActionResult GetLeagueResults(int id)
         {
             var key = TranslateId<League>(id);

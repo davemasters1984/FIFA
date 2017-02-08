@@ -13,6 +13,8 @@ namespace FIFA.QueryServices.Models
 
         public string TeamName { get; set; }
 
+        public string PlayerFace { get; set; }
+
         public int Position { get; set; }
 
         public int GamesPlayed { get; set; }
