@@ -1,7 +1,7 @@
 ﻿using FIFA.CommandServices.Interface;
 using FIFA.Model;
-using FIFA.WebApi.Infrastructure;
-using FIFA.WebApi.Models;
+using FIFA.QueryServices.Indexes;
+using FIFA.QueryServices.Models;
 using System.Linq;
 using System.Web.Http;
 using System.Web.Http.Description;
@@ -34,7 +34,10 @@ namespace FIFA.WebApi.Controllers
             ":ash:",
             ":jakub:",
             ":mogg:",
-            ":luke:"
+            ":luke:",
+            ":carl:",
+            ":rich:",
+            ":jonny:"
         };
 
         [Route("")]

@@ -152,12 +152,6 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="Infrastructure\Raven\LeagueSummaryIndex.cs" />
-    <Compile Include="Infrastructure\Raven\ResultsIndex.cs" />
-    <Compile Include="Infrastructure\Raven\LeagueTableIndex.cs" />
-    <Compile Include="Models\LeagueSummary.cs" />
-    <Compile Include="Models\LeagueTableRow.cs" />
-    <Compile Include="Models\ResultSummary.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -178,6 +172,8 @@
   <ItemGroup>
     <Folder Include="Extensions\" />
     <Folder Include="Helpers\" />
+    <Folder Include="Infrastructure\Raven\" />
+    <Folder Include="Models\" />
   </ItemGroup>
   <ItemGroup>
     <WCFMetadata Include="Service References\" />
@@ -198,6 +194,10 @@
     <ProjectReference Include="..\FIFA.Model\FIFA.Model.csproj">
       <Project>{631ea0f9-1f8f-4908-9221-fbad745f3b1f}</Project>
       <Name>FIFA.Model</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\FIFA.QueryServices\FIFA.QueryServices.csproj">
+      <Project>{fbade8d1-3abe-4312-a94d-ef161acffd1c}</Project>
+      <Name>FIFA.QueryServices</Name>
     </ProjectReference>
   </ItemGroup>
   <PropertyGroup>

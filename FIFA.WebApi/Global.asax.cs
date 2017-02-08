@@ -1,4 +1,4 @@
-﻿using FIFA.WebApi.Infrastructure;
+﻿using FIFA.QueryServices.Indexes;
 using Raven.Client.Document;
 using System;
 using System.Collections.Generic;

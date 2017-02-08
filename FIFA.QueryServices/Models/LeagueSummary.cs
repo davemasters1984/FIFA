@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 
-namespace FIFA.WebApi.Models
+namespace FIFA.QueryServices.Models
 {
     public class LeagueSummary
     {

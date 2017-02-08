@@ -4,17 +4,15 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{BA6C5F94-EBD3-4587-8B6E-936E571FC59A}</ProjectGuid>
-    <OutputType>Exe</OutputType>
+    <ProjectGuid>{FBADE8D1-3ABE-4312-A94D-EF161ACFFD1C}</ProjectGuid>
+    <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>FIFAData</RootNamespace>
-    <AssemblyName>FIFAData</AssemblyName>
+    <RootNamespace>FIFA.QueryServices</RootNamespace>
+    <AssemblyName>FIFA.QueryServices</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
@@ -24,7 +22,6 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
@@ -33,14 +30,6 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="FileHelpers, Version=3.1.2.0, Culture=neutral, PublicKeyToken=3e0c08d59cc3d657, processorArchitecture=MSIL">
-      <HintPath>..\packages\FileHelpers.3.1.2\lib\net45\FileHelpers.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="HtmlAgilityPack, Version=1.4.9.4, Culture=neutral, PublicKeyToken=bd319b19eaf3b43a, processorArchitecture=MSIL">
-      <HintPath>..\packages\HtmlAgilityPack.1.4.9.4\lib\Net45\HtmlAgilityPack.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="Raven.Abstractions, Version=3.5.2.0, Culture=neutral, PublicKeyToken=37f41c7f99471593, processorArchitecture=MSIL">
       <HintPath>..\packages\RavenDB.Client.3.5.2\lib\net45\Raven.Abstractions.dll</HintPath>
       <Private>True</Private>
@@ -60,38 +49,26 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="DataImport\FIFATeamImporter.cs" />
-    <Compile Include="RavenExtensions\Paging.cs" />
-    <Compile Include="DataImport\FifaTeamCsvItem.cs" />
-    <Compile Include="Program.cs" />
+    <Compile Include="Indexes\LeagueSummaryIndex.cs" />
+    <Compile Include="Indexes\LeagueTableIndex.cs" />
+    <Compile Include="Indexes\ResultsIndex.cs" />
+    <Compile Include="Models\LeagueSummary.cs" />
+    <Compile Include="Models\LeagueTableRow.cs" />
+    <Compile Include="Models\ResultSummary.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="App.config" />
-    <None Include="DataImport\FIFA.csv" />
-    <None Include="packages.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\FIFA.CommandServices.Interface\FIFA.CommandServices.Interface.csproj">
-      <Project>{796383de-ba60-4517-9f89-58212a8e1479}</Project>
-      <Name>FIFA.CommandServices.Interface</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\FIFA.CommandServices\FIFA.CommandServices.csproj">
-      <Project>{a8f413d8-dbff-47f1-972e-b0f20f50cc3d}</Project>
-      <Name>FIFA.CommandServices</Name>
-    </ProjectReference>
     <ProjectReference Include="..\FIFA.Infrastructure\FIFA.Infrastructure.csproj">
       <Project>{24c14f81-9784-4052-8518-e25c3749761a}</Project>
       <Name>FIFA.Infrastructure</Name>
     </ProjectReference>
     <ProjectReference Include="..\FIFA.Model\FIFA.Model.csproj">
-      <Project>{631EA0F9-1F8F-4908-9221-FBAD745F3B1F}</Project>
+      <Project>{631ea0f9-1f8f-4908-9221-fbad745f3b1f}</Project>
       <Name>FIFA.Model</Name>
     </ProjectReference>
-    <ProjectReference Include="..\FIFA.QueryServices\FIFA.QueryServices.csproj">
-      <Project>{fbade8d1-3abe-4312-a94d-ef161acffd1c}</Project>
-      <Name>FIFA.QueryServices</Name>
-    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

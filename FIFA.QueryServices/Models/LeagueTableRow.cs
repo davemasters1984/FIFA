@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 
-namespace FIFA.WebApi.Models
+namespace FIFA.QueryServices.Models
 {
     public class LeagueTableRow
     {
@@ -22,5 +22,7 @@ namespace FIFA.WebApi.Models
         public int GoalsFor { get; set; }
 
         public int GoalsAgainst { get; set; }
+
+        public int TeamRating { get; set; }
     }
 }

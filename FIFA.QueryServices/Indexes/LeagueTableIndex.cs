@@ -1,14 +1,9 @@
 ﻿using FIFA.Model;
-using FIFA.WebApi.Models;
-using Raven.Abstractions.Indexing;
+using FIFA.QueryServices.Models;
 using Raven.Client.Indexes;
-using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Web;
-using static FIFA.WebApi.Infrastructure.LeagueTableIndex;
 
-namespace FIFA.WebApi.Infrastructure
+namespace FIFA.QueryServices.Indexes
 {
     public class LeagueTableIndex : AbstractIndexCreationTask<League, LeagueTableRow>
     {
@@ -29,7 +24,8 @@ namespace FIFA.WebApi.Infrastructure
                     GoalsFor = p.GoalsFor,
                     Position = p.Position,
                     Points = p.Points,
-                    GamesPlayed = p.GamesPlayed
+                    GamesPlayed = p.GamesPlayed,
+                    TeamRating = team.OverallRating
                 };
 
             Reduce =
@@ -43,7 +39,8 @@ namespace FIFA.WebApi.Infrastructure
                                GoalsFor = r.GoalsFor,
                                Position = r.Position,
                                Points = r.Points,
-                               GamesPlayed = r.GamesPlayed
+                               GamesPlayed = r.GamesPlayed,
+                               TeamRating = r.TeamRating
                            } 
                            into g
                            select new LeagueTableRow
@@ -55,7 +52,8 @@ namespace FIFA.WebApi.Infrastructure
                                GoalsFor = g.Key.GoalsFor,
                                Position = g.Key.Position,
                                Points = g.Key.Points,
-                               GamesPlayed = g.Key.GamesPlayed
+                               GamesPlayed = g.Key.GamesPlayed,
+                               TeamRating = g.Key.TeamRating
                            };
         }
     }

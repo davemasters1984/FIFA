@@ -45,3 +45,5 @@ C:\GIT\FIFA\FIFAData\bin\Debug\Microsoft.Practices.ServiceLocation.pdb
 C:\GIT\FIFA\FIFAData\bin\Debug\Microsoft.Practices.ServiceLocation.xml
 C:\GIT\FIFA\FIFAData\obj\Debug\FIFAData.exe
 C:\GIT\FIFA\FIFAData\obj\Debug\FIFAData.pdb
+C:\Git\FIFA\FIFAData\bin\Debug\FIFA.QueryServices.dll
+C:\Git\FIFA\FIFAData\bin\Debug\FIFA.QueryServices.pdb

@@ -2,11 +2,15 @@
 using FIFA.Infrastructure;
 using FIFA.Model;
 using FIFA.Model.Services;
+using FIFA.QueryServices.Indexes;
+using FIFA.QueryServices.Models;
 using FIFAData.DataImport;
 using Raven.Client;
 using Raven.Client.Document;
+using Raven.Client.Linq;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace FIFAData
 {
@@ -19,8 +23,11 @@ namespace FIFAData
         {
             CreateDocumentStore();
 
-            CreatePreviousLeague();
+            //CreatePreviousLeague();
 
+            OutputLatestLeague();
+
+            
             Console.WriteLine("Players & Teams installed successfully");
 
             Console.Read();
@@ -58,6 +65,31 @@ namespace FIFAData
             });
         }      
 
+        private static void OutputLatestLeague()
+        {
+            using (var session = _documentStore.OpenSession())
+            {
+                var latestLeague = session.Query<League>()
+                    .OrderByDescending(l => l.CreatedDate)
+                    .FirstOrDefault();
+
+
+                var leagueTable
+                    = session.Query<LeagueTableRow, LeagueTableIndex>()
+                        .Where(l => l.LeagueId == latestLeague.Id)
+                        .OrderBy(l => l.TeamRating)
+                        .ToList();
+                
+                foreach(var row in leagueTable)
+                {
+                    Console.WriteLine(string.Format("{0} - {1} [{2}]",
+                        row.PlayerName,
+                        row.TeamName,
+                        row.TeamRating));
+                }
+            }
+        }
+
         private static void InstallAllPlayers()
         {
             using (var session = _documentStore.OpenSession())
@@ -69,6 +101,21 @@ namespace FIFAData
             }
         }
 
+        private static void AddPlayer(string face, string name)
+        {
+            var player = new Player
+            {
+                Face = face,
+                Name = name,
+                IsNew = true,
+            };
+
+            using (var session = _documentStore.OpenSession())
+            {
+                session.Store(player);
+                session.SaveChanges();
+            }
+        }
 
         private static void ImportTeams()
         {
