@@ -4,8 +4,6 @@ namespace FIFA.Model
 {
     public class Participant
     {
-        public string Id { get; set; }
-
         public string PlayerId { get; set; }
 
         public string TeamId { get; set; }

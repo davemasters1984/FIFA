@@ -16,6 +16,8 @@ namespace FIFA.Model
 
         public string TeamName { get; set; }
 
+        public string Badge { get; set; }
+
         public string League { get; set; }
 
         public int OverallRating { get; set; }

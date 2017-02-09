@@ -30,6 +30,7 @@ namespace FIFA.WebApi
             container.RegisterInstance(DocumentStoreFactory.CreateDocumentStore(), new ContainerControlledLifetimeManager());
 
             container.RegisterType<ILeagueCommandService, LeagueCommandService>();
+            container.RegisterType<ITeamCommandService, TeamCommandService>();
 
             container.RegisterType<ILeagueService, LeagueService>();
             container.RegisterType<IResultService, ResultService>();

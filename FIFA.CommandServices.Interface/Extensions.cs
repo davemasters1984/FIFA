@@ -13,6 +13,7 @@ namespace FIFA.CommandServices.Interface
         {
             return new PostResultArgs
             {
+                LeagueId = command.LeagueId,
                 AwayPlayerGoals = command.AwayPlayerGoals,
                 AwayPlayerId = command.AwayPlayerId,
                 HomePlayerGoals = command.HomePlayerGoals,

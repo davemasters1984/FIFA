@@ -5,13 +5,14 @@ using System.Linq;
 
 namespace FIFA.QueryServices.Indexes
 {
-    public class ResultsIndex : AbstractIndexCreationTask<Result, ResultSummary>
+    public class ResultsIndex : AbstractIndexCreationTask<League, ResultSummary>
     {
         public ResultsIndex()
         {
             Map =
-                results =>
-                from result in results
+                leagues =>
+                from league in leagues
+                from result in league.Results
                 let homePlayer = LoadDocument<Player>(result.HomePlayerId)
                 let awayPlayer = LoadDocument<Player>(result.AwayPlayerId)
                 select new ResultSummary

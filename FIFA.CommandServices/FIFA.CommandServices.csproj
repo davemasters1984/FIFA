@@ -52,6 +52,7 @@
     <Compile Include="BaseCommandService.cs" />
     <Compile Include="LeagueCommandService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="TeamCommandService.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
