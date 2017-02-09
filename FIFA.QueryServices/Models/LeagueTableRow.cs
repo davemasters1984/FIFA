@@ -13,6 +13,10 @@ namespace FIFA.QueryServices.Models
 
         public string TeamName { get; set; }
 
+        public string TeamBadge { get; set; }
+
+        public string TeamId { get; set; }
+
         public string PlayerFace { get; set; }
 
         public int Position { get; set; }
@@ -20,6 +24,12 @@ namespace FIFA.QueryServices.Models
         public int GamesPlayed { get; set; }
 
         public int Points { get; set; }
+
+        public int GamesWon { get; set; }
+
+        public int GamesLost { get; set; }
+
+        public int GamesDrawn { get; set; }
 
         public int GoalsFor { get; set; }
 

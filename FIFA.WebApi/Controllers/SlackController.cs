@@ -32,18 +32,23 @@ namespace FIFA.WebApi.Controllers
                 var leagueTable
                     = session.Query<LeagueTableRow, LeagueTableIndex>()
                         .Where(l => l.LeagueId == latestLeague.Id)
-                        .OrderBy(l => l.Points)
+                        .OrderByDescending(l => l.Points)
                         .ToList();
 
                 var response = new StringBuilder();
+                int i = 1;
 
                 foreach (var row in leagueTable)
                 {
-                    response.AppendFormat(string.Format("\n{0} {1} {2}",
+                    response.AppendFormat(string.Format("\n{0} {1} {2} Played: *{3}* W: *{4}* D: *{5}* L: *{6}* GD: *{7}* Pts: *{8}*",
+                        i++,
                         row.PlayerFace,
-                        row.PlayerName,
-                        row.TeamName,
+                        row.TeamBadge,
                         row.GamesPlayed,
+                        row.GamesWon,
+                        row.GamesDrawn,
+                        row.GamesLost,
+                        row.GoalsFor - row.GoalsAgainst,
                         row.Points));
                 }
 
@@ -53,6 +58,16 @@ namespace FIFA.WebApi.Controllers
                 return resp;
 
             }
+        }
+
+        [HttpPost]
+        [Route("league/current/result")]
+        public HttpResponseMessage PostResultForCurrentLeague()
+        {
+            var resp = new HttpResponseMessage(HttpStatusCode.OK);
+            resp.Content = new StringContent("Test", Encoding.UTF8, "text/plain");
+
+            return resp;
         }
     }
 }
