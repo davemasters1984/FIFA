@@ -1,4 +1,5 @@
 ﻿using FIFA.Model;
+using FIFA.QueryServices.Interface.Models;
 using FIFA.QueryServices.Models;
 using Raven.Client.Indexes;
 using System.Linq;

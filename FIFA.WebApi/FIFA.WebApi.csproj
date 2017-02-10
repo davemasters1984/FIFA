@@ -153,6 +153,10 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Models\Slack\GetLeagueSlackCommand.cs" />
+    <Compile Include="Models\Slack\PostResultSlackCommand.cs" />
+    <Compile Include="Models\Slack\SlackCommand.cs" />
+    <Compile Include="Models\Slack\SlackRequest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -174,7 +178,6 @@
     <Folder Include="Extensions\" />
     <Folder Include="Helpers\" />
     <Folder Include="Infrastructure\Raven\" />
-    <Folder Include="Models\" />
   </ItemGroup>
   <ItemGroup>
     <WCFMetadata Include="Service References\" />
@@ -195,6 +198,10 @@
     <ProjectReference Include="..\FIFA.Model\FIFA.Model.csproj">
       <Project>{631ea0f9-1f8f-4908-9221-fbad745f3b1f}</Project>
       <Name>FIFA.Model</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\FIFA.QueryServices.Interface\FIFA.QueryServices.Interface.csproj">
+      <Project>{9DE79390-0428-4BF6-9B28-B2714440E0C9}</Project>
+      <Name>FIFA.QueryServices.Interface</Name>
     </ProjectReference>
     <ProjectReference Include="..\FIFA.QueryServices\FIFA.QueryServices.csproj">
       <Project>{fbade8d1-3abe-4312-a94d-ef161acffd1c}</Project>

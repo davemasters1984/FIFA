@@ -3,6 +3,8 @@ using FIFA.CommandServices.Interface;
 using FIFA.Infrastructure;
 using FIFA.Infrastructure.IoC;
 using FIFA.Model.Services;
+using FIFA.QueryServices.Interface;
+using FIFA.QueryServices.Services;
 using Microsoft.Practices.Unity;
 using System.Web.Http;
 using Unity.WebApi;
@@ -31,6 +33,8 @@ namespace FIFA.WebApi
 
             container.RegisterType<ILeagueCommandService, LeagueCommandService>();
             container.RegisterType<ITeamCommandService, TeamCommandService>();
+
+            container.RegisterType<ILeagueQueryService, LeagueQueryService>();
 
             container.RegisterType<ILeagueService, LeagueService>();
             container.RegisterType<IResultService, ResultService>();

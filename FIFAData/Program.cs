@@ -3,6 +3,7 @@ using FIFA.Infrastructure;
 using FIFA.Model;
 using FIFA.Model.Services;
 using FIFA.QueryServices.Indexes;
+using FIFA.QueryServices.Interface.Models;
 using FIFA.QueryServices.Models;
 using FIFAData.DataImport;
 using Raven.Client;
@@ -72,7 +73,6 @@ namespace FIFAData
                 var latestLeague = session.Query<League>()
                     .OrderByDescending(l => l.CreatedDate)
                     .FirstOrDefault();
-
 
                 var leagueTable
                     = session.Query<LeagueTableRow, LeagueTableIndex>()

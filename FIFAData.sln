@@ -19,6 +19,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FIFA.Infrastructure", "FIFA
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FIFA.QueryServices", "FIFA.QueryServices\FIFA.QueryServices.csproj", "{FBADE8D1-3ABE-4312-A94D-EF161ACFFD1C}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FIFA.QueryServices.Interface", "FIFA.QueryServices.Interface\FIFA.QueryServices.Interface.csproj", "{9DE79390-0428-4BF6-9B28-B2714440E0C9}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -57,6 +59,10 @@ Global
 		{FBADE8D1-3ABE-4312-A94D-EF161ACFFD1C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FBADE8D1-3ABE-4312-A94D-EF161ACFFD1C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FBADE8D1-3ABE-4312-A94D-EF161ACFFD1C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9DE79390-0428-4BF6-9B28-B2714440E0C9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9DE79390-0428-4BF6-9B28-B2714440E0C9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9DE79390-0428-4BF6-9B28-B2714440E0C9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9DE79390-0428-4BF6-9B28-B2714440E0C9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
