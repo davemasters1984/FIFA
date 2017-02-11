@@ -13,9 +13,21 @@ namespace FIFA.Model
 
         public List<Participant> Participants { get; set; }
 
-        public List<Result> Results { get; set; }
-
         public List<Fixture> Fixtures { get; set; }
+
+        public League()
+        {
+
+        }
+
+        public League(DateTime createdDate, 
+            List<Participant> participants, 
+            List<Fixture> fixtures)
+        {
+            Participants = participants;
+            Fixtures = fixtures;
+            CreatedDate = createdDate;
+        }
 
         public void PostResult(PostResultArgs args)
         {
@@ -24,34 +36,38 @@ namespace FIFA.Model
 
             ValidateArgs(args);
 
-            var result = CreateResult(args);
+            var fixture = GetFixtureForResult(args);
 
-            UpdateParticipantsForPostResult(result);
+            fixture.Result = CreateResult(args);
 
-            if (Results == null)
-                Results = new List<Result>();
-
-            Results.Add(result);
+            UpdateParticipantsForPostResult(fixture);
         }
 
-        private void UpdateParticipantsForPostResult(Result result)
+        private Fixture GetFixtureForResult(PostResultArgs args)
         {
-            UpdateHomeParticipantForPostedResult(result);
-            UpdateAwayParticipantForPostedResult(result);
+            var fixture = Fixtures.FirstOrDefault(f => f.HomePlayerId == args.HomePlayerId && f.AwayPlayerId == args.AwayPlayerId);
+
+            return fixture;
         }
 
-        private void UpdateHomeParticipantForPostedResult(Result result)
+        private void UpdateParticipantsForPostResult(Fixture fixture)
         {
-            var participant = FindParticipant(result.HomePlayerId);
-
-            participant.PostResultAsHomePlayer(result);
+            UpdateHomeParticipantForPostedResult(fixture);
+            UpdateAwayParticipantForPostedResult(fixture);
         }
 
-        private void UpdateAwayParticipantForPostedResult(Result result)
+        private void UpdateHomeParticipantForPostedResult(Fixture fixture)
         {
-            var participant = FindParticipant(result.AwayPlayerId);
+            var participant = FindParticipant(fixture.HomePlayerId);
 
-            participant.PostResultAsAwayPlayer(result);
+            participant.PostResultAsHomePlayer(fixture.Result);
+        }
+
+        private void UpdateAwayParticipantForPostedResult(Fixture fixture)
+        {
+            var participant = FindParticipant(fixture.AwayPlayerId);
+
+            participant.PostResultAsAwayPlayer(fixture.Result);
         }
 
         private Participant FindParticipant(string playerId)
@@ -69,21 +85,21 @@ namespace FIFA.Model
 
         private void ValidateArgs(PostResultArgs args)
         {
-            var resultsForFixture = GetLeagueResultsForFixture(args);
+            var fixturesForResult = GetFixturesForPlayers(args);
 
-            if (IsFixtureAlreadyBeenPlayedHomeAndAway(resultsForFixture))
+            if (IsFixtureAlreadyBeenPlayedHomeAndAway(fixturesForResult))
                 throw new Exception("This fixture has already been played twice for the home and away games.");
 
-            if (DoesHomeAndAwayPlayersNeedSwapping(resultsForFixture, args))
+            if (DoesHomeAndAwayPlayersNeedSwapping(fixturesForResult, args))
                 SwapHomeAndAwayPlayers(args);
         }
 
-        private bool IsFixtureAlreadyBeenPlayedHomeAndAway(IEnumerable<Result> resultsForFixture)
+        private bool IsFixtureAlreadyBeenPlayedHomeAndAway(IEnumerable<Fixture> alreadyPlayedFixtures)
         {
-            return resultsForFixture.Count() == 2;
+            return alreadyPlayedFixtures.Count() == 2;
         }
 
-        private bool DoesHomeAndAwayPlayersNeedSwapping(IEnumerable<Result> resultsForFixture, PostResultArgs args)
+        private bool DoesHomeAndAwayPlayersNeedSwapping(IEnumerable<Fixture> resultsForFixture, PostResultArgs args)
         {
             return resultsForFixture.Any(r => r.HomePlayerId == args.HomePlayerId && r.AwayPlayerId == args.AwayPlayerId);
         }
@@ -101,26 +117,24 @@ namespace FIFA.Model
             args.AwayPlayerGoals = originalHomeGoals;
         }
 
-        private IEnumerable<Result> GetLeagueResultsForFixture(PostResultArgs args)
+        private IEnumerable<Fixture> GetFixturesForPlayers(PostResultArgs args)
         {
-            if (this.Results == null)
-                return Enumerable.Empty<Result>();
+            if (this.Fixtures == null)
+                return Enumerable.Empty<Fixture>();
 
-            var leagueResults = this.Results
-                .Where(r => r.HomePlayerId == args.HomePlayerId && r.AwayPlayerId == args.AwayPlayerId
-                        || r.HomePlayerId == args.AwayPlayerId && r.AwayPlayerId == args.HomePlayerId)
+            var fixturesForPlayers = Fixtures
+                .Where(f => f.HomePlayerId == args.HomePlayerId && f.AwayPlayerId == args.AwayPlayerId
+                        || f.HomePlayerId == args.AwayPlayerId && f.AwayPlayerId == args.HomePlayerId)
+                .Where(f => f.Result != null)
                 .ToList();
 
-            return leagueResults;
+            return fixturesForPlayers;
         }
 
         private Result CreateResult(PostResultArgs args)
         {
             return new Result
             {
-                AwayPlayerId = args.AwayPlayerId,
-                HomePlayerId = args.HomePlayerId,
-                LeagueId = args.LeagueId,
                 AwayPlayerGoals = args.AwayPlayerGoals,
                 HomePlayerGoals = args.HomePlayerGoals,
                 Date = DateTime.Now

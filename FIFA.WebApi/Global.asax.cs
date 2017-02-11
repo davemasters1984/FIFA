@@ -31,6 +31,7 @@ namespace FIFA.WebApi
 
             new LeagueTableIndex().Execute(documentStore);
             new ResultsIndex().Execute(documentStore);
+            new FixturesIndex().Execute(documentStore);
             new LeagueSummaryIndex().Execute(documentStore);
         }
     }

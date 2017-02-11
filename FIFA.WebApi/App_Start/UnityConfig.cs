@@ -5,6 +5,8 @@ using FIFA.Infrastructure.IoC;
 using FIFA.Model.Services;
 using FIFA.QueryServices.Interface;
 using FIFA.QueryServices.Services;
+using FIFA.WebApi.Infrastructure.Slack;
+using FIFA.WebApi.Infrastructure.Slack.Processors;
 using Microsoft.Practices.Unity;
 using System.Web.Http;
 using Unity.WebApi;
@@ -38,6 +40,11 @@ namespace FIFA.WebApi
 
             container.RegisterType<ILeagueService, LeagueService>();
             container.RegisterType<IResultService, ResultService>();
+
+            container.RegisterType<ISlackRequestService, SlackRequestService>();
+            container.RegisterType<ISlackRequestProcessor, GetLeagueSlackRequestProcessor>("league");
+            container.RegisterType<ISlackRequestProcessor, PostResultSlackRequestProcessor>("result");
+            container.RegisterType<ISlackRequestProcessor, GetFixturesSlackRequestProcessor>("fixtures");
         }
     }
 }

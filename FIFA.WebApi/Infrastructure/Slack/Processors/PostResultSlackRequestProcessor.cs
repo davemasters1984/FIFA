@@ -1,12 +1,13 @@
 ﻿using FIFA.CommandServices.Interface;
 using FIFA.Infrastructure.IoC;
 using FIFA.Model;
+using FIFA.WebApi.Models.Slack;
 using Microsoft.Practices.Unity;
 using Raven.Client;
 using System;
 using System.Linq;
 
-namespace FIFA.WebApi.Models.Slack
+namespace FIFA.WebApi.Infrastructure.Slack
 {
     public class PostResultSlackRequestProcessor : SlackRequestProcessor
     {
@@ -14,6 +15,8 @@ namespace FIFA.WebApi.Models.Slack
         private int _homeGoals;
         private string _awayPlayerFace;
         private int _awayGoals;
+        private IDocumentStore _documentStore;
+        private ILeagueCommandService _leagueCommandService;
 
         public override string CommandText
         {
@@ -23,18 +26,22 @@ namespace FIFA.WebApi.Models.Slack
             }
         }
 
-        protected override void Execute(SlackRequest request)
+        public PostResultSlackRequestProcessor(IDocumentStore documentStore, 
+            ILeagueCommandService leagueCommandService)
+        {
+            _documentStore = documentStore;
+            _leagueCommandService = leagueCommandService;
+        }
+
+        public override void Execute(SlackRequest request)
         {
             SetDataFromCommandText(request.text);
-
-            var documentStore = UnityHelper.Container.Resolve<IDocumentStore>();
-            var leagueService = UnityHelper.Container.Resolve<ILeagueCommandService>();
 
             Player homePlayer;
             Player awayPlayer;
             League league;
 
-            using (var session = documentStore.OpenSession())
+            using (var session = _documentStore.OpenSession())
             {
                 league = session.Query<League>()
                     .OrderByDescending(l => l.CreatedDate)
@@ -49,7 +56,7 @@ namespace FIFA.WebApi.Models.Slack
                     .FirstOrDefault();
             }
 
-            leagueService.PostResult(new PostResultCommand
+            _leagueCommandService.PostResult(new PostResultCommand
             {
                 LeagueId = league.Id,
                 HomePlayerId = homePlayer.Id,

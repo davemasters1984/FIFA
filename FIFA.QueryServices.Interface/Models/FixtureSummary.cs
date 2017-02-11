@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Web;
+using System.Text;
+using System.Threading.Tasks;
 
-namespace FIFA.QueryServices.Models
+namespace FIFA.QueryServices.Interface.Models
 {
-    public class ResultSummary
+    public class FixtureSummary
     {
         public string LeagueId { get; set; }
 
@@ -15,14 +16,10 @@ namespace FIFA.QueryServices.Models
 
         public string HomePlayerFace { get; set; }
 
-        public int HomePlayerGoals { get; set; }
-
         public string AwayPlayerId { get; set; }
 
         public string AwayPlayerName { get; set; }
 
         public string AwayPlayerFace { get; set; }
-
-        public int AwayPlayerGoals { get; set; }
     }
 }

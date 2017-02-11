@@ -49,11 +49,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Indexes\FixturesIndex.cs" />
     <Compile Include="Indexes\LeagueSummaryIndex.cs" />
     <Compile Include="Indexes\LeagueTableIndex.cs" />
     <Compile Include="Indexes\ResultsIndex.cs" />
     <Compile Include="Models\LeagueSummary.cs" />
-    <Compile Include="Models\ResultSummary.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\LeagueQueryService.cs" />
   </ItemGroup>

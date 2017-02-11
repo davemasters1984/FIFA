@@ -10,6 +10,17 @@ namespace FIFA.Model.Services
     {
         public League CreateNewLeague(CreateLeagueArgs args)
         {
+            var participants = GenerateParticipants(args);
+
+            var fixtures = GenerateFixtures(participants);
+
+            var newLeague = new League(DateTime.Now, participants, fixtures);
+
+            return newLeague;
+        }
+
+        private List<Participant> GenerateParticipants(CreateLeagueArgs args)
+        {
             var teamAssigner = new TeamAssigner(args);
 
             var assignments = teamAssigner.GetAssignments();
@@ -17,11 +28,11 @@ namespace FIFA.Model.Services
             var newLeague = new League();
 
             newLeague.CreatedDate = DateTime.Now;
-            newLeague.Participants = new List<Participant>();
+            var participants = new List<Participant>();
 
             foreach (var assignment in assignments)
             {
-                newLeague.Participants.Add(new Participant
+                participants.Add(new Participant
                 {
                     PlayerId = assignment.Player.Id,
                     TeamId = assignment.Team.Id,
@@ -29,7 +40,14 @@ namespace FIFA.Model.Services
                 });
             }
 
-            return newLeague;
+            return participants;
+        }
+
+        private List<Fixture> GenerateFixtures(List<Participant> participants)
+        {
+            var fixtureGenerator = new FixtureGenerator(participants);
+
+            return fixtureGenerator.GenerateFixtures();
         }
     }
 }

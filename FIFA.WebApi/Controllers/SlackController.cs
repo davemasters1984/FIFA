@@ -1,4 +1,5 @@
-﻿using FIFA.WebApi.Models.Slack;
+﻿using FIFA.WebApi.Infrastructure.Slack;
+using FIFA.WebApi.Models.Slack;
 using Raven.Client;
 using System.Net;
 using System.Net.Http;
@@ -8,19 +9,20 @@ using System.Web.Http;
 namespace FIFA.WebApi.Controllers
 {
     [RoutePrefix("api/slack")]
-    public class SlackController : BaseController
+    public class SlackController : ApiController
     {
-        public SlackController(IDocumentStore documentStore)
-            :base(documentStore)
-        {
+        private ISlackRequestService _slackRequestService;
 
+        public SlackController(ISlackRequestService slackRequestService)
+        {
+            _slackRequestService = slackRequestService;
         }
 
         [HttpPost]
         [Route("")]
         public HttpResponseMessage ProcessSlackCommand([FromBody] SlackRequest request)
         {
-            var slackResponse = SlackRequestProcessor.ExecuteRequestAsync(request);
+            var slackResponse = _slackRequestService.ExecuteRequestAsync(request);
 
             var responseMessage = new HttpResponseMessage(HttpStatusCode.OK);
 

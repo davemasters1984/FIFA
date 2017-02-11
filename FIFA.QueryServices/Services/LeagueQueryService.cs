@@ -5,6 +5,7 @@ using FIFA.QueryServices.Interface.Models;
 using Raven.Client;
 using System.Collections.Generic;
 using System.Linq;
+using System;
 
 namespace FIFA.QueryServices.Services
 {
@@ -17,6 +18,19 @@ namespace FIFA.QueryServices.Services
             _documentStore = documentStore;
         }
 
+        public string GetCurrentLeagueId()
+        {
+            using (var session = _documentStore.OpenSession())
+            {
+                var leagueId = session.Query<League>()
+                    .OrderByDescending(l => l.CreatedDate)
+                    .Select(l => l.Id)
+                    .FirstOrDefault();
+
+                return leagueId;
+            }
+        }
+
         public IEnumerable<LeagueTableRow> GetCurrentLeagueTable()
         {
             using (var session = _documentStore.OpenSession())
@@ -27,6 +41,34 @@ namespace FIFA.QueryServices.Services
                     .FirstOrDefault();
 
                 return GetLeagueTable(session, leagueId);
+            }
+        }
+
+        public IEnumerable<FixtureSummary> GetFixturesForPlayer(string leagueId, string playerId)
+        {
+            using (var session = _documentStore.OpenSession())
+            {
+                var fixtures = session.Query<FixtureSummary, FixturesIndex>()
+                    .Where(l => l.LeagueId == leagueId)
+                    .Where(l => l.HomePlayerId == playerId || l.AwayPlayerId == playerId)
+                    .ToList();
+
+                return fixtures;
+            }
+
+            
+        }
+
+        public IEnumerable<FixtureSummary> GetFixturesForPlayerByFace(string leagueId, string face)
+        {
+            using (var session = _documentStore.OpenSession())
+            {
+                var fixtures = session.Query<FixtureSummary, FixturesIndex>()
+                    .Where(l => l.LeagueId == leagueId)
+                    .Where(l => l.HomePlayerFace == face || l.AwayPlayerFace == face)
+                    .ToList();
+
+                return fixtures;
             }
         }
 

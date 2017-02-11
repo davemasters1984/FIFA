@@ -8,12 +8,10 @@ namespace FIFA.Model
 {
     public class Fixture
     {
-        public string Id { get; set; }
-
-        public string LeagueId { get; set; }
-
         public string HomePlayerId { get; set; }
 
         public string AwayPlayerId { get; set; }
+
+        public Result Result { get; set; }
     }
 }

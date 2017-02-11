@@ -165,9 +165,13 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="Models\Slack\GetLeagueSlackRequestProcessor.cs" />
-    <Compile Include="Models\Slack\PostResultSlackRequestProcessor.cs" />
-    <Compile Include="Models\Slack\SlackRequestProcessor.cs" />
+    <Compile Include="Infrastructure\Slack\Processors\GetFixturesSlackRequestProcessor.cs" />
+    <Compile Include="Infrastructure\Slack\Processors\GetLeagueSlackRequestProcessor.cs" />
+    <Compile Include="Infrastructure\Slack\ISlackRequestProcessor.cs" />
+    <Compile Include="Infrastructure\Slack\ISlackRequestService.cs" />
+    <Compile Include="Infrastructure\Slack\Processors\PostResultSlackRequestProcessor.cs" />
+    <Compile Include="Infrastructure\Slack\SlackRequestProcessor.cs" />
+    <Compile Include="Infrastructure\Slack\SlackRequestService.cs" />
     <Compile Include="Models\Slack\SlackRequest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -189,7 +193,6 @@
   <ItemGroup>
     <Folder Include="Extensions\" />
     <Folder Include="Helpers\" />
-    <Folder Include="Infrastructure\Raven\" />
   </ItemGroup>
   <ItemGroup>
     <WCFMetadata Include="Service References\" />

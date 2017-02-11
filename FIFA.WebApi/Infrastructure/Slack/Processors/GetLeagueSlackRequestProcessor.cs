@@ -1,10 +1,8 @@
-﻿using FIFA.Infrastructure.IoC;
-using FIFA.QueryServices.Interface;
-using Microsoft.Practices.Unity;
+﻿using FIFA.QueryServices.Interface;
+using FIFA.WebApi.Models.Slack;
 using System.Text;
-using System.Threading.Tasks;
 
-namespace FIFA.WebApi.Models.Slack
+namespace FIFA.WebApi.Infrastructure.Slack
 {
     public class GetLeagueSlackRequestProcessor : SlackRequestProcessor
     {
@@ -18,12 +16,12 @@ namespace FIFA.WebApi.Models.Slack
             }
         }
 
-        public GetLeagueSlackRequestProcessor()
+        public GetLeagueSlackRequestProcessor(ILeagueQueryService queryService)
         {
-            _queryService = UnityHelper.Container.Resolve<ILeagueQueryService>();
+            _queryService = queryService;
         }
 
-        protected override void Execute(SlackRequest request)
+        public override void Execute(SlackRequest request)
         {
             var leagueTable = _queryService.GetCurrentLeagueTable();
 
@@ -37,11 +35,11 @@ namespace FIFA.WebApi.Models.Slack
                     row.PlayerFace,
                     row.TeamBadge,
                     row.GamesPlayed,
-                    row.GamesWon,
-                    row.GamesDrawn,
-                    row.GamesLost,
-                    row.GoalsFor - row.GoalsAgainst,
-                    row.Points));
+                    row.GamesWon.ToString().PadLeft(3, ' '),
+                    row.GamesDrawn.ToString().PadLeft(3, ' '),
+                    row.GamesLost.ToString().PadLeft(3, ' '),
+                    (row.GoalsFor - row.GoalsAgainst).ToString().PadLeft(3, ' '),
+                    row.Points.ToString().PadLeft(3, ' ')));
             }
 
             SendResponse(request.response_url, response.ToString());
