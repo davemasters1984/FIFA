@@ -72,6 +72,18 @@
       <HintPath>..\packages\Microsoft.ApplicationInsights.2.2.0\lib\net45\Microsoft.ApplicationInsights.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="Microsoft.AspNet.WebHooks.Common, Version=1.2.1.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.WebHooks.Common.1.2.1\lib\net45\Microsoft.AspNet.WebHooks.Common.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.AspNet.WebHooks.Receivers, Version=1.2.1.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.WebHooks.Receivers.1.2.1\lib\net45\Microsoft.AspNet.WebHooks.Receivers.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.AspNet.WebHooks.Receivers.Slack, Version=1.2.1.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.WebHooks.Receivers.Slack.1.2.1\lib\net45\Microsoft.AspNet.WebHooks.Receivers.Slack.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="Microsoft.CodeDom.Providers.DotNetCompilerPlatform, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.0\lib\net45\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.dll</HintPath>
       <Private>True</Private>
@@ -153,9 +165,9 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="Models\Slack\GetLeagueSlackCommand.cs" />
-    <Compile Include="Models\Slack\PostResultSlackCommand.cs" />
-    <Compile Include="Models\Slack\SlackCommand.cs" />
+    <Compile Include="Models\Slack\GetLeagueSlackRequestProcessor.cs" />
+    <Compile Include="Models\Slack\PostResultSlackRequestProcessor.cs" />
+    <Compile Include="Models\Slack\SlackRequestProcessor.cs" />
     <Compile Include="Models\Slack\SlackRequest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

@@ -20,11 +20,11 @@ namespace FIFA.WebApi.Controllers
         [Route("")]
         public HttpResponseMessage ProcessSlackCommand([FromBody] SlackRequest request)
         {
-            var slackResponse = SlackCommand.ExecuteRequest(request);
+            var slackResponse = SlackRequestProcessor.ExecuteRequestAsync(request);
 
             var responseMessage = new HttpResponseMessage(HttpStatusCode.OK);
 
-            responseMessage.Content = new StringContent(slackResponse, Encoding.UTF8, "text/plain");
+            responseMessage.Content = new StringContent("message received!", Encoding.UTF8, "text/plain");
 
             return responseMessage;
         }

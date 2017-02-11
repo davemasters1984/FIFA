@@ -1,14 +1,14 @@
-﻿using FIFA.Infrastructure.IoC;
-using Raven.Client;
-using Microsoft.Practices.Unity;
-using System;
+﻿using FIFA.CommandServices.Interface;
+using FIFA.Infrastructure.IoC;
 using FIFA.Model;
+using Microsoft.Practices.Unity;
+using Raven.Client;
+using System;
 using System.Linq;
-using FIFA.CommandServices.Interface;
 
 namespace FIFA.WebApi.Models.Slack
 {
-    public class PostResultSlackCommand : SlackCommand
+    public class PostResultSlackRequestProcessor : SlackRequestProcessor
     {
         private string _homePlayerFace;
         private int _homeGoals;
@@ -23,7 +23,7 @@ namespace FIFA.WebApi.Models.Slack
             }
         }
 
-        public override string Execute(SlackRequest request)
+        protected override void Execute(SlackRequest request)
         {
             SetDataFromCommandText(request.text);
 
@@ -49,7 +49,7 @@ namespace FIFA.WebApi.Models.Slack
                     .FirstOrDefault();
             }
 
-            leagueService.PostResult(new CommandServices.Interface.PostResultCommand
+            leagueService.PostResult(new PostResultCommand
             {
                 LeagueId = league.Id,
                 HomePlayerId = homePlayer.Id,
@@ -58,7 +58,7 @@ namespace FIFA.WebApi.Models.Slack
                 AwayPlayerGoals = _awayGoals,
             });
 
-            return "Result added successfully";
+            SendResponse(request.response_url, "Result added successfully");
         }
 
         private void SetDataFromCommandText(string commandText)

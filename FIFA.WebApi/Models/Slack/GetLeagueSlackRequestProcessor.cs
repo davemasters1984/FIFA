@@ -2,10 +2,11 @@
 using FIFA.QueryServices.Interface;
 using Microsoft.Practices.Unity;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace FIFA.WebApi.Models.Slack
 {
-    public class GetLeagueSlackCommand : SlackCommand
+    public class GetLeagueSlackRequestProcessor : SlackRequestProcessor
     {
         private ILeagueQueryService _queryService;
 
@@ -17,12 +18,12 @@ namespace FIFA.WebApi.Models.Slack
             }
         }
 
-        public GetLeagueSlackCommand()
+        public GetLeagueSlackRequestProcessor()
         {
             _queryService = UnityHelper.Container.Resolve<ILeagueQueryService>();
         }
 
-        public override string Execute(SlackRequest request)
+        protected override void Execute(SlackRequest request)
         {
             var leagueTable = _queryService.GetCurrentLeagueTable();
 
@@ -43,7 +44,7 @@ namespace FIFA.WebApi.Models.Slack
                     row.Points));
             }
 
-            return response.ToString();
+            SendResponse(request.response_url, response.ToString());
         }
     }
 }
