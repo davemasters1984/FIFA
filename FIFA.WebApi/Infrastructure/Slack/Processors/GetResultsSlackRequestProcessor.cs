@@ -1,29 +1,26 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
+﻿using FIFA.QueryServices.Interface;
 using FIFA.WebApi.Models.Slack;
-using FIFA.QueryServices.Interface;
+using System;
 using System.Text;
 
 namespace FIFA.WebApi.Infrastructure.Slack.Processors
 {
-    public class GetFixturesSlackRequestProcessor : SlackRequestProcessor
+    public class GetResultsSlackRequestProcessor : SlackRequestProcessor
     {
         private ILeagueQueryService _leagueQueryService;
         private string _face;
-
-        public GetFixturesSlackRequestProcessor(ILeagueQueryService leagueQueryService)
-        {
-            _leagueQueryService = leagueQueryService;
-        }
 
         public override string CommandText
         {
             get
             {
-                return "fixtures";
+                return "results";
             }
+        }
+
+        public GetResultsSlackRequestProcessor(ILeagueQueryService leagueQueryService)
+        {
+            _leagueQueryService = leagueQueryService;
         }
 
         public override void Execute(SlackRequest request)
@@ -32,18 +29,16 @@ namespace FIFA.WebApi.Infrastructure.Slack.Processors
 
             var leagueId = _leagueQueryService.GetCurrentLeagueId();
 
-            var fixtures = _leagueQueryService.GetFixturesForPlayerByFace(leagueId, _face);
+            var results = _leagueQueryService.GetResultsForPlayerByFace(leagueId, _face);
 
             var responseString = new StringBuilder();
 
-            foreach (var fixture in fixtures)
-                responseString.AppendFormat("\n{0}{1} {2} *vs* {3} {4}{5}",
-                    fixture.HomePlayerFace,
-                    fixture.HomeTeamBadge,
-                    fixture.HomeTeamName,
-                    fixture.AwayTeamName,
-                    fixture.AwayTeamBadge,
-                    fixture.AwayPlayerFace);
+            foreach (var result in results)
+                responseString.AppendFormat("\n{0} {1} *vs* {2} {3}",
+                    result.HomePlayerFace,
+                    result.HomePlayerGoals,
+                    result.AwayPlayerGoals,
+                    result.AwayPlayerFace);
 
             SendResponse(request.response_url, responseString.ToString());
         }
@@ -62,7 +57,9 @@ namespace FIFA.WebApi.Infrastructure.Slack.Processors
 
         public override ValidationResult ValidateRequest(SlackRequest request)
         {
-            return ValidationResult.ValidResult(string.Format("Retreiving Fixtures for {0}...", _face));
+            SetDataFromCommandText(request.text);
+
+            return ValidationResult.ValidResult(string.Format("`Retreiving results for` {0}", _face));
         }
     }
 }

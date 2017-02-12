@@ -16,6 +16,14 @@ namespace FIFA.QueryServices.Interface.Models
 
         public string HomePlayerFace { get; set; }
 
+        public string HomeTeamBadge { get; set; }
+
+        public string HomeTeamName { get; set; }
+
+        public string AwayTeamBadge { get; set; }
+
+        public string AwayTeamName { get; set; }
+
         public string AwayPlayerId { get; set; }
 
         public string AwayPlayerName { get; set; }

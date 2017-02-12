@@ -31,6 +31,19 @@ namespace FIFA.QueryServices.Services
             }
         }
 
+        public IEnumerable<ResultSummary> GetResultsForPlayerByFace(string leagueId, string face)
+        {
+            using (var session = _documentStore.OpenSession())
+            {
+                var results = session.Query<ResultSummary, ResultsIndex>()
+                    .Where(l => l.LeagueId == leagueId)
+                    .Where(l => l.HomePlayerFace == face || l.AwayPlayerFace == face)
+                    .ToList();
+
+                return results;
+            }
+        }
+
         public IEnumerable<LeagueTableRow> GetCurrentLeagueTable()
         {
             using (var session = _documentStore.OpenSession())
@@ -55,8 +68,6 @@ namespace FIFA.QueryServices.Services
 
                 return fixtures;
             }
-
-            
         }
 
         public IEnumerable<FixtureSummary> GetFixturesForPlayerByFace(string leagueId, string face)

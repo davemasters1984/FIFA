@@ -15,6 +15,18 @@ namespace FIFA.WebApi.Infrastructure.Slack
             _processors = processors;
         }
 
+        public ValidationResult ValidateRequest(SlackRequest request)
+        {
+            var commandText = GetCommandTextFromRequest(request.text);
+
+            var command = _processors.FirstOrDefault(c => c.CommandText == commandText);
+
+            if (command == null)
+                return ValidationResult.InvalidResult(string.Format("'{0}' not recognised"));
+
+            return command.ValidateRequest(request);
+        }
+
         public async Task ExecuteRequestAsync(SlackRequest request)
         {
             var commandText = GetCommandTextFromRequest(request.text);

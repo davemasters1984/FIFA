@@ -12,6 +12,8 @@ namespace FIFA.WebApi.Infrastructure.Slack
 
         public abstract void Execute(SlackRequest request);
 
+        public abstract ValidationResult ValidateRequest(SlackRequest request);
+
         protected void SendResponse(string url, string responseContent)
         {
             HttpClient client = new HttpClient();

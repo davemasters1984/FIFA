@@ -45,6 +45,7 @@ namespace FIFA.WebApi
             container.RegisterType<ISlackRequestProcessor, GetLeagueSlackRequestProcessor>("league");
             container.RegisterType<ISlackRequestProcessor, PostResultSlackRequestProcessor>("result");
             container.RegisterType<ISlackRequestProcessor, GetFixturesSlackRequestProcessor>("fixtures");
+            container.RegisterType<ISlackRequestProcessor, GetResultsSlackRequestProcessor>("results");
         }
     }
 }

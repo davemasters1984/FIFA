@@ -1,8 +1,6 @@
 ﻿using FIFA.CommandServices.Interface;
-using FIFA.Infrastructure.IoC;
 using FIFA.Model;
 using FIFA.WebApi.Models.Slack;
-using Microsoft.Practices.Unity;
 using Raven.Client;
 using System;
 using System.Linq;
@@ -81,6 +79,11 @@ namespace FIFA.WebApi.Infrastructure.Slack
             _homeGoals = int.Parse(commandWords[2]);
             _awayGoals = int.Parse(commandWords[4]);
             _awayPlayerFace = commandWords[5];
+        }
+
+        public override ValidationResult ValidateRequest(SlackRequest request)
+        {
+            return ValidationResult.ValidResult("Adding result into league");
         }
     }
 }

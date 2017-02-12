@@ -15,6 +15,8 @@ namespace FIFA.QueryServices.Interface
 
         IEnumerable<FixtureSummary> GetFixturesForPlayerByFace(string leagueId, string face);
 
+        IEnumerable<ResultSummary> GetResultsForPlayerByFace(string leagueId, string face);
+
 
     }
 }

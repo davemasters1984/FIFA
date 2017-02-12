@@ -44,5 +44,10 @@ namespace FIFA.WebApi.Infrastructure.Slack
 
             SendResponse(request.response_url, response.ToString());
         }
+
+        public override ValidationResult ValidateRequest(SlackRequest request)
+        {
+            return ValidationResult.ValidResult("Retreiving League Table...");
+        }
     }
 }

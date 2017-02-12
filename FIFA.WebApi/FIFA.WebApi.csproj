@@ -169,6 +169,7 @@
     <Compile Include="Infrastructure\Slack\Processors\GetLeagueSlackRequestProcessor.cs" />
     <Compile Include="Infrastructure\Slack\ISlackRequestProcessor.cs" />
     <Compile Include="Infrastructure\Slack\ISlackRequestService.cs" />
+    <Compile Include="Infrastructure\Slack\Processors\GetResultsSlackRequestProcessor.cs" />
     <Compile Include="Infrastructure\Slack\Processors\PostResultSlackRequestProcessor.cs" />
     <Compile Include="Infrastructure\Slack\SlackRequestProcessor.cs" />
     <Compile Include="Infrastructure\Slack\SlackRequestService.cs" />
