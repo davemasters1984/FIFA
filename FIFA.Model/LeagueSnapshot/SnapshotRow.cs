@@ -4,11 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FIFA.QueryServices.Interface.Models
+namespace FIFA.Model
 {
-    public class LeagueTableRow
+    public class SnapshotRow
     {
-        public string LeagueId { get; set; }
+        public int Position { get; set; }
 
         public string PlayerName { get; set; }
 
@@ -19,8 +19,6 @@ namespace FIFA.QueryServices.Interface.Models
         public string TeamId { get; set; }
 
         public string PlayerFace { get; set; }
-
-        public int Position { get; set; }
 
         public int GamesPlayed { get; set; }
 
@@ -36,10 +34,6 @@ namespace FIFA.QueryServices.Interface.Models
 
         public int GoalsAgainst { get; set; }
 
-        public int GoalDifference { get; set; }
-
         public int TeamRating { get; set; }
-
-        public int PositionChange { get; set; }
     }
 }

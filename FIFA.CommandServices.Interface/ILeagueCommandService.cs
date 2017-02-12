@@ -11,5 +11,7 @@ namespace FIFA.CommandServices.Interface
         void CreateLeague(CreateLeagueCommand command);
 
         void PostResult(PostResultCommand command);
+
+        void TakeSnapshot(TakeSnapshotCommand command);
     }
 }

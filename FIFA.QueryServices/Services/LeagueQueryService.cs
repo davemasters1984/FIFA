@@ -95,9 +95,37 @@ namespace FIFA.QueryServices.Services
                 = session.Query<LeagueTableRow, LeagueTableIndex>()
                     .Where(l => l.LeagueId == leagueId)
                     .OrderByDescending(l => l.Points)
+                    .ThenByDescending(l => l.GoalDifference)
+                    .ThenByDescending(l => l.GoalsFor)
                     .ToList();
 
+            var lastSnapshot
+                = session.Query<LeagueTableSnapshot>()
+                    .Where(l => l.LeagueId == leagueId)
+                    .Where(l => l.SnapshotDate < DateTime.Now.Date)
+                    .FirstOrDefault();
+
+            if (lastSnapshot == null)
+                return leagueTable;
+
+            AddPreviousPositionsToRows(leagueTable, lastSnapshot);
+
             return leagueTable;
+        }
+
+        private void AddPreviousPositionsToRows(List<LeagueTableRow> leagueTable, LeagueTableSnapshot lastSnapshot)
+        {
+            foreach(var row in leagueTable)
+            {
+                var correspondingPlayerRow = lastSnapshot.Rows
+                    .FirstOrDefault(r => r.PlayerFace == row.PlayerFace);
+
+                var difference = Math.Abs(correspondingPlayerRow.Position - row.Position);
+
+                row.PositionChange = (row.Position < correspondingPlayerRow.Position)
+                    ? difference *= -1
+                    : difference;
+            }
         }
     }
 }

@@ -83,7 +83,7 @@ namespace FIFA.WebApi.Infrastructure.Slack
 
         public override ValidationResult ValidateRequest(SlackRequest request)
         {
-            return ValidationResult.ValidResult("Adding result into league");
+            return ValidationResult.ValidResult("`Adding result into league`");
         }
     }
 }

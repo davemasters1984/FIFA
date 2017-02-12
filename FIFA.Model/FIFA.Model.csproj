@@ -49,6 +49,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="LeagueSnapshot\LeagueTableSnapshot.cs" />
+    <Compile Include="LeagueSnapshot\SnapshotRow.cs" />
     <Compile Include="Services\League\CreateLeagueArgs.cs" />
     <Compile Include="Services\League\Helpers\FixtureGenerator.cs" />
     <Compile Include="Services\League\Helpers\FourStarTeamAssigner.cs" />
