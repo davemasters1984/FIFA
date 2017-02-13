@@ -1,5 +1,6 @@
 ﻿using FIFA.QueryServices.Interface;
 using FIFA.WebApi.Models.Slack;
+using System;
 using System.Text;
 
 namespace FIFA.WebApi.Infrastructure.Slack
@@ -31,8 +32,9 @@ namespace FIFA.WebApi.Infrastructure.Slack
             foreach (var row in leagueTable)
             {
                 var positionChangeIcon = GetPositionChangeIcon(row.PositionChange);
+                var positionChangeNumber = GetPositionChangeNumber(row.PositionChange);
 
-                response.AppendFormat(string.Format("\n{0} {1} {2} Played: *{3}* W: *{4}* D: *{5}* L: *{6}* GD: *{7}* Pts: *{8}* {9}",
+                response.AppendFormat(string.Format("\n{0} {1} {2} Played: *{3}* W: *{4}* D: *{5}* L: *{6}* GD: *{7}* Pts: *{8}* {9} [{10}]",
                     i++,
                     row.PlayerFace,
                     row.TeamBadge,
@@ -42,7 +44,8 @@ namespace FIFA.WebApi.Infrastructure.Slack
                     row.GamesLost.ToString().PadLeft(3, ' '),
                     (row.GoalsFor - row.GoalsAgainst).ToString().PadLeft(3, ' '),
                     row.Points.ToString().PadLeft(3, ' '),
-                    positionChangeIcon));
+                    positionChangeIcon,
+                    positionChangeNumber));
             }
 
             SendResponse(request.response_url, response.ToString());
@@ -54,6 +57,16 @@ namespace FIFA.WebApi.Infrastructure.Slack
                 return ":arrow_up:";
             if (difference > 0)
                 return ":arrow_down:";
+
+            return string.Empty;
+        }
+
+        private string GetPositionChangeNumber(int difference)
+        {
+            if (difference < 0)
+                return string.Format("+{0}", Math.Abs(difference));
+            if (difference > 0)
+                return string.Format("-{0}", Math.Abs(difference));
 
             return string.Empty;
         }
