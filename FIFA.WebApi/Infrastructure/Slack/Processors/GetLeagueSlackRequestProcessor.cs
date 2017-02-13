@@ -34,8 +34,8 @@ namespace FIFA.WebApi.Infrastructure.Slack
                 var positionChangeIcon = GetPositionChangeIcon(row.PositionChange);
                 var positionChangeNumber = GetPositionChangeNumber(row.PositionChange);
 
-                response.AppendFormat(string.Format("\n{0} {1} {2} Played: *{3}* W: *{4}* D: *{5}* L: *{6}* GD: *{7}* Pts: *{8}* {9} [{10}]",
-                    i++,
+                response.AppendFormat(string.Format("\n{0} {1} {2} Played: *{3}*   W: *{4}*   D: *{5}*   L: *{6}*   GD: *{7}*   Pts: *{8}* {9} {10}",
+                    (i++).ToString().PadLeft(2, ' '),
                     row.PlayerFace,
                     row.TeamBadge,
                     row.GamesPlayed,
@@ -64,9 +64,9 @@ namespace FIFA.WebApi.Infrastructure.Slack
         private string GetPositionChangeNumber(int difference)
         {
             if (difference < 0)
-                return string.Format("+{0}", Math.Abs(difference));
+                return string.Format("[+{0}]", Math.Abs(difference));
             if (difference > 0)
-                return string.Format("-{0}", Math.Abs(difference));
+                return string.Format("[-{0}]", Math.Abs(difference));
 
             return string.Empty;
         }

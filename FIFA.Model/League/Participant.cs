@@ -32,6 +32,13 @@ namespace FIFA.Model
             GoalsFor += result.HomePlayerGoals;
             GoalsAgainst += result.AwayPlayerGoals;
             GamesPlayed++;
+
+            if (result.HomePoints == 3)
+                GamesWon++;
+            if (result.HomePoints == 0)
+                GamesLost++;
+            if (result.HomePoints == 1)
+                GamesDrawn++;
         }
 
         public void PostResultAsAwayPlayer(Result result)
@@ -40,6 +47,13 @@ namespace FIFA.Model
             GoalsFor += result.AwayPlayerGoals;
             GoalsAgainst += result.HomePlayerGoals;
             GamesPlayed++;
+
+            if (result.AwayPoints == 3)
+                GamesWon++;
+            if (result.AwayPoints == 0)
+                GamesLost++;
+            if (result.AwayPoints == 1)
+                GamesDrawn++;
         }
     }
 }

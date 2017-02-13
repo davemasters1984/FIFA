@@ -1,6 +1,5 @@
 ﻿using FIFA.Model;
 using FIFA.QueryServices.Interface.Models;
-using FIFA.QueryServices.Models;
 using Raven.Client.Indexes;
 using System.Linq;
 
@@ -27,6 +26,9 @@ namespace FIFA.QueryServices.Indexes
                     GoalsAgainst = p.GoalsAgainst,
                     GoalsFor = p.GoalsFor,
                     GoalDifference = p.GoalsFor - p.GoalsAgainst,
+                    GamesWon = p.GamesWon,
+                    GamesDrawn = p.GamesDrawn,
+                    GamesLost = p.GamesLost,
                     Position = p.Position,
                     Points = p.Points,
                     GamesPlayed = p.GamesPlayed,
@@ -46,6 +48,9 @@ namespace FIFA.QueryServices.Indexes
                                GoalsAgainst = r.GoalsAgainst,
                                GoalsFor = r.GoalsFor,
                                GoalDifference = r.GoalDifference,
+                               GamesWon = r.GamesWon,
+                               GamesDrawn = r.GamesDrawn,
+                               GamesLost = r.GamesLost,
                                Position = r.Position,
                                Points = r.Points,
                                GamesPlayed = r.GamesPlayed,
@@ -63,6 +68,9 @@ namespace FIFA.QueryServices.Indexes
                                GoalsAgainst = g.Key.GoalsAgainst,
                                GoalsFor = g.Key.GoalsFor,
                                GoalDifference = g.Key.GoalDifference,
+                               GamesWon = g.Key.GamesWon,
+                               GamesDrawn = g.Key.GamesDrawn,
+                               GamesLost = g.Key.GamesLost,
                                Position = g.Key.Position,
                                Points = g.Key.Points,
                                GamesPlayed = g.Key.GamesPlayed,

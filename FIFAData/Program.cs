@@ -5,6 +5,7 @@ using FIFA.Model.Services;
 using FIFA.QueryServices.Indexes;
 using FIFA.QueryServices.Interface.Models;
 using FIFA.QueryServices.Models;
+using FIFA.QueryServices.Services;
 using FIFAData.DataImport;
 using Raven.Client;
 using Raven.Client.Document;
@@ -26,7 +27,10 @@ namespace FIFAData
 
             //CreatePreviousLeague();
 
-            OutputLatestLeague();
+            //OutputLatestLeague();
+
+            GenerateFixturesForLeague("leagues/417");
+
 
             
             Console.WriteLine("Players & Teams installed successfully");
@@ -58,12 +62,12 @@ namespace FIFAData
 
         private static void CreateLeague()
         {
-            var leagueService = new LeagueCommandService(new RavenRepository(), new LeagueService(), new ResultService(new RavenRepository()));
+            //var leagueService = new LeagueCommandService(new RavenRepository(), new LeagueService(), new ResultService(new RavenRepository()));
 
-            leagueService.CreateLeague(new FIFA.CommandServices.Interface.CreateLeagueCommand
-            {
-                ParticipantFaces = _participantNames
-            });
+            //leagueService.CreateLeague(new FIFA.CommandServices.Interface.CreateLeagueCommand
+            //{
+            //    ParticipantFaces = _participantNames
+            //});
         }      
 
         private static void OutputLatestLeague()
@@ -132,6 +136,47 @@ namespace FIFAData
             };
 
             _documentStore.Initialize();
+        }
+
+        public static void DuplicateLeague(string leagueId)
+        {
+            using (var session = _documentStore.OpenSession())
+            {
+                var league = session.Load<League>(leagueId);
+
+                session.Advanced.Evict(league);
+                var newId = session.Advanced.GetDocumentId(league);
+
+                session.Store(league, leagueId + "0");
+            }
+        }
+
+        private static void GenerateFixturesForLeague(string leagueId)
+        {
+            using (var session = _documentStore.OpenSession())
+            {
+                var league = session.Load<League>(leagueId);
+
+                if (HasFixtures(league))
+                    return;
+
+                FixtureGenerator gen = new FixtureGenerator(league.Participants);
+
+                league.Fixtures = gen.GenerateFixtures();
+
+                session.Store(league);
+                session.SaveChanges();
+            }
+        }
+
+        private static bool HasFixtures(League league)
+        {
+            if (league.Fixtures == null)
+                return false;
+            if (!league.Fixtures.Any())
+                return false;
+
+            return true;
         }
 
         public static void CreatePreviousLeague()
