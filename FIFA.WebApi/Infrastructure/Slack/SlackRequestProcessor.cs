@@ -18,6 +18,7 @@ namespace FIFA.WebApi.Infrastructure.Slack
         {
             HttpClient client = new HttpClient();
             var response = new SlackSlashResponse(responseContent);
+            response.ResponseType = "in_channel";
 
             client.BaseAddress = new Uri(url);
 
