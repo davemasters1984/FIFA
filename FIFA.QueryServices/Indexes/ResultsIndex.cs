@@ -1,4 +1,5 @@
 ﻿using FIFA.Model;
+using FIFA.QueryServices.Interface.Models;
 using FIFA.QueryServices.Models;
 using Raven.Client.Indexes;
 using System.Linq;
@@ -12,20 +13,21 @@ namespace FIFA.QueryServices.Indexes
             Map =
                 leagues =>
                 from league in leagues
-                from result in league.Results
-                let homePlayer = LoadDocument<Player>(result.HomePlayerId)
-                let awayPlayer = LoadDocument<Player>(result.AwayPlayerId)
+                from fixture in league.Fixtures
+                let homePlayer = LoadDocument<Player>(fixture.HomePlayerId)
+                let awayPlayer = LoadDocument<Player>(fixture.AwayPlayerId)
+                where fixture.Result != null
                 select new ResultSummary
                 {
-                    LeagueId = result.LeagueId,
+                    LeagueId = league.Id,
                     HomePlayerId = homePlayer.Id,
                     HomePlayerFace = homePlayer.Face,
                     HomePlayerName = homePlayer.Name,
-                    HomePlayerGoals = result.HomePlayerGoals,
+                    HomePlayerGoals = fixture.Result.HomePlayerGoals,
                     AwayPlayerId = awayPlayer.Id,
                     AwayPlayerFace = awayPlayer.Face,
                     AwayPlayerName = awayPlayer.Name,
-                    AwayPlayerGoals = result.AwayPlayerGoals,
+                    AwayPlayerGoals = fixture.Result.AwayPlayerGoals,
                 };
 
             Reduce =

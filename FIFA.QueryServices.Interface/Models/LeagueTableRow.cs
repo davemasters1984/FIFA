@@ -1,9 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Web;
+using System.Text;
+using System.Threading.Tasks;
 
-namespace FIFA.QueryServices.Models
+namespace FIFA.QueryServices.Interface.Models
 {
     public class LeagueTableRow
     {
@@ -35,6 +36,10 @@ namespace FIFA.QueryServices.Models
 
         public int GoalsAgainst { get; set; }
 
+        public int GoalDifference { get; set; }
+
         public int TeamRating { get; set; }
+
+        public int PositionChange { get; set; }
     }
 }

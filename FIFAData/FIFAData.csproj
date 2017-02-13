@@ -88,6 +88,10 @@
       <Project>{631EA0F9-1F8F-4908-9221-FBAD745F3B1F}</Project>
       <Name>FIFA.Model</Name>
     </ProjectReference>
+    <ProjectReference Include="..\FIFA.QueryServices.Interface\FIFA.QueryServices.Interface.csproj">
+      <Project>{9de79390-0428-4bf6-9b28-b2714440e0c9}</Project>
+      <Name>FIFA.QueryServices.Interface</Name>
+    </ProjectReference>
     <ProjectReference Include="..\FIFA.QueryServices\FIFA.QueryServices.csproj">
       <Project>{fbade8d1-3abe-4312-a94d-ef161acffd1c}</Project>
       <Name>FIFA.QueryServices</Name>

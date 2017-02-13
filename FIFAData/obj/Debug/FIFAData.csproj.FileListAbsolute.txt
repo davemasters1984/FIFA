@@ -47,3 +47,5 @@ C:\GIT\FIFA\FIFAData\obj\Debug\FIFAData.exe
 C:\GIT\FIFA\FIFAData\obj\Debug\FIFAData.pdb
 C:\Git\FIFA\FIFAData\bin\Debug\FIFA.QueryServices.dll
 C:\Git\FIFA\FIFAData\bin\Debug\FIFA.QueryServices.pdb
+C:\GIT\FIFA\FIFAData\bin\Debug\FIFA.QueryServices.Interface.dll
+C:\GIT\FIFA\FIFAData\bin\Debug\FIFA.QueryServices.Interface.pdb
