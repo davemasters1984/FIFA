@@ -35,28 +35,43 @@ namespace FIFA.WebApi.Infrastructure.Slack.Processors
 
             foreach(var formRow in form)
             {
-                response.AppendFormat("\n{0}{1} {7}{6}{5}{4}{3}{2}",
+                response.AppendFormat("\n{0}{1} {7}{6}{5}{4}{3}{2} {8}",
                     formRow.PlayerFace,
                     formRow.TeamBadge,
-                    GetIconForResult(formRow.Results.Take(1).FirstOrDefault()),
-                    GetIconForResult(formRow.Results.Skip(1).Take(1).FirstOrDefault()),
-                    GetIconForResult(formRow.Results.Skip(2).Take(1).FirstOrDefault()),
-                    GetIconForResult(formRow.Results.Skip(3).Take(1).FirstOrDefault()),
-                    GetIconForResult(formRow.Results.Skip(4).Take(1).FirstOrDefault()),
-                    GetIconForResult(formRow.Results.Skip(5).Take(1).FirstOrDefault()));
+                    GetIconForResult(formRow.PlayerId, formRow.Results.Take(1).FirstOrDefault()),
+                    GetIconForResult(formRow.PlayerId, formRow.Results.Skip(1).Take(1).FirstOrDefault()),
+                    GetIconForResult(formRow.PlayerId, formRow.Results.Skip(2).Take(1).FirstOrDefault()),
+                    GetIconForResult(formRow.PlayerId, formRow.Results.Skip(3).Take(1).FirstOrDefault()),
+                    GetIconForResult(formRow.PlayerId, formRow.Results.Skip(4).Take(1).FirstOrDefault()),
+                    GetIconForResult(formRow.PlayerId, formRow.Results.Skip(5).Take(1).FirstOrDefault()),
+                    GetPointsDescription(formRow));
             }
 
             SendResponse(request.response_url, response.ToString());
         }
 
-        private string GetIconForResult(Res res)
+        private string GetPointsDescription(FormTableRow row)
+        {
+            if (row.Results == null)
+                return string.Empty;
+            if (!row.Results.Any())
+                return string.Empty;
+
+            int possiblePoints = 3 * row.Results.Count();
+
+            return string.Format("`[{0} points from a possible {1}]`", row.TotalPoints, possiblePoints);
+        }
+
+        private string GetIconForResult(string playerId, Res res)
         {
             if (res == null)
                 return string.Empty;
 
-            if (res.Points == 3)
+            var points = (res.HomePlayerId == playerId) ? res.HomePoints : res.AwayPoints;
+
+            if (points == 3)
                 return ":win:";
-            if (res.Points == 1)
+            if (points == 1)
                 return ":draw:";
 
             return ":lose:";

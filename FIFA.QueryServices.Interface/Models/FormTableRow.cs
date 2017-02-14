@@ -25,6 +25,14 @@ namespace FIFA.QueryServices.Interface.Models
 
     public class Res
     {
-        public int Points { get; set; }
+        public int HomePoints { get; set; }
+
+        public int AwayPoints { get; set; }
+
+        public string HomePlayerId { get; set; }
+
+        public string AwayPlayerId { get; set; }
+
+
     }
 }

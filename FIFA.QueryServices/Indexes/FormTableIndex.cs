@@ -31,19 +31,16 @@ namespace FIFA.QueryServices.Indexes
                     TeamId = team.Id,
                     Results = league.Fixtures
                               .Where(f => f.Result != null)
-                              .Where(f => f.HomePlayerId == p.PlayerId)
+                              .Where(f => f.HomePlayerId == p.PlayerId || f.AwayPlayerId == p.PlayerId)
+                              .OrderByDescending(f => f.Result.Date)
+                              .Take(6)
                               .Select(f => new Res
                               {
-                                  Points = f.Result.HomePoints
-                              }).Union
-                              (
-                              league.Fixtures
-                              .Where(f => f.Result != null)
-                              .Where(f => f.AwayPlayerId == p.PlayerId)
-                              .Select(f => new Res
-                              {
-                                  Points = f.Result.AwayPoints
-                              })),
+                                  HomePlayerId = f.HomePlayerId,
+                                  AwayPlayerId = f.AwayPlayerId,
+                                  HomePoints = f.Result.HomePoints,
+                                  AwayPoints = f.Result.AwayPoints
+                              }),
                     TotalPoints = 1,
                 };
 
@@ -67,7 +64,8 @@ namespace FIFA.QueryServices.Indexes
                                TeamBadge = g.Key.TeamBadge,
                                TeamId = g.Key.TeamId,
                                Results = g.Key.Results,
-                               TotalPoints = g.Key.Results.Sum(r => r.Points)
+                               TotalPoints = g.Key.Results.Where(r => r.HomePlayerId == g.Key.PlayerId).Sum(r => r.HomePoints) +
+                                             g.Key.Results.Where(r => r.AwayPlayerId == g.Key.PlayerId).Sum(r => r.AwayPoints)
                            };
         }
     }
