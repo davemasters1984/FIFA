@@ -1,11 +1,6 @@
 ﻿using FIFA.QueryServices.Indexes;
 using Raven.Client.Document;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
 using System.Web.Http;
-using System.Web.Routing;
 
 namespace FIFA.WebApi
 {
@@ -33,6 +28,7 @@ namespace FIFA.WebApi
             new ResultsIndex().Execute(documentStore);
             new FixturesIndex().Execute(documentStore);
             new LeagueSummaryIndex().Execute(documentStore);
+            new FormTableIndex().Execute(documentStore);
         }
     }
 }

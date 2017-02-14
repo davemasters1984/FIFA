@@ -127,5 +127,18 @@ namespace FIFA.QueryServices.Services
                     : difference;
             }
         }
+
+        public IEnumerable<FormTableRow> GetFormTable(string leagueId)
+        {
+            using (var session = _documentStore.OpenSession())
+            {
+                var form = session.Query<FormTableRow, FormTableIndex>()
+                    .Where(l => l.LeagueId == leagueId)
+                    .OrderByDescending(l => l.TotalPoints)
+                    .ToList();
+
+                return form;
+            }
+        }
     }
 }

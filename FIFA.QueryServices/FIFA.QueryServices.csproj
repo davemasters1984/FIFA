@@ -50,6 +50,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Indexes\FixturesIndex.cs" />
+    <Compile Include="Indexes\FormTableIndex.cs" />
     <Compile Include="Indexes\LeagueSummaryIndex.cs" />
     <Compile Include="Indexes\LeagueTableIndex.cs" />
     <Compile Include="Indexes\ResultsIndex.cs" />

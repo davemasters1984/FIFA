@@ -29,10 +29,10 @@ namespace FIFAData
 
             //OutputLatestLeague();
 
-            GenerateFixturesForLeague("leagues/417");
+            //GenerateFixturesForLeague("leagues/417");
 
+            QueryForm();
 
-            
             Console.WriteLine("Players & Teams installed successfully");
 
             Console.Read();
@@ -69,6 +69,17 @@ namespace FIFAData
             //    ParticipantFaces = _participantNames
             //});
         }      
+
+        private static void QueryForm()
+        {
+            using (var session = _documentStore.OpenSession())
+            {
+                var form = session.Query<FormTableRow, FormTableIndex>()
+                    .ToList();
+
+                form.ToString();
+            }
+        }
 
         private static void OutputLatestLeague()
         {

@@ -42,6 +42,7 @@
   <ItemGroup>
     <Compile Include="ILeagueQueryService.cs" />
     <Compile Include="Models\FixtureSummary.cs" />
+    <Compile Include="Models\FormTableRow.cs" />
     <Compile Include="Models\LeagueTableRow.cs" />
     <Compile Include="Models\ResultSummary.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
