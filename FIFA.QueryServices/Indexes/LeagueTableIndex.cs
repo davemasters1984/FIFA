@@ -18,6 +18,7 @@ namespace FIFA.QueryServices.Indexes
                 select new LeagueTableRow
                 {
                     LeagueId = league.Id,
+                    PlayerId = player.Id,
                     PlayerName = player.Name,
                     PlayerFace = player.Face,
                     TeamName = team.TeamName,
@@ -41,6 +42,7 @@ namespace FIFA.QueryServices.Indexes
                            {
                                LeagueId = r.LeagueId,
                                Name = r.PlayerName,
+                               PlayerId = r.PlayerId,
                                PlayerFace = r.PlayerFace,
                                TeamName = r.TeamName,
                                TeamBadge = r.TeamBadge,
@@ -60,6 +62,7 @@ namespace FIFA.QueryServices.Indexes
                            select new LeagueTableRow
                            {
                                LeagueId = g.Key.LeagueId,
+                               PlayerId = g.Key.PlayerId,
                                PlayerName = g.Key.Name,
                                PlayerFace = g.Key.PlayerFace,
                                TeamName = g.Key.TeamName,

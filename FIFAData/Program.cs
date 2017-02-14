@@ -31,7 +31,7 @@ namespace FIFAData
 
             //GenerateFixturesForLeague("leagues/417");
 
-            QueryForm();
+            //UpdateSnapshotPlayerIds();
 
             Console.WriteLine("Players & Teams installed successfully");
 
@@ -78,6 +78,30 @@ namespace FIFAData
                     .ToList();
 
                 form.ToString();
+            }
+        }
+
+        private static void UpdateSnapshotPlayerIds()
+        {
+            using (var session = _documentStore.OpenSession())
+            {
+                var snapShots = session.Query<LeagueTableSnapshot>().ToList();
+                var players = session.Query<Player>().ToList();
+
+                foreach(var snap in snapShots)
+                {
+                    foreach(var row in snap.Rows)
+                    {
+                        row.PlayerId = players
+                            .Where(p => p.Face == row.PlayerFace)
+                            .Select(p => p.Id)
+                            .FirstOrDefault();
+                    }
+
+                    session.Store(snap);
+                }
+
+                session.SaveChanges();
             }
         }
 

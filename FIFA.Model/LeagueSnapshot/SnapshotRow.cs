@@ -12,6 +12,8 @@ namespace FIFA.Model
 
         public string PlayerName { get; set; }
 
+        public string PlayerId { get; set; }
+
         public string TeamName { get; set; }
 
         public string TeamBadge { get; set; }

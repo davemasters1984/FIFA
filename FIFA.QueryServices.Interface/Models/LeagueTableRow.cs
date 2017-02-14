@@ -10,6 +10,8 @@ namespace FIFA.QueryServices.Interface.Models
     {
         public string LeagueId { get; set; }
 
+        public string PlayerId { get; set; }
+
         public string PlayerName { get; set; }
 
         public string TeamName { get; set; }

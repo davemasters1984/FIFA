@@ -151,6 +151,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="App_Data\empty-line-graph.png" />
     <Content Include="Global.asax" />
     <Content Include="Web.config" />
   </ItemGroup>
@@ -170,6 +171,7 @@
     <Compile Include="Infrastructure\Slack\Processors\GetLeagueSlackRequestProcessor.cs" />
     <Compile Include="Infrastructure\Slack\ISlackRequestProcessor.cs" />
     <Compile Include="Infrastructure\Slack\ISlackRequestService.cs" />
+    <Compile Include="Infrastructure\Slack\Processors\GetPlayerComparisonHistorySlackRequestProcessor.cs" />
     <Compile Include="Infrastructure\Slack\Processors\GetResultsSlackRequestProcessor.cs" />
     <Compile Include="Infrastructure\Slack\Processors\PostResultSlackRequestProcessor.cs" />
     <Compile Include="Infrastructure\Slack\SlackRequestProcessor.cs" />
