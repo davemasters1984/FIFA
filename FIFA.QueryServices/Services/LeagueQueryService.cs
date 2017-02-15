@@ -202,6 +202,27 @@ namespace FIFA.QueryServices.Services
             }
         }
 
+        public CurrentLeagueAndPlayerIds GetCurrentLeagueAndPlayerIds(string playerFaceOne, string playerFaceTwo)
+        {
+            using (var session = _documentStore.OpenSession())
+            {
+                var data = new CurrentLeagueAndPlayerIds
+                {
+                    LeagueId = GetCurrentLeagueId(session),
+                    PlayerOneId = session.Query<Player>()
+                        .Where(p => p.Face == playerFaceOne)
+                        .Select(p => p.Id)
+                        .FirstOrDefault(),
+                    PlayerTwoId = session.Query<Player>()
+                        .Where(p => p.Face == playerFaceTwo)
+                        .Select(p => p.Id)
+                        .FirstOrDefault(),
+                };
+
+                return data;
+            }
+        }
+
         #endregion
     }
 }
