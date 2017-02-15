@@ -102,6 +102,7 @@ namespace FIFA.CommandServices
                 GoalsFor = row.GoalsFor,
                 PlayerFace = row.PlayerFace,
                 PlayerName = row.PlayerName,
+                PlayerId = row.PlayerId,
                 Points = row.Points,
                 TeamBadge = row.TeamBadge,
                 TeamName = row.TeamName,

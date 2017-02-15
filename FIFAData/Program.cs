@@ -31,7 +31,7 @@ namespace FIFAData
 
             //GenerateFixturesForLeague("leagues/417");
 
-            //UpdateSnapshotPlayerIds();
+            UpdateSnapshotPlayerIds();
 
             Console.WriteLine("Players & Teams installed successfully");
 
