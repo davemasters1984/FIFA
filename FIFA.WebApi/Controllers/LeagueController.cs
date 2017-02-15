@@ -157,13 +157,15 @@ namespace FIFA.WebApi.Controllers
             var playerComparison 
                 = _leagueQueryService.GetPlayerPositionHistoryComparisonForCurrentLeague(playerOneIdString, playerTwoIdString);
 
-            using (var img = Image.FromFile(HttpContext.Current.Server.MapPath("~/App_Data/empty-line-graph.png")))
+            using (var img = Image.FromFile(HttpContext.Current.Server.MapPath("~/App_Data/graph.png")))
             using (var graphics = Graphics.FromImage(img))
             {
                 // Use the Graphics object to modify it
+                var colorOne = ColorTranslator.FromHtml("#3CC1C9");
+                var colorTwo = ColorTranslator.FromHtml("#F2DB1C");
 
-                var playerOnePlotter = new LinePlotter(graphics, Color.Green, playerComparison.PlayerOneName, playerComparison.PlayerOnePositionHistory);
-                var playerTwoPlotter = new LinePlotter(graphics, Color.Blue, playerComparison.PlayerTwoName, playerComparison.PlayerTwoPositionHistory);
+                var playerOnePlotter = new LinePlotter(graphics, colorOne, playerComparison.PlayerOneName, playerComparison.PlayerOnePositionHistory);
+                var playerTwoPlotter = new LinePlotter(graphics, colorTwo, playerComparison.PlayerTwoName, playerComparison.PlayerTwoPositionHistory);
 
                 playerOnePlotter.Plot();
                 playerTwoPlotter.Plot();
