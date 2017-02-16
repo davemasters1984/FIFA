@@ -31,24 +31,45 @@ namespace FIFA.WebApi.Infrastructure.Slack
 
             foreach (var row in leagueTable)
             {
+                var positionString = GetFormattedNumberString(i++);
                 var positionChangeIcon = GetPositionChangeIcon(row.PositionChange);
                 var positionChangeNumber = GetPositionChangeNumber(row.PositionChange);
 
-                response.AppendFormat(string.Format("\n{0} {1} {2} Played: *{3}*   W: *{4}*   D: *{5}*   L: *{6}*   GD: *{7}*   Pts: *{8}* {9} {10}",
-                    (i++).ToString().PadRight(3, ' ').PadLeft(3, ' '),
+                var gamesPlayedString = GetFormattedNumberString(row.GamesPlayed);
+                var gamesWonString = GetFormattedNumberString(row.GamesWon);
+                var gamesDrawnString = GetFormattedNumberString(row.GamesDrawn);
+                var gamesLostString = GetFormattedNumberString(row.GamesLost);
+                var goalDifferenceString = GetFormattedNumberString(row.GoalsFor - row.GoalsAgainst);
+                var pointsString = GetFormattedNumberString(row.Points);
+
+                response.AppendFormat(string.Format("\n{0}{1} {2} Played: *{3}*   W: *{4}*   D: *{5}*   L: *{6}*   GD: *{7}*   Pts: *{8}* {9} {10}",
+                    positionString,
                     row.PlayerFace,
                     row.TeamBadge,
-                    row.GamesPlayed,
-                    row.GamesWon.ToString().PadLeft(3, ' '),
-                    row.GamesDrawn.ToString().PadLeft(3, ' '),
-                    row.GamesLost.ToString().PadLeft(3, ' '),
-                    (row.GoalsFor - row.GoalsAgainst).ToString().PadLeft(3, ' '),
-                    row.Points.ToString().PadLeft(3, ' '),
+                    gamesPlayedString,
+                    gamesWonString,
+                    gamesDrawnString,
+                    gamesLostString,
+                    goalDifferenceString,
+                    pointsString,
                     positionChangeIcon,
                     positionChangeNumber));
             }
 
-            SendResponse(request.response_url, response.ToString());
+            var responseString = response.ToString();
+
+            SendResponse(request.response_url, responseString);
+        }
+
+        private string GetFormattedNumberString(int number)
+        {
+            if (number < 0)
+                return string.Format("{0}", number);
+
+            if (number < 10)
+                return string.Format("{0}  ", number);
+
+            return string.Format("{0}", number);
         }
 
         private string GetPositionChangeIcon(int difference)
