@@ -62,7 +62,7 @@ namespace FIFA.WebApi.Infrastructure.Slack.Processors
 
         public override ValidationResult ValidateRequest(SlackRequest request)
         {
-            return ValidationResult.ValidResult(string.Format("`Retreiving fixtures for:` {0} `[Requested By: {1}`",
+            return ValidationResult.ValidResult(string.Format("`Retreiving fixtures for:` {0}",
                 _face,
                 request.user_name));
         }

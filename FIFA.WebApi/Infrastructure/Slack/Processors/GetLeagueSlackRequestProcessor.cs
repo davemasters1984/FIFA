@@ -39,10 +39,10 @@ namespace FIFA.WebApi.Infrastructure.Slack
                 var gamesWonString = GetFormattedNumberString(row.GamesWon);
                 var gamesDrawnString = GetFormattedNumberString(row.GamesDrawn);
                 var gamesLostString = GetFormattedNumberString(row.GamesLost);
-                var goalDifferenceString = GetFormattedNumberString(row.GoalsFor - row.GoalsAgainst);
+                var goalDifferenceString = GetGoalDifferenceNumberString(row.GoalsFor - row.GoalsAgainst);
                 var pointsString = GetFormattedNumberString(row.Points);
 
-                response.AppendFormat(string.Format("\n{0}{1} {2} Played: *{3}*   W: *{4}*   D: *{5}*   L: *{6}*   GD: *{7}*   Pts: *{8}* {9} {10}",
+                response.AppendFormat(string.Format("\n{0}{1} {2} Played: *{3}*   W: *{4}*   D: *{5}*   L: *{6}*   GD: {7}   Pts: *{8}* {9} {10}",
                     positionString,
                     row.PlayerFace,
                     row.TeamBadge,
@@ -59,6 +59,18 @@ namespace FIFA.WebApi.Infrastructure.Slack
             var responseString = response.ToString();
 
             SendResponse(request.response_url, responseString);
+        }
+
+        private string GetGoalDifferenceNumberString(int goalDifference)
+        {
+            if (goalDifference < -9)
+                return string.Format("*{0}*", goalDifference);
+            if (goalDifference > 9)
+                return string.Format(" *{0}*", goalDifference);
+            if (goalDifference < 0)
+                return string.Format("*{0}* ", goalDifference);
+
+            return string.Format(" *{0}*  ", goalDifference);
         }
 
         private string GetFormattedNumberString(int number)

@@ -62,7 +62,7 @@ namespace FIFA.WebApi.Infrastructure.Slack.Processors
 
             GetCommandData(request.text);
 
-            return ValidationResult.ValidResult("Getting comparison chart");
+            return ValidationResult.ValidResult("`Retreiving player position comparison chart`");
         }
 
         private void GetCommandData(string commandText)

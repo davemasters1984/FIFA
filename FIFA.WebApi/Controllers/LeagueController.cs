@@ -250,7 +250,7 @@ namespace FIFA.WebApi.Controllers
                 _color = color;
                 _dates = dates.ToList();
                 _drawFormat.FormatFlags = StringFormatFlags.DirectionVertical;
-                _xAxisIncrementAmount = 479 / dates.Count();
+                _xAxisIncrementAmount = 379 / dates.Count();
             }
 
             public void Draw()
@@ -294,8 +294,8 @@ namespace FIFA.WebApi.Controllers
                 _graphics = graphics;
                 _color = color;
 
-                _xAxisIncrementAmount = 479 / positions.Count();
-                _yAxisIncrementAmount = 379 / 18;
+                _xAxisIncrementAmount = 379 / positions.Count();
+                _yAxisIncrementAmount = 479 / 18;
             }
 
             public void Plot()

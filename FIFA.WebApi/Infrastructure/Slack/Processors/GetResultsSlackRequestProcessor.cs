@@ -59,7 +59,7 @@ namespace FIFA.WebApi.Infrastructure.Slack.Processors
         {
             SetDataFromCommandText(request.text);
 
-            return ValidationResult.ValidResult(string.Format("`Retreiving results for:` {0} `[Requested By: {1}`",
+            return ValidationResult.ValidResult(string.Format("`Retreiving results for:` {0}",
                 _face,
                 request.user_name));
         }
