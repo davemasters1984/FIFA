@@ -57,7 +57,7 @@ namespace FIFA.CommandServices
         public void TakeSnapshot(TakeSnapshotCommand command)
         {
             var currentLeagueId = _leagueQueryService.GetCurrentLeagueId();
-            var currentLeague = _leagueQueryService.GetLeagueTable(currentLeagueId);
+            var currentLeague = _leagueQueryService.GetLeagueTableWaitForIndex(currentLeagueId);
             var currentDate = DateTime.Now.Date;
 
             using (var unitOfWork = UnitOfWorkFactory.CreateUnitOfWork())

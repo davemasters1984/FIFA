@@ -33,6 +33,8 @@ namespace FIFAData
 
             //UpdateSnapshotPlayerIds();
 
+            //TestIndexWait();
+
             TakeSnapshot();
 
             Console.WriteLine("Players & Teams installed successfully");
@@ -62,12 +64,19 @@ namespace FIFAData
             };
         }
 
+        private static void TestIndexWait()
+        {
+            var leagueQueryService = new LeagueQueryService(_documentStore);
+
+            var league = leagueQueryService.GetLeagueTableWaitForIndex("leagues/417");
+        }
+
         private static void TakeSnapshot()
         {
             var leagueQueryService = new LeagueQueryService(_documentStore);
 
             var currentLeagueId = leagueQueryService.GetCurrentLeagueId();
-            var currentLeague = leagueQueryService.GetLeagueTable(currentLeagueId);
+            var currentLeague = leagueQueryService.GetLeagueTableWaitForIndex(currentLeagueId);
             var currentDate = DateTime.Now.Date;
 
             using (var session = _documentStore.OpenSession())

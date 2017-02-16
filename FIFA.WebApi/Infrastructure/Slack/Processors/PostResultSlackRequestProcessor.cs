@@ -63,7 +63,7 @@ namespace FIFA.WebApi.Infrastructure.Slack
                 AwayPlayerGoals = _awayGoals,
             });
 
-            SendResponse(request.response_url, "Result added successfully");
+            SendResponse(request.response_url, string.Format("{0} {1} - {2} {3} `added successfully`", _homePlayerFace, _homeGoals, _awayGoals, _awayPlayerFace));
         }
 
         private void SetDataFromCommandText(string commandText)

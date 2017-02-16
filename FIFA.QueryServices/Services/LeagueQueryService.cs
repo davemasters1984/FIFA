@@ -91,6 +91,12 @@ namespace FIFA.QueryServices.Services
                 return GetLeagueTable(session, leagueId);
         }
 
+        public IEnumerable<LeagueTableRow> GetLeagueTableWaitForIndex(string leagueId)
+        {
+            using (var session = _documentStore.OpenSession())
+                return GetLeagueTable(session, leagueId, true);
+        }
+
         public IEnumerable<FormTableRow> GetFormTable(string leagueId)
         {
             using (var session = _documentStore.OpenSession())
@@ -162,10 +168,15 @@ namespace FIFA.QueryServices.Services
             return leagueId;
         }
 
-        private IEnumerable<LeagueTableRow> GetLeagueTable(IDocumentSession session, string leagueId)
+        private IEnumerable<LeagueTableRow> GetLeagueTable(IDocumentSession session, string leagueId, bool waitForFreshIndex)
         {
-            var leagueTable
-                = session.Query<LeagueTableRow, LeagueTableIndex>()
+            var leagueTableQuery
+                = session.Query<LeagueTableRow, LeagueTableIndex>();
+
+            if (waitForFreshIndex)
+                leagueTableQuery = leagueTableQuery.Customize(c => c.WaitForNonStaleResultsAsOfNow());
+
+            var orderedleagueTable = leagueTableQuery
                     .Where(l => l.LeagueId == leagueId)
                     .OrderByDescending(l => l.Points)
                     .ThenByDescending(l => l.GoalDifference)
@@ -180,12 +191,18 @@ namespace FIFA.QueryServices.Services
                     .FirstOrDefault();
 
             if (lastSnapshot == null)
-                return leagueTable;
+                return orderedleagueTable;
 
-            AddPreviousPositionsToRows(leagueTable, lastSnapshot);
+            AddPreviousPositionsToRows(orderedleagueTable, lastSnapshot);
 
-            return leagueTable;
+            return orderedleagueTable;
         }
+
+        private IEnumerable<LeagueTableRow> GetLeagueTable(IDocumentSession session, string leagueId)
+        {
+            return GetLeagueTable(session, leagueId, false);
+        }
+
 
         private void AddPreviousPositionsToRows(List<LeagueTableRow> leagueTable, LeagueTableSnapshot lastSnapshot)
         {
