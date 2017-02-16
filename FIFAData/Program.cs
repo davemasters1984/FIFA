@@ -31,7 +31,9 @@ namespace FIFAData
 
             //GenerateFixturesForLeague("leagues/417");
 
-            UpdateSnapshotPlayerIds();
+            //UpdateSnapshotPlayerIds();
+
+            TakeSnapshot();
 
             Console.WriteLine("Players & Teams installed successfully");
 
@@ -57,6 +59,65 @@ namespace FIFAData
                 ":jakub:",
                 ":mogg:",
                 ":luke:"
+            };
+        }
+
+        private static void TakeSnapshot()
+        {
+            var leagueQueryService = new LeagueQueryService(_documentStore);
+
+            var currentLeagueId = leagueQueryService.GetCurrentLeagueId();
+            var currentLeague = leagueQueryService.GetLeagueTable(currentLeagueId);
+            var currentDate = DateTime.Now.Date;
+
+            using (var session = _documentStore.OpenSession())
+            {
+                var snapshot = session.Query<LeagueTableSnapshot>()
+                    .Where(s => s.SnapshotDate == currentDate)
+                    .Where(s => s.LeagueId == currentLeagueId)
+                    .FirstOrDefault();
+
+                if (snapshot == null)
+                    snapshot = new LeagueTableSnapshot();
+
+                snapshot.Rows = MapSnapshotRows(currentLeague);
+                snapshot.SnapshotDate = currentDate;
+                snapshot.LeagueId = currentLeagueId;
+
+                session.Store(snapshot);
+                session.SaveChanges();
+            }
+        }
+
+        private static List<SnapshotRow> MapSnapshotRows(IEnumerable<LeagueTableRow> rows)
+        {
+            var snapshotRows = new List<SnapshotRow>();
+
+            foreach (var row in rows)
+                snapshotRows.Add(MapToSnapshotRow(row));
+
+            return snapshotRows;
+        }
+
+        private static SnapshotRow MapToSnapshotRow(LeagueTableRow row)
+        {
+            return new SnapshotRow
+            {
+                Position = row.Position,
+                TeamId = row.TeamId,
+                GamesDrawn = row.GamesDrawn,
+                GamesLost = row.GamesLost,
+                GamesPlayed = row.GamesPlayed,
+                GamesWon = row.GamesWon,
+                GoalsAgainst = row.GoalsAgainst,
+                GoalsFor = row.GoalsFor,
+                PlayerFace = row.PlayerFace,
+                PlayerName = row.PlayerName,
+                PlayerId = row.PlayerId,
+                Points = row.Points,
+                TeamBadge = row.TeamBadge,
+                TeamName = row.TeamName,
+                TeamRating = row.TeamRating
             };
         }
 
