@@ -17,6 +17,7 @@ using System.Net.Http.Headers;
 using System;
 using FIFA.QueryServices.Interface;
 using System.Collections.Generic;
+using System.Drawing.Drawing2D;
 
 namespace FIFA.WebApi.Controllers
 {
@@ -160,15 +161,31 @@ namespace FIFA.WebApi.Controllers
             using (var img = Image.FromFile(HttpContext.Current.Server.MapPath("~/App_Data/graph.png")))
             using (var graphics = Graphics.FromImage(img))
             {
+                graphics.SmoothingMode = SmoothingMode.HighQuality;
+                graphics.InterpolationMode = InterpolationMode.HighQualityBicubic;
+                graphics.PixelOffsetMode = PixelOffsetMode.HighQuality;
+
                 // Use the Graphics object to modify it
                 var colorOne = ColorTranslator.FromHtml("#3CC1C9");
                 var colorTwo = ColorTranslator.FromHtml("#F2DB1C");
 
+                var dates = playerComparison.PlayerOnePositionHistory
+                    .Select(d => d.Date)
+                    .Union(playerComparison.PlayerTwoPositionHistory
+                    .Select(d => d.Date))
+                    .Distinct()
+                    .OrderBy(d => d)
+                    .ToList();
+
                 var playerOnePlotter = new LinePlotter(graphics, colorOne, playerComparison.PlayerOneName, playerComparison.PlayerOnePositionHistory);
                 var playerTwoPlotter = new LinePlotter(graphics, colorTwo, playerComparison.PlayerTwoName, playerComparison.PlayerTwoPositionHistory);
+                var datesDrawer = new DateAxisDrawer(graphics, Color.White, dates);
+                var positionAxisDrawer = new PositionAxisDrawer(graphics, Color.White, 18);
 
                 playerOnePlotter.Plot();
                 playerTwoPlotter.Plot();
+                datesDrawer.Draw();
+                //positionAxisDrawer.DrawAxis();
 
                 // Write the resulting image to the response stream
                 using (var stream = new MemoryStream())
@@ -180,6 +197,82 @@ namespace FIFA.WebApi.Controllers
                     result.Content.Headers.ContentType = new MediaTypeHeaderValue("image/png");
                     return result;
                 }
+            }
+        }
+
+        private class PositionAxisDrawer
+        {
+            private int _positions;
+            private double _yAxisIncrementAmount;
+            private Graphics _graphics;
+            private Color _color;
+            private Point _currentPointLeft = new Point(21, 479);
+            private Point _currentPointRight = new Point(26, 479);
+
+            public PositionAxisDrawer(Graphics graphics, Color color, int positions)
+            {
+                _graphics = graphics;
+                _color = color;
+                _positions = positions;
+                _yAxisIncrementAmount = 479 / positions;
+            }
+
+            public void DrawAxis()
+            {
+                for (int i = 1; i < _positions; i++)
+                    DrawerNotch();
+            }
+
+            private void DrawerNotch()
+            {
+                _graphics.DrawLine(new Pen(_color, 4), _currentPointLeft, _currentPointRight);
+
+                _currentPointLeft = new Point(_currentPointLeft.X, _currentPointLeft.Y - (int)_yAxisIncrementAmount);
+                _currentPointRight = new Point(_currentPointRight.X, _currentPointRight.Y - (int)_yAxisIncrementAmount);
+            }
+            
+
+        }
+
+        private class DateAxisDrawer
+        {
+            private List<DateTime> _dates;
+            private Graphics _graphics;
+            private Color _color;
+            private double _xAxisIncrementAmount;
+            private StringFormat _drawFormat = new StringFormat();
+            private Point _currentPoint = new Point(21, 425);
+            private bool _isFirst = true;
+
+            public DateAxisDrawer(Graphics graphics, Color color, IEnumerable<DateTime> dates)
+            {
+                _graphics = graphics;
+                _color = color;
+                _dates = dates.ToList();
+                _drawFormat.FormatFlags = StringFormatFlags.DirectionVertical;
+                _xAxisIncrementAmount = 479 / dates.Count();
+            }
+
+            public void Draw()
+            {
+                foreach(var date in _dates)
+                    RenderDate(date);
+            }
+
+            private void RenderDate(DateTime date)
+            {
+                if (!_isFirst)
+                {
+                    _graphics.DrawString(date.ToString("dd MMM"),
+                        new Font(FontFamily.Families.Where(f => f.Name.ToLower().Contains("arial")).First(), 10),
+                        new Pen(_color, 3).Brush,
+                        new PointF(_currentPoint.X - 10, _currentPoint.Y + 5),
+                        _drawFormat
+                    );
+                }
+
+                _currentPoint = new Point(_currentPoint.X + (int)_xAxisIncrementAmount, _currentPoint.Y);
+                _isFirst = false;
             }
         }
 
@@ -203,7 +296,6 @@ namespace FIFA.WebApi.Controllers
 
                 _xAxisIncrementAmount = 479 / positions.Count();
                 _yAxisIncrementAmount = 379 / 18;
-
             }
 
             public void Plot()
@@ -213,8 +305,6 @@ namespace FIFA.WebApi.Controllers
 
                 RenderPlayerName();
             }
-
-
 
             private void PlotNext(PlayerPosition position)
             {
