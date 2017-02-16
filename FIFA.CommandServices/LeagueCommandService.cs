@@ -4,9 +4,11 @@ using FIFA.Model;
 using FIFA.Model.Services;
 using FIFA.QueryServices.Interface;
 using FIFA.QueryServices.Interface.Models;
+using Microsoft.ApplicationInsights;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace FIFA.CommandServices
 {
@@ -16,6 +18,7 @@ namespace FIFA.CommandServices
         private IResultService _resultService;
         private IRepository _repository;
         private ILeagueQueryService _leagueQueryService;
+        private TelemetryClient telemetry = new TelemetryClient();
 
         public LeagueCommandService(IRepository repository, 
             ILeagueService leagueService, 
@@ -51,7 +54,7 @@ namespace FIFA.CommandServices
                 _resultService.PostResult(command.AsArgs());
             }
 
-            TakeSnapshot(new TakeSnapshotCommand());
+            Task.Factory.StartNew(() => TakeSnapshot(new TakeSnapshotCommand()));
         }
 
         public void TakeSnapshot(TakeSnapshotCommand command)
@@ -59,6 +62,7 @@ namespace FIFA.CommandServices
             var currentLeagueId = _leagueQueryService.GetCurrentLeagueId();
             var currentLeague = _leagueQueryService.GetLeagueTableWaitForIndex(currentLeagueId);
             var currentDate = DateTime.Now.Date;
+            var start = DateTime.Now;
 
             using (var unitOfWork = UnitOfWorkFactory.CreateUnitOfWork())
             {
@@ -76,6 +80,11 @@ namespace FIFA.CommandServices
 
                 _repository.Store(snapshot);
             }
+
+            var end = DateTime.Now;
+            var timeTaken = end.Subtract(start);
+
+            telemetry.TrackMetric("Snapshot Time", timeTaken.TotalSeconds);
         }
 
         private List<SnapshotRow> MapSnapshotRows(IEnumerable<LeagueTableRow> rows)
