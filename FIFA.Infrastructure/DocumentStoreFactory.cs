@@ -14,12 +14,11 @@ namespace FIFA.Infrastructure
         {
             var documentStore = new DocumentStore
             {
-                ConnectionStringName = "RavenHQ",
+                ConnectionStringName = "azure",
                 DefaultDatabase = "FIFA",
             };
 
             documentStore.Initialize();
-
             return documentStore;
         }
     }

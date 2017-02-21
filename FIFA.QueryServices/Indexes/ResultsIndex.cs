@@ -10,6 +10,8 @@ namespace FIFA.QueryServices.Indexes
     {
         public ResultsIndex()
         {
+            this.MaxIndexOutputsPerDocument = 500;
+
             Map =
                 leagues =>
                 from league in leagues

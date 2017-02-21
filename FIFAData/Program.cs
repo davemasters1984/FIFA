@@ -25,21 +25,20 @@ namespace FIFAData
         {
             CreateDocumentStore();
 
-            //CreatePreviousLeague();
+            DeployIndexes();
 
-            //OutputLatestLeague();
-
-            //GenerateFixturesForLeague("leagues/417");
-
-            //UpdateSnapshotPlayerIds();
-
-            //TestIndexWait();
-
-            TakeSnapshot();
-
-            Console.WriteLine("Players & Teams installed successfully");
+            Console.WriteLine("Complete.");
 
             Console.Read();
+        }
+
+        private static void DeployIndexes()
+        {
+            new LeagueTableIndex().Execute(_documentStore);
+            new ResultsIndex().Execute(_documentStore);
+            new FixturesIndex().Execute(_documentStore);
+            new LeagueSummaryIndex().Execute(_documentStore);
+            new FormTableIndex().Execute(_documentStore);
         }
 
         private static void SetParticipantNames()
@@ -236,7 +235,7 @@ namespace FIFAData
         {
             _documentStore = new DocumentStore
             {
-                ConnectionStringName = "RavenHQ",
+                ConnectionStringName = "azure",
                 DefaultDatabase = "FIFA",
             };
 

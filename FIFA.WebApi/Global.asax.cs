@@ -1,6 +1,10 @@
-﻿using FIFA.QueryServices.Indexes;
+﻿using FIFA.Infrastructure;
+using FIFA.Infrastructure.IoC;
+using FIFA.QueryServices.Indexes;
+using Raven.Client;
 using Raven.Client.Document;
 using System.Web.Http;
+using Microsoft.Practices.Unity;
 
 namespace FIFA.WebApi
 {
@@ -10,25 +14,6 @@ namespace FIFA.WebApi
         {
             GlobalConfiguration.Configure(WebApiConfig.Register);
             UnityConfig.RegisterComponents();
-
-            DeployIndexes();
-        }
-
-        protected void DeployIndexes()
-        {
-            var documentStore = new DocumentStore
-            {
-                ConnectionStringName = "RavenHQ",
-                DefaultDatabase = "FIFA",
-            };
-
-            documentStore.Initialize();
-
-            new LeagueTableIndex().Execute(documentStore);
-            new ResultsIndex().Execute(documentStore);
-            new FixturesIndex().Execute(documentStore);
-            new LeagueSummaryIndex().Execute(documentStore);
-            new FormTableIndex().Execute(documentStore);
         }
     }
 }
