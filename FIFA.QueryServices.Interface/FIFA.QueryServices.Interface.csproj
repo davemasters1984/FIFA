@@ -41,12 +41,15 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ILeagueQueryService.cs" />
+    <Compile Include="IStatisticQueryService.cs" />
     <Compile Include="Models\CurrentLeagueAndPlayerIds.cs" />
     <Compile Include="Models\FixtureSummary.cs" />
     <Compile Include="Models\FormTableRow.cs" />
     <Compile Include="Models\LeagueTableRow.cs" />
     <Compile Include="Models\PlayerPositionHistoryComparison.cs" />
+    <Compile Include="Models\PlayerWeeklyResultsSummary.cs" />
     <Compile Include="Models\ResultSummary.cs" />
+    <Compile Include="Models\WeeklySummary.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

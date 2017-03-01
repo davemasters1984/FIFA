@@ -30,6 +30,7 @@ namespace FIFA.QueryServices.Indexes
                     AwayPlayerFace = awayPlayer.Face,
                     AwayPlayerName = awayPlayer.Name,
                     AwayPlayerGoals = fixture.Result.AwayPlayerGoals,
+                    Date = fixture.Result.Date
                 };
 
             Reduce =
@@ -45,6 +46,7 @@ namespace FIFA.QueryServices.Indexes
                                AwayPlayerFace = r.AwayPlayerFace,
                                AwayPlayerName = r.AwayPlayerName,
                                AwayPlayerGoals = r.AwayPlayerGoals,
+                               Date = r.Date
                            } 
                            into g
                            select new ResultSummary
@@ -58,6 +60,7 @@ namespace FIFA.QueryServices.Indexes
                                AwayPlayerFace = g.Key.AwayPlayerFace,
                                AwayPlayerName = g.Key.AwayPlayerName,
                                AwayPlayerGoals = g.Key.AwayPlayerGoals,
+                               Date = g.Key.Date
                            };
         }
     }

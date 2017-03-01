@@ -25,11 +25,22 @@ namespace FIFAData
         {
             CreateDocumentStore();
 
-            DeployIndexes();
+            //DeployIndexes();
+
+            GetWeeklyStatistic();
 
             Console.WriteLine("Complete.");
 
             Console.Read();
+        }
+
+        private static void GetWeeklyStatistic()
+        {
+            var queryService = new StatisticQueryService(_documentStore);
+
+            var stats = queryService.GetWeeklySummary();
+
+            stats.ToString();
         }
 
         private static void DeployIndexes()
@@ -236,10 +247,16 @@ namespace FIFAData
             _documentStore = new DocumentStore
             {
                 ConnectionStringName = "azure",
-                DefaultDatabase = "FIFA",
             };
 
             _documentStore.Initialize();
+        }
+
+        public static void GenerateStatistics()
+        {
+            var queryService = new StatisticQueryService(_documentStore);
+
+            queryService.GenerateStatistics();
         }
 
         public static void DuplicateLeague(string leagueId)

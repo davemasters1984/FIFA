@@ -15,7 +15,6 @@ namespace FIFA.Infrastructure
             var documentStore = new DocumentStore
             {
                 ConnectionStringName = "azure",
-                DefaultDatabase = "FIFA",
             };
 
             documentStore.Initialize();

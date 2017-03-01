@@ -57,6 +57,7 @@
     <Compile Include="Models\LeagueSummary.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\LeagueQueryService.cs" />
+    <Compile Include="Services\StatisticQueryService.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\FIFA.Infrastructure\FIFA.Infrastructure.csproj">

@@ -24,5 +24,7 @@ namespace FIFA.QueryServices.Interface.Models
         public string AwayPlayerFace { get; set; }
 
         public int AwayPlayerGoals { get; set; }
+
+        public DateTime Date { get; set; }
     }
 }
