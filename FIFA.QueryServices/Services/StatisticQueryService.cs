@@ -104,7 +104,7 @@ namespace FIFA.QueryServices.Services
                     .Select(r => new WeeklyStatistic { PlayerId = r.PlayerId, KeyStat = r.GoalsScored, GamesPlayed = r.GamesPlayed, Face = playerNames.Where(p => p.Id == r.PlayerId).Select(p => p.Face).FirstOrDefault() })
                     .FirstOrDefault();
 
-                weeklySummary.PlayerWithLeastPoints = resultsSummary
+                weeklySummary.PlayerWithMostGoalsConceded = resultsSummary
                     .OrderByDescending(r => r.GoalsConceded)
                     .Select(r => new WeeklyStatistic { PlayerId = r.PlayerId, KeyStat = r.GoalsConceded, GamesPlayed = r.GamesPlayed, Face = playerNames.Where(p => p.Id == r.PlayerId).Select(p => p.Face).FirstOrDefault() })
                     .FirstOrDefault();

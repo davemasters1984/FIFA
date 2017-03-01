@@ -10,7 +10,7 @@ namespace FIFA.QueryServices.Interface.Models
     {
         public WeeklyStatistic PlayerWithMostGoals { get; set; }
 
-        public WeeklyStatistic PlayerWithLeastGoals { get; set; }
+        public WeeklyStatistic PlayerWithMostGoalsConceded { get; set; }
 
         public WeeklyStatistic PlayerWithMostGamesPlayed { get; set; }
 
