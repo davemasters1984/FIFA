@@ -26,8 +26,7 @@ namespace FIFAData
             CreateDocumentStore();
 
             //DeployIndexes();
-
-            GetWeeklyStatistic();
+            GenerateStatistics();
 
             Console.WriteLine("Complete.");
 
@@ -38,7 +37,7 @@ namespace FIFAData
         {
             var queryService = new StatisticQueryService(_documentStore);
 
-            var stats = queryService.GetWeeklySummary();
+            var stats = queryService.GetWeeklySummary("leagues/417");
 
             stats.ToString();
         }
@@ -256,7 +255,12 @@ namespace FIFAData
         {
             var queryService = new StatisticQueryService(_documentStore);
 
-            queryService.GenerateStatistics();
+            queryService.GenerateStatisticsForPeriod(new FIFA.QueryServices.Interface.GenerateStatisticsForPeriodArgs
+            {
+                LeagueId = "leagues/417",
+                PeriodEnd = DateTime.Now.Date,
+                PeriodStart = DateTime.Now.Date.AddDays(-7)
+            });
         }
 
         public static void DuplicateLeague(string leagueId)

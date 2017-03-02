@@ -9,8 +9,8 @@ namespace FIFA.QueryServices.Interface
 {
     public interface IStatisticQueryService
     {
-        void GenerateStatistics();
+        void GenerateStatisticsForPeriod(GenerateStatisticsForPeriodArgs args);
 
-        WeeklySummary GetWeeklySummary();
+        StatisticSummary GetWeeklySummary(string leagueId);
     }
 }

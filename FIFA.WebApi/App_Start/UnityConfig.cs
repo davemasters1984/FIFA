@@ -37,6 +37,7 @@ namespace FIFA.WebApi
             container.RegisterType<ITeamCommandService, TeamCommandService>();
 
             container.RegisterType<ILeagueQueryService, LeagueQueryService>();
+            container.RegisterType<IStatisticQueryService, StatisticQueryService>();
 
             container.RegisterType<ILeagueService, LeagueService>();
             container.RegisterType<IResultService, ResultService>();
@@ -48,7 +49,7 @@ namespace FIFA.WebApi
             container.RegisterType<ISlackRequestProcessor, GetResultsSlackRequestProcessor>("results");
             container.RegisterType<ISlackRequestProcessor, GetFormTableSlackRequestProcessor>("form");
             container.RegisterType<ISlackRequestProcessor, GetPlayerComparisonHistorySlackRequestProcessor>("compare");
-            
+            container.RegisterType<ISlackRequestProcessor, GetWeeklySummarySlackRequestProcessor>("week");
         }
     }
 }

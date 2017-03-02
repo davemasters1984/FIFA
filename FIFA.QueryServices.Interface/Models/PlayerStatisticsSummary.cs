@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace FIFA.QueryServices.Interface.Models
 {
-    public class PlayerWeeklyResultsSummary
+    public class PlayerStatisticsSummary
     {
         public string PlayerId { get; set; }
 
@@ -16,6 +16,6 @@ namespace FIFA.QueryServices.Interface.Models
 
         public int Points { get; set; }
 
-        public int GamesPlayed { get; set; }
+        public int GamesPlayed { get; set; } 
     }
 }
