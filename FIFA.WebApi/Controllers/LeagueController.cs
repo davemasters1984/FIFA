@@ -149,7 +149,7 @@ namespace FIFA.WebApi.Controllers
             return Ok("Result posted successfully");
         }
 
-        [Route("{leagueId:int}/players/{playerOneId:int}/compare/{playerTwoId:int}")]
+        [Route("{leagueId:int}/players/{playerOneId:int}/chart/{playerTwoId:int}")]
         public HttpResponseMessage GetPlayersGraph(int leagueId, int playerOneId, int playerTwoId)
         {
             var playerOneIdString = TranslateId<Player>(playerOneId);

@@ -22,7 +22,7 @@ namespace FIFA.WebApi.Infrastructure.Slack
             _queryService = queryService;
         }
 
-        public override void Execute(SlackRequest request)
+        protected override void ExecuteRequest(SlackRequest request)
         {
             var leagueTable = _queryService.GetCurrentLeagueTable();
 

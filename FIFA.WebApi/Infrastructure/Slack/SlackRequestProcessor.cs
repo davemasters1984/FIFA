@@ -10,9 +10,23 @@ namespace FIFA.WebApi.Infrastructure.Slack
     {
         public abstract string CommandText { get; }
 
-        public abstract void Execute(SlackRequest request);
+        protected abstract void ExecuteRequest(SlackRequest request);
 
         public abstract ValidationResult ValidateRequest(SlackRequest request);
+
+        public void Execute(SlackRequest request)
+        {
+            try
+            {
+                ExecuteRequest(request);
+            }
+            catch (Exception ex)
+            {
+                string errorMessage = string.Format("`Command: '{0}' failed. Error: {1}", request.text, ex.Message);
+                SendResponse(request.response_url, errorMessage);
+                throw;
+            }
+        }
 
         protected void SendResponse(string url, string responseContent)
         {

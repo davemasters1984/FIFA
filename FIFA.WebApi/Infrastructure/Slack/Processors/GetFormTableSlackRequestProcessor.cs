@@ -26,7 +26,7 @@ namespace FIFA.WebApi.Infrastructure.Slack.Processors
             }
         }
 
-        public override void Execute(SlackRequest request)
+        protected override void ExecuteRequest(SlackRequest request)
         {
             var currentLeagueId = _leagueQueryService.GetCurrentLeagueId();
             var form = _leagueQueryService.GetFormTable(currentLeagueId);

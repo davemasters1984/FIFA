@@ -42,6 +42,7 @@
   <ItemGroup>
     <Compile Include="Args\GenerateStatisticsForPeriodArgs.cs" />
     <Compile Include="ILeagueQueryService.cs" />
+    <Compile Include="IPlayerQueryService.cs" />
     <Compile Include="IStatisticQueryService.cs" />
     <Compile Include="Models\CurrentLeagueAndPlayerIds.cs" />
     <Compile Include="Models\FixtureSummary.cs" />

@@ -25,7 +25,7 @@ namespace FIFA.WebApi.Infrastructure.Slack.Processors
             _queryService = queryService;
         }
 
-        public override void Execute(SlackRequest request)
+        protected override void ExecuteRequest(SlackRequest request)
         {
             var summary = _queryService.GetWeeklySummary("leagues/417");
 

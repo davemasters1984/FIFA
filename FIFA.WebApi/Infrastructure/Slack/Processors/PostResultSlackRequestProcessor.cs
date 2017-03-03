@@ -1,5 +1,6 @@
 ﻿using FIFA.CommandServices.Interface;
 using FIFA.Model;
+using FIFA.QueryServices.Interface;
 using FIFA.WebApi.Models.Slack;
 using Raven.Client;
 using System;
@@ -10,11 +11,14 @@ namespace FIFA.WebApi.Infrastructure.Slack
     public class PostResultSlackRequestProcessor : SlackRequestProcessor
     {
         private string _homePlayerFace;
+        private string _homePlayerId;
         private int _homeGoals;
         private string _awayPlayerFace;
+        private string _awayPlayerId;
         private int _awayGoals;
         private IDocumentStore _documentStore;
         private ILeagueCommandService _leagueCommandService;
+        private IPlayerQueryService _playerQueryService;
 
         public override string CommandText
         {
@@ -25,18 +29,16 @@ namespace FIFA.WebApi.Infrastructure.Slack
         }
 
         public PostResultSlackRequestProcessor(IDocumentStore documentStore, 
+            IPlayerQueryService playerQueryService,
             ILeagueCommandService leagueCommandService)
         {
             _documentStore = documentStore;
             _leagueCommandService = leagueCommandService;
+            _playerQueryService = playerQueryService;
         }
 
-        public override void Execute(SlackRequest request)
+        protected override void ExecuteRequest(SlackRequest request)
         {
-            SetDataFromCommandText(request.text);
-
-            Player homePlayer;
-            Player awayPlayer;
             League league;
 
             using (var session = _documentStore.OpenSession())
@@ -44,21 +46,13 @@ namespace FIFA.WebApi.Infrastructure.Slack
                 league = session.Query<League>()
                     .OrderByDescending(l => l.CreatedDate)
                     .FirstOrDefault();
-
-                homePlayer = session.Query<Player>()
-                    .Where(p => p.Face == _homePlayerFace)
-                    .FirstOrDefault();
-
-                awayPlayer = session.Query<Player>()
-                    .Where(p => p.Face == _awayPlayerFace)
-                    .FirstOrDefault();
             }
 
             _leagueCommandService.PostResult(new PostResultCommand
             {
                 LeagueId = league.Id,
-                HomePlayerId = homePlayer.Id,
-                AwayPlayerId = awayPlayer.Id,
+                HomePlayerId = _homePlayerId,
+                AwayPlayerId = _awayPlayerId,
                 HomePlayerGoals = _homeGoals,
                 AwayPlayerGoals = _awayGoals,
             });
@@ -68,22 +62,43 @@ namespace FIFA.WebApi.Infrastructure.Slack
 
         private void SetDataFromCommandText(string commandText)
         {
-            //fifaleague result :dave: 1 - 0 :ash:
+            //result :dave: 1 - 0 :ash:
 
             string[] commandWords = commandText.Split();
 
-            if (commandText.Length < 6)
-                throw new Exception("Invalid Command");
+            if (commandWords.Length < 6)
+                throw new Exception(string.Format("Could not understand command: '{0}'. Results should be in the format 'result :face: 1 - 1 :face:'", commandText));
 
             _homePlayerFace = commandWords[1];
-            _homeGoals = int.Parse(commandWords[2]);
-            _awayGoals = int.Parse(commandWords[4]);
+                
+            if (!int.TryParse(commandWords[2], out _homeGoals))
+                throw new Exception(string.Format("Invalid home goals: '{0}'", commandWords[2]));
+
+            if (!int.TryParse(commandWords[4], out _awayGoals))
+                throw new Exception(string.Format("Invalid away goals: '{0}'", commandWords[4]));
+
             _awayPlayerFace = commandWords[5];
+        }
+
+        private void ResolvePlayerIds()
+        {
+            _homePlayerId = _playerQueryService.ResolvePlayerId(_homePlayerFace);
+            _awayPlayerId = _playerQueryService.ResolvePlayerId(_awayPlayerId);
         }
 
         public override ValidationResult ValidateRequest(SlackRequest request)
         {
-            return ValidationResult.ValidResult("`Adding result into league`");
+            try
+            {
+                SetDataFromCommandText(request.text);
+                ResolvePlayerIds();
+
+                return ValidationResult.ValidResult("`Adding result into league`");
+            }
+            catch (Exception ex)
+            {
+                return ValidationResult.InvalidResult(string.Format("`Unable to add result: {0}`", ex.Message));
+            }
         }
     }
 }

@@ -23,7 +23,7 @@ namespace FIFA.WebApi.Infrastructure.Slack.Processors
             _leagueQueryService = leagueQueryService;
         }
 
-        public override void Execute(SlackRequest request)
+        protected override void ExecuteRequest(SlackRequest request)
         {
             SetDataFromCommandText(request.text);
 

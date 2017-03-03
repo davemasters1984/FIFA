@@ -8,36 +8,42 @@ using FIFA.QueryServices.Interface;
 
 namespace FIFA.WebApi.Infrastructure.Slack.Processors
 {
-    public class GetPlayerComparisonHistorySlackRequestProcessor : SlackRequestProcessor
+    public class GetPlayerPositionChartSlackRequestProcessor : SlackRequestProcessor
     {
         private string _playerOneFace;
+        private string _playerOneId;
         private string _playerTwoFace;
+        private string _playerTwoId;
         private string _orginalRequestUrl;
         private ILeagueQueryService _queryService;
+        private IPlayerQueryService _playerQueryService;
+
         public override string CommandText
         {
             get
             {
-                return "compare";
+                return "chart";
             }
         }
 
-        public GetPlayerComparisonHistorySlackRequestProcessor(ILeagueQueryService queryService)
+        public GetPlayerPositionChartSlackRequestProcessor(ILeagueQueryService queryService,
+            IPlayerQueryService playerQueryService)
         {
             _queryService = queryService;
+            _playerQueryService = playerQueryService;
         }
 
-        public override void Execute(SlackRequest request)
+        protected override void ExecuteRequest(SlackRequest request)
         {
             var response = new SlackSlashResponse(string.Empty);
 
-            var data = _queryService.GetCurrentLeagueAndPlayerIds(_playerOneFace, _playerTwoFace);
+            var fullLeagueId = _queryService.GetCurrentLeagueId();
 
-            var playerOneId = GetIdWithoutPrefix("players/", data.PlayerOneId);
-            var playerTwoId = GetIdWithoutPrefix("players/", data.PlayerTwoId);
-            var leagueId = GetIdWithoutPrefix("leagues/", data.LeagueId);
+            var playerOneId = GetIdWithoutPrefix("players/", _playerOneId);
+            var playerTwoId = GetIdWithoutPrefix("players/", _playerTwoId);
+            var leagueId = GetIdWithoutPrefix("leagues/", fullLeagueId);
 
-            var graphUrl = string.Format("{0}/api/leagues/{1}/players/{2}/compare/{3}",
+            var graphUrl = string.Format("{0}/api/leagues/{1}/players/{2}/chart/{3}",
                 _orginalRequestUrl,
                 leagueId,
                 playerOneId,
@@ -60,16 +66,30 @@ namespace FIFA.WebApi.Infrastructure.Slack.Processors
         {
             _orginalRequestUrl = HttpContext.Current.Request.Url.GetLeftPart(UriPartial.Authority);
 
-            GetCommandData(request.text);
+            try
+            {
+                SetCommandData(request.text);
+                ResolvePlayerIds();
 
-            return ValidationResult.ValidResult("`Retreiving player position comparison chart`");
+                return ValidationResult.ValidResult("`Retreiving player position comparison chart`");
+            }
+            catch (Exception ex)
+            {
+                return ValidationResult.InvalidResult(string.Format("`Unable to add result: {0}`", ex.Message));
+            }
         }
 
-        private void GetCommandData(string commandText)
+        private void ResolvePlayerIds()
+        {
+            _playerOneId = _playerQueryService.ResolvePlayerId(_playerOneFace);
+            _playerTwoId = _playerQueryService.ResolvePlayerId(_playerTwoFace);
+        }
+
+        private void SetCommandData(string commandText)
         {
             string[] commandWords = commandText.Split();
 
-            if (commandText.Length < 3)
+            if (commandWords.Length < 3)
                 throw new Exception("Invalid Command");
 
             _playerOneFace = commandWords[1];
