@@ -18,6 +18,7 @@ using System;
 using FIFA.QueryServices.Interface;
 using System.Collections.Generic;
 using System.Drawing.Drawing2D;
+using FIFA.WebApi.Infrastructure.Charting;
 
 namespace FIFA.WebApi.Controllers
 {
@@ -158,23 +159,20 @@ namespace FIFA.WebApi.Controllers
             var positionHistory = 
                 _leagueQueryService.GetPostionHistoryForPlayers(translatedLeagueId, translatedIds);
 
-            using (var img = Image.FromFile(HttpContext.Current.Server.MapPath("~/App_Data/graph.png")))
-            using (var graphics = Graphics.FromImage(img))
+            using (var img = Image.FromFile(HttpContext.Current.Server.MapPath("~/App_Data/Blank-Chart.png")))
+            using (var graphics = CreateGraphicsFromImage(img))
             {
-                graphics.SmoothingMode = SmoothingMode.HighQuality;
-                graphics.InterpolationMode = InterpolationMode.HighQualityBicubic;
-                graphics.PixelOffsetMode = PixelOffsetMode.HighQuality;
-
                 var dates = GetDistinctDatesFromPlayerHistory(positionHistory);
                 var linePlotters = GetPlottersForPlayerHistories(graphics, positionHistory);
 
-                var datesDrawer = new DateAxisDrawer(graphics, Color.White, dates);
-                var positionAxisDrawer = new PositionAxisDrawer(graphics, Color.White, 18);
+                var datesDrawer = new DateAxisDrawer(graphics, Color.Black, dates);
+                var positionAxisDrawer = new PositionAxisDrawer(graphics, Color.Black, 18);
+
+                datesDrawer.Draw();
+                positionAxisDrawer.DrawAxis();
 
                 foreach (var linePlotter in linePlotters)
                     linePlotter.Plot();
-
-                datesDrawer.Draw();
 
                 using (var stream = new MemoryStream())
                 {
@@ -186,6 +184,17 @@ namespace FIFA.WebApi.Controllers
                     return result;
                 }
             }
+        }
+
+        private Graphics CreateGraphicsFromImage(Image image)
+        {
+            var graphics = Graphics.FromImage(image);
+
+            graphics.SmoothingMode = SmoothingMode.HighQuality;
+            graphics.InterpolationMode = InterpolationMode.HighQualityBicubic;
+            graphics.PixelOffsetMode = PixelOffsetMode.HighQuality;
+
+            return graphics;
         }
 
         private Color GetRandomColour(Random random)
@@ -282,157 +291,11 @@ namespace FIFA.WebApi.Controllers
             }
         }
 
-        private class PositionAxisDrawer
-        {
-            private int _positions;
-            private double _yAxisIncrementAmount;
-            private Graphics _graphics;
-            private Color _color;
-            private Point _currentPointLeft = new Point(21, 479);
-            private Point _currentPointRight = new Point(26, 479);
 
-            public PositionAxisDrawer(Graphics graphics, Color color, int positions)
-            {
-                _graphics = graphics;
-                _color = color;
-                _positions = positions;
-                _yAxisIncrementAmount = 479 / positions;
-            }
 
-            public void DrawAxis()
-            {
-                for (int i = 1; i < _positions; i++)
-                    DrawerNotch();
-            }
 
-            private void DrawerNotch()
-            {
-                _graphics.DrawLine(new Pen(_color, 4), _currentPointLeft, _currentPointRight);
 
-                _currentPointLeft = new Point(_currentPointLeft.X, _currentPointLeft.Y - (int)_yAxisIncrementAmount);
-                _currentPointRight = new Point(_currentPointRight.X, _currentPointRight.Y - (int)_yAxisIncrementAmount);
-            }
-            
 
-        }
-
-        private class DateAxisDrawer
-        {
-            private List<DateTime> _dates;
-            private Graphics _graphics;
-            private Color _color;
-            private double _xAxisIncrementAmount;
-            private StringFormat _drawFormat = new StringFormat();
-            private Point _currentPoint = new Point(21, 425);
-            private bool _isFirst = true;
-
-            public DateAxisDrawer(Graphics graphics, Color color, IEnumerable<DateTime> dates)
-            {
-                _graphics = graphics;
-                _color = color;
-                _dates = dates.ToList();
-                _drawFormat.FormatFlags = StringFormatFlags.DirectionVertical;
-                _xAxisIncrementAmount = 379 / dates.Count();
-            }
-
-            public void Draw()
-            {
-                foreach(var date in _dates)
-                    RenderDate(date);
-            }
-
-            private void RenderDate(DateTime date)
-            {
-                if (!_isFirst)
-                {
-                    _graphics.DrawString(date.ToString("dd MMM"),
-                        new Font(FontFamily.Families.Where(f => f.Name.ToLower().Contains("arial")).First(), 10),
-                        new Pen(_color, 3).Brush,
-                        new PointF(_currentPoint.X - 10, _currentPoint.Y + 5),
-                        _drawFormat
-                    );
-                }
-
-                _currentPoint = new Point(_currentPoint.X + (int)_xAxisIncrementAmount, _currentPoint.Y);
-                _isFirst = false;
-            }
-        }
-
-        private class LinePlotter
-        {
-            private string _playerName;
-            private List<PlayerPosition> _positions;
-            private readonly double _xAxisIncrementAmount;
-            private readonly double _yAxisIncrementAmount;
-            private Point _currentPoint = new Point(21, 479);
-            private Graphics _graphics;
-            private bool _isFirstResult = true;
-            private Color _color;
-
-            public LinePlotter(Graphics graphics, Color color, string playerName, IEnumerable<PlayerPosition> positions)
-            {
-                _positions = positions.ToList();
-                _playerName = playerName;
-                _graphics = graphics;
-                _color = color;
-
-                _xAxisIncrementAmount = 379 / positions.Count();
-                _yAxisIncrementAmount = 479 / 18;
-            }
-
-            public void Plot()
-            {
-                foreach(var position in _positions)
-                    PlotNext(position);
-
-                RenderPlayerName();
-            }
-
-            private void PlotNext(PlayerPosition position)
-            {
-                var newYPosition = _yAxisIncrementAmount * position.Position;
-
-                var newXPosition = (_isFirstResult) 
-                    ? _currentPoint.X 
-                    : _currentPoint.X + _xAxisIncrementAmount;
-
-                var newPoint = new Point((int)newXPosition, (int)newYPosition);
-
-                if (!_isFirstResult)
-                {
-                    DrawLine(_currentPoint, newPoint);
-                }
-
-                _currentPoint = newPoint;
-                _isFirstResult = false;
-            }
-
-            private void RenderPositionNumber(PlayerPosition position)
-            {
-                if (position != _positions[_positions.Count - 1])
-                    return;
-
-                _graphics.DrawString(position.Position.ToString(),
-                    new Font(FontFamily.Families.Where(f => f.Name.ToLower().Contains("arial")).First(), 10),
-                    new Pen(_color, 3).Brush,
-                    new PointF(_currentPoint.X - 10, _currentPoint.Y + 5)
-                );
-            }
-
-            private void RenderPlayerName()
-            {
-                _graphics.DrawString(_playerName,
-                    new Font(FontFamily.Families.Where(f => f.Name.ToLower().Contains("arial")).First(), 10),
-                    new Pen(_color, 3).Brush,
-                    new PointF(_currentPoint.X - 10, _currentPoint.Y + 5)
-                );
-            }
-
-            private void DrawLine(Point startPoint, Point endPoint)
-            {
-                _graphics.DrawLine(new Pen(_color, 4), startPoint, endPoint);
-            }
-        }
     }
 
     
