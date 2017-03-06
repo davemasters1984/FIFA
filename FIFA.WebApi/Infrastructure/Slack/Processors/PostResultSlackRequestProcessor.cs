@@ -83,7 +83,7 @@ namespace FIFA.WebApi.Infrastructure.Slack
         private void ResolvePlayerIds()
         {
             _homePlayerId = _playerQueryService.ResolvePlayerId(_homePlayerFace);
-            _awayPlayerId = _playerQueryService.ResolvePlayerId(_awayPlayerId);
+            _awayPlayerId = _playerQueryService.ResolvePlayerId(_awayPlayerFace);
         }
 
         public override ValidationResult ValidateRequest(SlackRequest request)
