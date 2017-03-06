@@ -21,6 +21,8 @@ namespace FIFA.QueryServices.Interface
 
         IEnumerable<FormTableRow> GetFormTable(string leagueId);
 
+        IEnumerable<PlayerPositionHistory> GetPostionHistoryForPlayers(string leagueId, IEnumerable<string> playerIds);
+
         PlayerPositionHistoryComparison GetPlayerPositionHistoryComparisonForCurrentLeague(string playerOneId, string playerTwoId);
 
         CurrentLeagueAndPlayerIds GetCurrentLeagueAndPlayerIds(string playerFaceOne, string playerFaceTwo);

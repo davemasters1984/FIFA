@@ -149,6 +149,88 @@ namespace FIFA.WebApi.Controllers
             return Ok("Result posted successfully");
         }
 
+        [Route("{leagueId:int}/position-history/{playerIds}")]
+        public HttpResponseMessage GetPlayerPostitionHistoryChart(int leagueId, string playerIds)
+        {
+            var translatedIds = GetTranslatedPlayerIds(playerIds);
+            var translatedLeagueId = TranslateId<League>(leagueId);
+
+            var positionHistory = 
+                _leagueQueryService.GetPostionHistoryForPlayers(translatedLeagueId, translatedIds);
+
+            using (var img = Image.FromFile(HttpContext.Current.Server.MapPath("~/App_Data/graph.png")))
+            using (var graphics = Graphics.FromImage(img))
+            {
+                graphics.SmoothingMode = SmoothingMode.HighQuality;
+                graphics.InterpolationMode = InterpolationMode.HighQualityBicubic;
+                graphics.PixelOffsetMode = PixelOffsetMode.HighQuality;
+
+                var dates = GetDistinctDatesFromPlayerHistory(positionHistory);
+                var linePlotters = GetPlottersForPlayerHistories(graphics, positionHistory);
+
+                var datesDrawer = new DateAxisDrawer(graphics, Color.White, dates);
+                var positionAxisDrawer = new PositionAxisDrawer(graphics, Color.White, 18);
+
+                foreach (var linePlotter in linePlotters)
+                    linePlotter.Plot();
+
+                datesDrawer.Draw();
+
+                using (var stream = new MemoryStream())
+                {
+                    img.Save(stream, ImageFormat.Png);
+
+                    HttpResponseMessage result = new HttpResponseMessage(HttpStatusCode.OK);
+                    result.Content = new ByteArrayContent(stream.ToArray());
+                    result.Content.Headers.ContentType = new MediaTypeHeaderValue("image/png");
+                    return result;
+                }
+            }
+        }
+
+        private Color GetRandomColour(Random random)
+        {
+            return Color.FromArgb(random.Next(256), random.Next(256), random.Next(256));
+        }
+
+        private IEnumerable<DateTime> GetDistinctDatesFromPlayerHistory(IEnumerable<PlayerPositionHistory> history)
+        {
+            return history
+                .SelectMany(x => x.History.Select(h => h.Date))
+                .Distinct()
+                .OrderBy(d => d)
+                .ToList();
+        }
+
+        private IEnumerable<LinePlotter> GetPlottersForPlayerHistories(Graphics graphics, IEnumerable<PlayerPositionHistory> history)
+        {
+            var plotters = new List<LinePlotter>();
+            var random = new Random();
+
+            foreach(var playerHistory in history)
+            {
+                var colour = GetRandomColour(random);
+                var plotter = new LinePlotter(graphics, colour, playerHistory.PlayerName, playerHistory.History);
+
+                plotters.Add(plotter);
+            }
+
+            return plotters;
+
+        }
+
+        private IEnumerable<string> GetTranslatedPlayerIds(string playerIds)
+        {
+            var playerIdsWithoutPrefix = playerIds.Split(',');
+
+            var translatedIds = new List<string>();
+
+            foreach (var id in playerIdsWithoutPrefix)
+                translatedIds.Add(TranslateId<Player>(id));
+
+            return translatedIds;
+        }
+
         [Route("{leagueId:int}/players/{playerOneId:int}/chart/{playerTwoId:int}")]
         public HttpResponseMessage GetPlayersGraph(int leagueId, int playerOneId, int playerTwoId)
         {

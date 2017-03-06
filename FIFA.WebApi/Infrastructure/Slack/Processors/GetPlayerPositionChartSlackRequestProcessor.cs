@@ -10,20 +10,15 @@ namespace FIFA.WebApi.Infrastructure.Slack.Processors
 {
     public class GetPlayerPositionChartSlackRequestProcessor : SlackRequestProcessor
     {
-        private string _playerOneFace;
-        private string _playerOneId;
-        private string _playerTwoFace;
-        private string _playerTwoId;
+        private List<string> _playerFaces;
+        private List<string> _playerIds;
         private string _orginalRequestUrl;
         private ILeagueQueryService _queryService;
         private IPlayerQueryService _playerQueryService;
 
         public override string CommandText
         {
-            get
-            {
-                return "chart";
-            }
+            get { return "chart"; }
         }
 
         public GetPlayerPositionChartSlackRequestProcessor(ILeagueQueryService queryService,
@@ -39,15 +34,12 @@ namespace FIFA.WebApi.Infrastructure.Slack.Processors
 
             var fullLeagueId = _queryService.GetCurrentLeagueId();
 
-            var playerOneId = GetIdWithoutPrefix("players/", _playerOneId);
-            var playerTwoId = GetIdWithoutPrefix("players/", _playerTwoId);
             var leagueId = GetIdWithoutPrefix("leagues/", fullLeagueId);
 
-            var graphUrl = string.Format("{0}/api/leagues/{1}/players/{2}/chart/{3}",
+            var graphUrl = string.Format("{0}/api/leagues/{1}/position-history/{2}",
                 _orginalRequestUrl,
                 leagueId,
-                playerOneId,
-                playerTwoId);
+                string.Join(",", _playerIds));
 
             response.Attachments.Add(new SlackAttachment("Player Position History", "")
             {
@@ -81,20 +73,27 @@ namespace FIFA.WebApi.Infrastructure.Slack.Processors
 
         private void ResolvePlayerIds()
         {
-            _playerOneId = _playerQueryService.ResolvePlayerId(_playerOneFace);
-            _playerTwoId = _playerQueryService.ResolvePlayerId(_playerTwoFace);
+            _playerIds = new List<string>();
+
+            foreach(var face in _playerFaces)
+            {
+                var id = _playerQueryService.ResolvePlayerId(face);
+                
+                _playerIds.Add(GetIdWithoutPrefix("players/", id));
+            }
         }
 
         private void SetCommandData(string commandText)
         {
             string[] commandWords = commandText.Split();
 
-            if (commandWords.Length < 3)
+            if (commandWords.Length < 2)
                 throw new Exception("Invalid Command");
 
-            _playerOneFace = commandWords[1];
-            _playerTwoFace = commandWords[2];
-            
+            _playerFaces = new List<string>();
+
+            foreach (string face in commandWords.Skip(1))
+                _playerFaces.Add(face);           
         }
     }
 }

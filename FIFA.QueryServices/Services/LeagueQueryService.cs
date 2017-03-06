@@ -12,10 +12,12 @@ namespace FIFA.QueryServices.Services
     public class LeagueQueryService : ILeagueQueryService
     {
         private IDocumentStore _documentStore;
+        private IPlayerQueryService _playerQueryService;
 
-        public LeagueQueryService(IDocumentStore documentStore)
+        public LeagueQueryService(IDocumentStore documentStore, IPlayerQueryService playerQueryService)
         {
             _documentStore = documentStore;
+            _playerQueryService = playerQueryService;
         }
 
         #region Public Methods
@@ -110,6 +112,26 @@ namespace FIFA.QueryServices.Services
             }
         }
 
+        public IEnumerable<PlayerPositionHistory> GetPostionHistoryForPlayers(string leagueId, IEnumerable<string> playerIds)
+        {
+            var history = new List<PlayerPositionHistory>();
+
+            using (var session = _documentStore.OpenSession())
+            {
+                var snapshots = session.Query<LeagueTableSnapshot>()
+                    .Where(s => s.LeagueId == leagueId)
+                    .ToList();
+
+                if (!snapshots.Any())
+                    return Enumerable.Empty<PlayerPositionHistory>();
+
+                foreach (var playerId in playerIds)
+                    history.Add(GetPlayerPositionHistory(snapshots, playerId, session));
+
+                return history;
+            }
+        }
+
         public PlayerPositionHistoryComparison GetPlayerPositionHistoryComparisonForCurrentLeague(string playerOneId, string playerTwoId)
         {
             using (var session = _documentStore.OpenSession())
@@ -157,6 +179,26 @@ namespace FIFA.QueryServices.Services
         #endregion
 
         #region Private Methods 
+
+        private PlayerPositionHistory GetPlayerPositionHistory(IEnumerable<LeagueTableSnapshot> snapshots, string playerId, IDocumentSession session)
+        {
+            var player = session.Load<Player>(playerId);
+
+            return new PlayerPositionHistory
+            {
+                PlayerId = playerId,
+                PlayerFace = player.Face,
+                PlayerName = player.Name,
+                History = snapshots.Select(r => new PlayerPosition
+                {
+                    Date = r.SnapshotDate,
+                    Position = r.Rows.Where(x => x.PlayerId == playerId)
+                        .Select(x => x.Position)
+                        .FirstOrDefault()
+                })
+                .ToList()
+            };
+        }
 
         private string GetCurrentLeagueId(IDocumentSession session)
         {

@@ -48,6 +48,7 @@
     <Compile Include="Models\FixtureSummary.cs" />
     <Compile Include="Models\FormTableRow.cs" />
     <Compile Include="Models\LeagueTableRow.cs" />
+    <Compile Include="Models\PlayerPositionHistory.cs" />
     <Compile Include="Models\PlayerPositionHistoryComparison.cs" />
     <Compile Include="Models\LeagueStatisticsForPeriod.cs" />
     <Compile Include="Models\PlayerStatisticsSummary.cs" />
