@@ -17,15 +17,15 @@ namespace FIFA.QueryServices.Services
             _documentStore = documentStore;
         }
 
-        public void GenerateStatisticsForPeriod(GenerateStatisticsForPeriodArgs args)
+        public LeagueStatisticsForPeriod GenerateStatisticsForPeriod(GenerateStatisticsForPeriodArgs args)
         {
             using (var session = _documentStore.OpenSession())
             {
-                var oneWeekAgo = DateTime.Now.Date.AddDays(-7);
+                DeletePreviousStatsForSamePeriod(session, args);
 
                 var allResultsForPastWeek = session.Query<ResultSummary, ResultsIndex>()
                     .Where(r => r.LeagueId == args.LeagueId)
-                    .Where(r => r.Date > oneWeekAgo)
+                    .Where(r => r.Date > args.PeriodStart && r.Date <= args.PeriodEnd)
                     .ToList();
                 
                 var homePlayerStats = allResultsForPastWeek
@@ -87,7 +87,21 @@ namespace FIFA.QueryServices.Services
 
                 session.Store(leagueStats);
                 session.SaveChanges();
+
+                return leagueStats;
             }
+        }
+
+        private void DeletePreviousStatsForSamePeriod(IDocumentSession session, GenerateStatisticsForPeriodArgs args)
+        {
+            var leagueStats = session.Query<LeagueStatisticsForPeriod>()
+                .Where(l => l.LeagueId == args.LeagueId)
+                .Where(l => l.PeriodStart == args.PeriodStart)
+                .Where(l => l.PeriodStart == args.PeriodEnd)
+                .ToList();
+
+            foreach (var stats in leagueStats)
+                session.Delete(stats);
         }
 
         public StatisticSummary GetWeeklySummary(string leagueId)
@@ -98,65 +112,66 @@ namespace FIFA.QueryServices.Services
                     .Select(p => new { p.Id, p.Face, p.Name })
                     .ToList();
 
-                var latestWeeklyStatistic = session.Query<LeagueStatisticsForPeriod>()
-                    .Where(s => s.Days == 7)
-                    .Where(s => s.LeagueId == leagueId)
-                    .OrderByDescending(s => s.PeriodEnd)
-                    .FirstOrDefault();
+                var latestWeeklyStatistics = GenerateStatisticsForPeriod(new GenerateStatisticsForPeriodArgs
+                {
+                    LeagueId = leagueId,
+                    PeriodStart = DateTime.Now.Date.AddDays(-7),
+                    PeriodEnd = DateTime.Now.Date
+                });
 
                 var weeklySummary = new StatisticSummary
                 {
-                    LeagueId = latestWeeklyStatistic.LeagueId,
-                    PeriodStart = latestWeeklyStatistic.PeriodStart,
-                    PeriodEnd = latestWeeklyStatistic.PeriodEnd
+                    LeagueId = latestWeeklyStatistics.LeagueId,
+                    PeriodStart = latestWeeklyStatistics.PeriodStart,
+                    PeriodEnd = latestWeeklyStatistics.PeriodEnd
                 };
 
-                weeklySummary.PlayerWithMostGoals = latestWeeklyStatistic.PlayerStatistics
+                weeklySummary.PlayerWithMostGoals = latestWeeklyStatistics.PlayerStatistics
                     .OrderByDescending(r => r.GoalsScored)
                     .Select(r => new PlayerStatistic { PlayerId = r.PlayerId, KeyStat = r.GoalsScored, GamesPlayed = r.GamesPlayed, Face = playerNames.Where(p => p.Id == r.PlayerId).Select(p => p.Face).FirstOrDefault() })
                     .FirstOrDefault();
 
-                weeklySummary.PlayerWithMostGoalsConceded = latestWeeklyStatistic.PlayerStatistics
+                weeklySummary.PlayerWithMostGoalsConceded = latestWeeklyStatistics.PlayerStatistics
                     .OrderByDescending(r => r.GoalsConceded)
                     .Select(r => new PlayerStatistic { PlayerId = r.PlayerId, KeyStat = r.GoalsConceded, GamesPlayed = r.GamesPlayed, Face = playerNames.Where(p => p.Id == r.PlayerId).Select(p => p.Face).FirstOrDefault() })
                     .FirstOrDefault();
 
-                weeklySummary.PlayerWithMostGamesPlayed = latestWeeklyStatistic.PlayerStatistics
+                weeklySummary.PlayerWithMostGamesPlayed = latestWeeklyStatistics.PlayerStatistics
                     .OrderByDescending(r => r.GamesPlayed)
                     .Select(r => new PlayerStatistic { PlayerId = r.PlayerId, GamesPlayed = r.GamesPlayed, Face = playerNames.Where(p => p.Id == r.PlayerId).Select(p => p.Face).FirstOrDefault() })
                     .FirstOrDefault();
 
-                weeklySummary.PlayerWithMostPoints = latestWeeklyStatistic.PlayerStatistics
+                weeklySummary.PlayerWithMostPoints = latestWeeklyStatistics.PlayerStatistics
                     .OrderByDescending(r => r.Points)
                     .Select(r => new PlayerStatistic { PlayerId = r.PlayerId, KeyStat = r.Points, GamesPlayed = r.GamesPlayed, Face = playerNames.Where(p => p.Id == r.PlayerId).Select(p => p.Face).FirstOrDefault() })
                     .FirstOrDefault();
 
-                weeklySummary.PlayerWithLeastPoints = latestWeeklyStatistic.PlayerStatistics
+                weeklySummary.PlayerWithLeastPoints = latestWeeklyStatistics.PlayerStatistics
                     .OrderBy(r => r.Points)
                     .Select(r => new PlayerStatistic { PlayerId = r.PlayerId, KeyStat = r.Points, GamesPlayed = r.GamesPlayed, Face = playerNames.Where(p => p.Id == r.PlayerId).Select(p => p.Face).FirstOrDefault() })
                     .FirstOrDefault();
 
-                weeklySummary.PlayerWithLeastGamesPlayed = latestWeeklyStatistic.PlayerStatistics
+                weeklySummary.PlayerWithLeastGamesPlayed = latestWeeklyStatistics.PlayerStatistics
                     .OrderBy(r => r.GamesPlayed)
                     .Select(r => new PlayerStatistic { PlayerId = r.PlayerId, KeyStat = r.GamesPlayed, GamesPlayed = r.GamesPlayed, Face = playerNames.Where(p => p.Id == r.PlayerId).Select(p => p.Face).FirstOrDefault() })
                     .FirstOrDefault();
 
-                weeklySummary.PlayerWithBestAttack = latestWeeklyStatistic.PlayerStatistics
+                weeklySummary.PlayerWithBestAttack = latestWeeklyStatistics.PlayerStatistics
                     .OrderByDescending(r => r.GoalsScored / r.GamesPlayed)
                     .Select(r => new PlayerStatistic { PlayerId = r.PlayerId, KeyStat = ((double)r.GoalsScored / (double)r.GamesPlayed), GamesPlayed = r.GamesPlayed, Face = playerNames.Where(p => p.Id == r.PlayerId).Select(p => p.Face).FirstOrDefault() })
                     .FirstOrDefault();
 
-                weeklySummary.PlayerWithWorstAttack = latestWeeklyStatistic.PlayerStatistics
+                weeklySummary.PlayerWithWorstAttack = latestWeeklyStatistics.PlayerStatistics
                     .OrderBy(r => r.GoalsScored / r.GamesPlayed)
                     .Select(r => new PlayerStatistic { PlayerId = r.PlayerId, KeyStat = ((double)r.GoalsScored / (double)r.GamesPlayed), GamesPlayed = r.GamesPlayed, Face = playerNames.Where(p => p.Id == r.PlayerId).Select(p => p.Face).FirstOrDefault() })
                     .FirstOrDefault();
 
-                weeklySummary.PlayerWithBestDefence = latestWeeklyStatistic.PlayerStatistics
+                weeklySummary.PlayerWithBestDefence = latestWeeklyStatistics.PlayerStatistics
                     .OrderBy(r => r.GoalsConceded / r.GamesPlayed)
                     .Select(r => new PlayerStatistic { PlayerId = r.PlayerId, KeyStat = ((double)r.GoalsConceded / (double)r.GamesPlayed), GamesPlayed = r.GamesPlayed, Face = playerNames.Where(p => p.Id == r.PlayerId).Select(p => p.Face).FirstOrDefault() })
                     .FirstOrDefault();
 
-                weeklySummary.PlayerWithWorstDefence = latestWeeklyStatistic.PlayerStatistics
+                weeklySummary.PlayerWithWorstDefence = latestWeeklyStatistics.PlayerStatistics
                     .OrderByDescending(r => r.GoalsConceded / r.GamesPlayed)
                     .Select(r => new PlayerStatistic { PlayerId = r.PlayerId, KeyStat = ((double)r.GoalsConceded / (double)r.GamesPlayed), GamesPlayed = r.GamesPlayed, Face = playerNames.Where(p => p.Id == r.PlayerId).Select(p => p.Face).FirstOrDefault() })
                     .FirstOrDefault();
