@@ -23,9 +23,12 @@ namespace FIFA.QueryServices.Services
             {
                 DeletePreviousStatsForSamePeriod(session, args);
 
+                DateTime adjustedPeriodEnd = args.PeriodEnd.AddDays(1).AddMinutes(-1);
+
                 var allResultsForPastWeek = session.Query<ResultSummary, ResultsIndex>()
                     .Where(r => r.LeagueId == args.LeagueId)
-                    .Where(r => r.Date > args.PeriodStart && r.Date <= args.PeriodEnd)
+                    .Where(r => r.Date > args.PeriodStart && r.Date < adjustedPeriodEnd)
+                    .OrderByDescending(r => r.Date)
                     .ToList();
                 
                 var homePlayerStats = allResultsForPastWeek

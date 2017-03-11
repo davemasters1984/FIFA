@@ -1,6 +1,7 @@
 ﻿using FIFA.QueryServices.Interface;
 using FIFA.WebApi.Models.Slack;
 using System;
+using System.Linq;
 using System.Text;
 
 namespace FIFA.WebApi.Infrastructure.Slack.Processors
@@ -33,12 +34,13 @@ namespace FIFA.WebApi.Infrastructure.Slack.Processors
 
             var responseString = new StringBuilder();
 
-            foreach (var result in results)
-                responseString.AppendFormat("\n{0} {1} *vs* {2} {3}",
+            foreach (var result in results.OrderBy(r => r.Date))
+                responseString.AppendFormat("\n{0} {1} *vs* {2} {3} `[{4}]`",
                     result.HomePlayerFace,
                     result.HomePlayerGoals,
                     result.AwayPlayerGoals,
-                    result.AwayPlayerFace);
+                    result.AwayPlayerFace,
+                    result.Date.ToString("dd MMM"));
 
             SendResponse(request.response_url, responseString.ToString());
         }
