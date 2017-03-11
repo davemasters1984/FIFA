@@ -54,6 +54,7 @@
     <Compile Include="Models\PlayerStatisticsSummary.cs" />
     <Compile Include="Models\ResultSummary.cs" />
     <Compile Include="Models\StatisticSummary.cs" />
+    <Compile Include="Models\TopGoalScorers.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

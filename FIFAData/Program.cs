@@ -75,14 +75,14 @@ namespace FIFAData
 
         private static void TestIndexWait()
         {
-            var leagueQueryService = new LeagueQueryService(_documentStore);
+            var leagueQueryService = new LeagueQueryService(_documentStore, new PlayerQueryService(_documentStore));
 
             var league = leagueQueryService.GetLeagueTableWaitForIndex("leagues/417");
         }
 
         private static void TakeSnapshot()
         {
-            var leagueQueryService = new LeagueQueryService(_documentStore);
+            var leagueQueryService = new LeagueQueryService(_documentStore, new PlayerQueryService(_documentStore));
 
             var currentLeagueId = leagueQueryService.GetCurrentLeagueId();
             var currentLeague = leagueQueryService.GetLeagueTableWaitForIndex(currentLeagueId);

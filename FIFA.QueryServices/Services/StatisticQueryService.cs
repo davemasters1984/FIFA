@@ -107,6 +107,65 @@ namespace FIFA.QueryServices.Services
                 session.Delete(stats);
         }
 
+        public TopGoalScorers GetCurrentTopGoalScorersForLeague(string leagueId)
+        {
+            using (var session = _documentStore.OpenSession())
+            {
+                var allResults = session.Query<ResultSummary, ResultsIndex>()
+                    .Where(r => r.LeagueId == leagueId)
+                    .OrderByDescending(r => r.Date)
+                    .ToList();
+
+                var playerNames = session.Query<Player>()
+                    .Select(p => new { p.Id, p.Face, p.Name })
+                    .ToList();
+
+                var homeGoals = allResults
+                    .GroupBy(r => r.HomePlayerId, r => new
+                    {
+                        GoalsScored = r.HomePlayerGoals,
+                    },
+                    (key, group) => new PlayerWithGoalsScored
+                    {
+                        PlayerId = key,
+                        GoalsScored = group.Sum(g => g.GoalsScored),
+                    })
+                    .ToList();
+
+                var awayGoals = allResults
+                    .GroupBy(r => r.AwayPlayerId, r => new
+                    {
+                        GoalsScored = r.AwayPlayerGoals,
+                    },
+                    (key, group) => new PlayerWithGoalsScored
+                    {
+                        PlayerId = key,
+                        GoalsScored = group.Sum(g => g.GoalsScored),
+                    })
+                    .ToList();
+
+                var allPlayerGoals = homeGoals.Union(awayGoals)
+                    .GroupBy(r => r.PlayerId, r => new
+                    {
+                        GoalsScored = r.GoalsScored,
+                    },
+                    (key, group) => new PlayerWithGoalsScored
+                    {
+                        PlayerId = key,
+                        GoalsScored = group.Sum(g => g.GoalsScored),
+                        Face = playerNames.Where(p => p.Id == key).Select(p => p.Face).FirstOrDefault()
+                    })
+                    .OrderByDescending(p => p.GoalsScored)
+                    .ToList();
+
+                return new TopGoalScorers
+                {
+                    LeagueId = leagueId,
+                    Players = allPlayerGoals
+                };
+            }
+        }
+
         public StatisticSummary GetWeeklySummary(string leagueId)
         {
             using (var session = _documentStore.OpenSession())

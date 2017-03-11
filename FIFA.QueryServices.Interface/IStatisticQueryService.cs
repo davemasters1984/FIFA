@@ -11,6 +11,8 @@ namespace FIFA.QueryServices.Interface
     {
         LeagueStatisticsForPeriod GenerateStatisticsForPeriod (GenerateStatisticsForPeriodArgs args);
 
+        TopGoalScorers GetCurrentTopGoalScorersForLeague(string leagueId);
+
         StatisticSummary GetWeeklySummary(string leagueId);
     }
 }
