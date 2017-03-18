@@ -14,5 +14,7 @@ namespace FIFA.QueryServices.Interface
         TopGoalScorers GetCurrentTopGoalScorersForLeague(string leagueId);
 
         StatisticSummary GetWeeklySummary(string leagueId);
+
+        IEnumerable<PredictedLeagueTableRow> GetPredictedTable(string leagueId);
     }
 }

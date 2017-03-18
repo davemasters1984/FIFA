@@ -5,6 +5,7 @@ using FIFA.QueryServices.Interface.Models;
 using Raven.Client;
 using System;
 using System.Linq;
+using System.Collections.Generic;
 
 namespace FIFA.QueryServices.Services
 {
@@ -239,6 +240,45 @@ namespace FIFA.QueryServices.Services
                     .FirstOrDefault();
 
                 return weeklySummary;
+            }
+        }
+
+        public IEnumerable<PredictedLeagueTableRow> GetPredictedTable(string leagueId)
+        {
+            using (var session = _documentStore.OpenSession())
+            {
+                var leagueTableQuery
+                    = session.Query<LeagueTableRow, LeagueTableIndex>();
+
+                var orderedleagueTable = leagueTableQuery
+                        .Where(l => l.LeagueId == leagueId)
+                        .OrderByDescending(l => l.Points)
+                        .ThenByDescending(l => l.GoalDifference)
+                        .ThenByDescending(l => l.GoalsFor)
+                        .ToList();
+
+                var predictedTable = new List<PredictedLeagueTableRow>();
+                var numberOfGamesToPlay = (orderedleagueTable.Count * 2) - 2;
+
+                foreach(var player in orderedleagueTable)
+                {
+                    var gamesRemaining = numberOfGamesToPlay - player.GamesPlayed;
+                    decimal averagePointsPerGame = (decimal)player.Points / (decimal)player.GamesPlayed;
+
+                    predictedTable.Add(new PredictedLeagueTableRow
+                    {
+                        LeagueId = player.LeagueId,
+                        PlayerFace = player.PlayerFace,
+                        PlayerId = player.PlayerId,
+                        PlayerName = player.PlayerName,
+                        Points = player.Points + (int)Math.Floor(averagePointsPerGame * gamesRemaining),
+                        TeamBadge = player.TeamBadge,
+                        TeamId = player.TeamId,
+                        TeamName = player.TeamName
+                    });
+                }
+
+                return predictedTable.OrderByDescending(p => p.Points);
             }
         }
     }

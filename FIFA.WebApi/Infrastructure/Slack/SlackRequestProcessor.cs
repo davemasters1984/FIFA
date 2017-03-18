@@ -49,5 +49,16 @@ namespace FIFA.WebApi.Infrastructure.Slack
 
             content.ToString();
         }
+
+        protected string GetFormattedNumberString(int number)
+        {
+            if (number < 0)
+                return string.Format("{0}", number);
+
+            if (number < 10)
+                return string.Format("{0}  ", number);
+
+            return string.Format("{0}", number);
+        }
     }
 }

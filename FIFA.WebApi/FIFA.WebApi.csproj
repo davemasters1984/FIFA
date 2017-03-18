@@ -176,6 +176,7 @@
     <Compile Include="Infrastructure\Slack\ISlackRequestProcessor.cs" />
     <Compile Include="Infrastructure\Slack\ISlackRequestService.cs" />
     <Compile Include="Infrastructure\Slack\Processors\GetPlayerPositionChartSlackRequestProcessor.cs" />
+    <Compile Include="Infrastructure\Slack\Processors\GetPredictedLeagueTableSlackRequestProcessor.cs" />
     <Compile Include="Infrastructure\Slack\Processors\GetResultsSlackRequestProcessor.cs" />
     <Compile Include="Infrastructure\Slack\Processors\GetTopGoalScorersSlackProcessors.cs" />
     <Compile Include="Infrastructure\Slack\Processors\GetWeeklySummarySlackRequestProcessor.cs" />

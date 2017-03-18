@@ -1,6 +1,7 @@
 ﻿using FIFA.QueryServices.Interface;
 using FIFA.WebApi.Models.Slack;
 using System;
+using System.Linq;
 using System.Text;
 
 namespace FIFA.WebApi.Infrastructure.Slack
@@ -27,11 +28,16 @@ namespace FIFA.WebApi.Infrastructure.Slack
             var leagueTable = _queryService.GetCurrentLeagueTable();
 
             var response = new StringBuilder();
-            int i = 1;
+            int currentPosition = 0;
+            int relegationPosition = leagueTable.Count();
+            int relegationPlayOffPosition = leagueTable.Count() - 2;
+            var relegationIcon = ":skull:";
+            var relegationPlayOffIcon = ":scream:";
 
             foreach (var row in leagueTable)
             {
-                var positionString = GetFormattedNumberString(i++);
+                currentPosition++;
+                var positionString = GetFormattedNumberString(currentPosition);
                 var positionChangeIcon = GetPositionChangeIcon(row.PositionChange);
                 var positionChangeNumber = GetPositionChangeNumber(row.PositionChange);
 
@@ -42,7 +48,16 @@ namespace FIFA.WebApi.Infrastructure.Slack
                 var goalDifferenceString = GetGoalDifferenceNumberString(row.GoalsFor - row.GoalsAgainst);
                 var pointsString = GetFormattedNumberString(row.Points);
 
-                response.AppendFormat(string.Format("\n{0}{1} {2} Played: *{3}*   W: *{4}*   D: *{5}*   L: *{6}*   GD: {7}   Pts: *{8}* {9} {10}",
+                var relegationOrPlayOffIcon = (currentPosition >= relegationPosition) 
+                    ? relegationIcon
+                    : (currentPosition >= relegationPlayOffPosition) 
+                        ? relegationPlayOffIcon 
+                        : string.Empty;
+
+                if (currentPosition == relegationPosition || currentPosition == relegationPlayOffPosition)
+                    response.Append("\n-----------------------------------------------------------------------------------");
+
+                response.AppendFormat(string.Format("\n{0}{1} {2} Played: *{3}*   W: *{4}*   D: *{5}*   L: *{6}*   GD: {7}   Pts: *{8}* {9} {10} {11}",
                     positionString,
                     row.PlayerFace,
                     row.TeamBadge,
@@ -53,7 +68,8 @@ namespace FIFA.WebApi.Infrastructure.Slack
                     goalDifferenceString,
                     pointsString,
                     positionChangeIcon,
-                    positionChangeNumber));
+                    positionChangeNumber,
+                    relegationOrPlayOffIcon));
             }
 
             var responseString = response.ToString();
@@ -73,16 +89,7 @@ namespace FIFA.WebApi.Infrastructure.Slack
             return string.Format(" *{0}*  ", goalDifference);
         }
 
-        private string GetFormattedNumberString(int number)
-        {
-            if (number < 0)
-                return string.Format("{0}", number);
 
-            if (number < 10)
-                return string.Format("{0}  ", number);
-
-            return string.Format("{0}", number);
-        }
 
         private string GetPositionChangeIcon(int difference)
         {
