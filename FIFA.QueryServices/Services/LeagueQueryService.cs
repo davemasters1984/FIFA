@@ -112,6 +112,68 @@ namespace FIFA.QueryServices.Services
             }
         }
 
+        public IEnumerable<FormTableRow> GetFormTable(string leagueId, int games)
+        {
+            using (var session = _documentStore.OpenSession())
+            {
+                var league = session.Load<League>(leagueId);
+                var teams = session.Query<Team>().ToList();
+                var players = session.Query<Player>().ToList();
+
+                var results = 
+                    (from p in league.Participants
+                    select new FormTableRow
+                    {
+                        LeagueId = league.Id,
+                        PlayerFace = players.Where(pl => pl.Id == p.PlayerId).Select(pl => pl.Face).FirstOrDefault(),
+                        PlayerId = p.PlayerId,
+                        TeamBadge = teams.Where(t => t.Id == p.TeamId).Select(t => t.Badge).FirstOrDefault(),
+                        TeamId = p.TeamId,
+                        Results = league.Fixtures
+                                    .Where(f => f.Result != null)
+                                    .Where(f => f.HomePlayerId == p.PlayerId || f.AwayPlayerId == p.PlayerId)
+                                    .OrderByDescending(f => f.Result.Date)
+                                    .Take(games)
+                                    .Select(f => new Res
+                                    {
+                                        HomePlayerId = f.HomePlayerId,
+                                        AwayPlayerId = f.AwayPlayerId,
+                                        HomePoints = f.Result.HomePoints,
+                                        AwayPoints = f.Result.AwayPoints
+                                    }),
+                        TotalPoints = 1,
+                    })
+                    .ToList();
+
+                var form = from r in results
+                            group r by new
+                            {
+                                LeagueId = r.LeagueId,
+                                PlayerId = r.PlayerId,
+                                PlayerFace = r.PlayerFace,
+                                TeamBadge = r.TeamBadge,
+                                TeamId = r.TeamId,
+                                Results = r.Results,
+                            }
+                            into g
+                            select new FormTableRow
+                            {
+                                LeagueId = g.Key.LeagueId,
+                                PlayerId = g.Key.PlayerId,
+                                PlayerFace = g.Key.PlayerFace,
+                                TeamBadge = g.Key.TeamBadge,
+                                TeamId = g.Key.TeamId,
+                                Results = g.Key.Results,
+                                TotalPoints = g.Key.Results.Where(r => r.HomePlayerId == g.Key.PlayerId).Sum(r => r.HomePoints) +
+                                              g.Key.Results.Where(r => r.AwayPlayerId == g.Key.PlayerId).Sum(r => r.AwayPoints)
+                            };
+
+                return form
+                    .OrderByDescending(f => f.TotalPoints)
+                    .ToList();
+            }
+        }
+
         public IEnumerable<PlayerPositionHistory> GetPostionHistoryForPlayers(string leagueId, IEnumerable<string> playerIds)
         {
             var history = new List<PlayerPositionHistory>();

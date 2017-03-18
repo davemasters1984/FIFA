@@ -12,6 +12,7 @@ namespace FIFA.WebApi.Infrastructure.Slack.Processors
     public class GetFormTableSlackRequestProcessor : SlackRequestProcessor
     {
         private ILeagueQueryService _leagueQueryService;
+        private int _numberOfGames;
 
         public GetFormTableSlackRequestProcessor(ILeagueQueryService leagueQueryService)
         {
@@ -29,25 +30,36 @@ namespace FIFA.WebApi.Infrastructure.Slack.Processors
         protected override void ExecuteRequest(SlackRequest request)
         {
             var currentLeagueId = _leagueQueryService.GetCurrentLeagueId();
-            var form = _leagueQueryService.GetFormTable(currentLeagueId);
 
-            var response = new StringBuilder();
+            var form = (_numberOfGames == 0)
+                ? _leagueQueryService.GetFormTable(currentLeagueId)
+                : _leagueQueryService.GetFormTable(currentLeagueId, _numberOfGames);
 
-            foreach(var formRow in form)
-            {
-                response.AppendFormat("\n{0}{1} {7}{6}{5}{4}{3}{2} {8}",
-                    formRow.PlayerFace,
-                    formRow.TeamBadge,
-                    GetIconForResult(formRow.PlayerId, formRow.Results.Take(1).FirstOrDefault()),
-                    GetIconForResult(formRow.PlayerId, formRow.Results.Skip(1).Take(1).FirstOrDefault()),
-                    GetIconForResult(formRow.PlayerId, formRow.Results.Skip(2).Take(1).FirstOrDefault()),
-                    GetIconForResult(formRow.PlayerId, formRow.Results.Skip(3).Take(1).FirstOrDefault()),
-                    GetIconForResult(formRow.PlayerId, formRow.Results.Skip(4).Take(1).FirstOrDefault()),
-                    GetIconForResult(formRow.PlayerId, formRow.Results.Skip(5).Take(1).FirstOrDefault()),
-                    GetPointsDescription(formRow));
-            }
+            var response = GetFormTableResponseText(form);
 
             SendResponse(request.response_url, response.ToString());
+        }
+
+        private string GetFormTableResponseText(IEnumerable<FormTableRow> form)
+        {
+            var response = new StringBuilder();
+            var games = (_numberOfGames > 0) ? _numberOfGames : 6;
+
+            response.AppendFormat("\n`Form table for last {0} games:`", games);
+
+            foreach (var formRow in form)
+            {
+                response.AppendFormat("\n{0}{1}", formRow.PlayerFace, formRow.TeamBadge);
+
+                foreach(var res in formRow.Results.Reverse())
+                    response.Append(GetIconForResult(formRow.PlayerId, res));
+
+                response.AppendFormat(" {0}", GetPointsDescription(formRow));
+            }
+
+            var responseString = response.ToString();
+
+            return responseString;
         }
 
         private string GetPointsDescription(FormTableRow row)
@@ -79,7 +91,23 @@ namespace FIFA.WebApi.Infrastructure.Slack.Processors
 
         public override ValidationResult ValidateRequest(SlackRequest request)
         {
-            return ValidationResult.ValidResult("`Fetching form table`");
+            SetDataFromCommandText(request.text);
+
+            if (_numberOfGames > 0)
+                return ValidationResult.ValidResult(string.Format("`Fetching form table for last {0} games`", _numberOfGames));
+
+            return ValidationResult.ValidResult("`Fetching form table for last 6 games`");
+        }
+
+        private void SetDataFromCommandText(string commandText)
+        {
+            string[] commandWords = commandText.Split();
+
+            if (commandWords.Length < 2)
+                return;
+
+            if (!int.TryParse(commandWords[1], out _numberOfGames))
+                throw new Exception(string.Format("Could not parse {0} as a number", commandWords[1]));
         }
     }
 }
