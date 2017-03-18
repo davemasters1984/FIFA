@@ -26,5 +26,7 @@ namespace FIFA.QueryServices.Interface
         PlayerPositionHistoryComparison GetPlayerPositionHistoryComparisonForCurrentLeague(string playerOneId, string playerTwoId);
 
         CurrentLeagueAndPlayerIds GetCurrentLeagueAndPlayerIds(string playerFaceOne, string playerFaceTwo);
+
+        IEnumerable<ResultSummary> GetHeadToHeadResults(string leagueId, string faceOne, string faceTwo);
     }
 }

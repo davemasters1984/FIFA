@@ -282,6 +282,19 @@ namespace FIFA.QueryServices.Services
             }
         }
 
+        public IEnumerable<ResultSummary> GetHeadToHeadResults(string leagueId, string faceOne, string faceTwo)
+        {
+            using (var session = _documentStore.OpenSession())
+            {
+                var results = session.Query<ResultSummary, ResultsIndex>()
+                    .Where(l => l.LeagueId == leagueId)
+                    .Where(l => (l.HomePlayerFace == faceOne && l.AwayPlayerFace == faceTwo) || (l.HomePlayerFace == faceTwo && l.AwayPlayerFace == faceOne))
+                    .ToList();
+
+                return results;
+            }
+        }
+
         #endregion
     }
 }

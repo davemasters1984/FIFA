@@ -172,6 +172,7 @@
     <Compile Include="Infrastructure\Charting\PositionAxisDrawer.cs" />
     <Compile Include="Infrastructure\Slack\Processors\GetFixturesSlackRequestProcessor.cs" />
     <Compile Include="Infrastructure\Slack\Processors\GetFormTableSlackRequestProcessor.cs" />
+    <Compile Include="Infrastructure\Slack\Processors\GetHeadToHeadForLeagueSlackRequestProcessor.cs" />
     <Compile Include="Infrastructure\Slack\Processors\GetLeagueSlackRequestProcessor.cs" />
     <Compile Include="Infrastructure\Slack\ISlackRequestProcessor.cs" />
     <Compile Include="Infrastructure\Slack\ISlackRequestService.cs" />
