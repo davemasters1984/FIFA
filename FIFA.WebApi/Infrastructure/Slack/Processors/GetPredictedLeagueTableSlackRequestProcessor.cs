@@ -42,6 +42,8 @@ namespace FIFA.WebApi.Infrastructure.Slack.Processors
             var relegationPlayOffIcon = ":scream:";
             var championIcon = ":crown:";
 
+            response.Append("`Predicted Final Table:`");
+
             foreach (var row in predictedTable)
             {
                 currentPosition++;

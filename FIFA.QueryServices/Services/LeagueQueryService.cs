@@ -35,6 +35,22 @@ namespace FIFA.QueryServices.Services
             }
         }
 
+        public string GetCurrentLeagueIdForPlayer(string face)
+        {
+            var playerId = _playerQueryService.ResolvePlayerId(face);
+
+            using (var session = _documentStore.OpenSession())
+            {
+                var leagueId = session.Query<League>()
+                    .OrderByDescending(l => l.CreatedDate)
+                    .Where(l => l.Participants.Any(p => p.PlayerId == playerId))
+                    .Select(l => l.Id)
+                    .FirstOrDefault();
+
+                return leagueId;
+            }
+        }
+
         public IEnumerable<ResultSummary> GetResultsForPlayerByFace(string leagueId, string face)
         {
             using (var session = _documentStore.OpenSession())

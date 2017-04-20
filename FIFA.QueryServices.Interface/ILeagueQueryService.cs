@@ -7,6 +7,8 @@ namespace FIFA.QueryServices.Interface
     {
         string GetCurrentLeagueId();
 
+        string GetCurrentLeagueIdForPlayer(string face);
+
         IEnumerable<LeagueTableRow> GetLeagueTable(string leagueId);
 
         IEnumerable<LeagueTableRow> GetLeagueTableWaitForIndex(string leagueId);
