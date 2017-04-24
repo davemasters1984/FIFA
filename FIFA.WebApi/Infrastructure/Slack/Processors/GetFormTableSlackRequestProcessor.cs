@@ -12,6 +12,7 @@ namespace FIFA.WebApi.Infrastructure.Slack.Processors
     public class GetFormTableSlackRequestProcessor : SlackRequestProcessor
     {
         private ILeagueQueryService _leagueQueryService;
+        private string _leagueName;
         private int _numberOfGames;
 
         public GetFormTableSlackRequestProcessor(ILeagueQueryService leagueQueryService)
@@ -29,7 +30,7 @@ namespace FIFA.WebApi.Infrastructure.Slack.Processors
 
         protected override void ExecuteRequest(SlackRequest request)
         {
-            var currentLeagueId = _leagueQueryService.GetCurrentLeagueId();
+            var currentLeagueId = _leagueQueryService.GetCurrentLeagueIdFromLeagueName(_leagueName);
 
             var form = (_numberOfGames == 0)
                 ? _leagueQueryService.GetFormTable(currentLeagueId)
@@ -94,9 +95,9 @@ namespace FIFA.WebApi.Infrastructure.Slack.Processors
             SetDataFromCommandText(request.text);
 
             if (_numberOfGames > 0)
-                return ValidationResult.ValidResult(string.Format("`Fetching form table for last {0} games`", _numberOfGames));
+                return ValidationResult.ValidResult(string.Format("`Fetching form table for last {0} games for {1}`", _numberOfGames, _leagueName));
 
-            return ValidationResult.ValidResult("`Fetching form table for last 6 games`");
+            return ValidationResult.ValidResult(string.Format("`Fetching form table for last 6 games for {0}`", _leagueName));
         }
 
         private void SetDataFromCommandText(string commandText)
@@ -104,10 +105,15 @@ namespace FIFA.WebApi.Infrastructure.Slack.Processors
             string[] commandWords = commandText.Split();
 
             if (commandWords.Length < 2)
+                throw new Exception("You must specify the league name");
+
+            _leagueName = commandWords[1];
+
+            if (commandWords.Length < 3)
                 return;
 
-            if (!int.TryParse(commandWords[1], out _numberOfGames))
-                throw new Exception(string.Format("Could not parse {0} as a number", commandWords[1]));
+            if (!int.TryParse(commandWords[2], out _numberOfGames))
+                throw new Exception(string.Format("Could not parse {0} as a number", commandWords[2]));
         }
     }
 }

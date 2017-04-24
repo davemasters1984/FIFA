@@ -54,13 +54,16 @@ namespace FIFA.CommandServices
                 _resultService.PostResult(command.AsArgs());
             }
 
-            Task.Factory.StartNew(() => TakeSnapshot(new TakeSnapshotCommand()));
+            Task.Factory.StartNew(() => TakeSnapshot(new TakeSnapshotCommand
+            {
+                LeagueId = command.LeagueId
+            }));
         }
 
         public void TakeSnapshot(TakeSnapshotCommand command)
         {
-            var currentLeagueId = _leagueQueryService.GetCurrentLeagueId();
-            var currentLeague = _leagueQueryService.GetLeagueTableWaitForIndex(currentLeagueId);
+            var leagueId = command.LeagueId;
+            var currentLeague = _leagueQueryService.GetLeagueTableWaitForIndex(leagueId);
             var currentDate = DateTime.Now.Date;
             var start = DateTime.Now;
 
@@ -68,7 +71,7 @@ namespace FIFA.CommandServices
             {
                 var snapshot = _repository.Query<LeagueTableSnapshot>()
                     .Where(s => s.SnapshotDate == currentDate)
-                    .Where(s => s.LeagueId == currentLeagueId)
+                    .Where(s => s.LeagueId == leagueId)
                     .FirstOrDefault();
 
                 if (snapshot == null)
@@ -76,7 +79,7 @@ namespace FIFA.CommandServices
 
                 snapshot.Rows = MapSnapshotRows(currentLeague);
                 snapshot.SnapshotDate = currentDate;
-                snapshot.LeagueId = currentLeagueId;
+                snapshot.LeagueId = leagueId;
 
                 _repository.Store(snapshot);
             }

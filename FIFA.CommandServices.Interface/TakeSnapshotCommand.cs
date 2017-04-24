@@ -8,5 +8,6 @@ namespace FIFA.CommandServices.Interface
 {
     public class TakeSnapshotCommand
     {
+        public string LeagueId { get; set; }
     }
 }

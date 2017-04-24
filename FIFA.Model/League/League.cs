@@ -15,6 +15,19 @@ namespace FIFA.Model
 
         public List<Fixture> Fixtures { get; set; }
 
+        public string Name { get; set; }
+
+        public bool IsComplete
+        {
+            get
+            {
+                if (Fixtures == null)
+                    return false;
+
+                return Fixtures.Count() == Fixtures.Where(f => f.Result != null).Count();
+            }
+        }
+
         public League()
         {
 

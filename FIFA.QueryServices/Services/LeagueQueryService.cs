@@ -42,8 +42,24 @@ namespace FIFA.QueryServices.Services
             using (var session = _documentStore.OpenSession())
             {
                 var leagueId = session.Query<League>()
-                    .OrderByDescending(l => l.CreatedDate)
+                    .Where(l => !l.IsComplete)
                     .Where(l => l.Participants.Any(p => p.PlayerId == playerId))
+                    .OrderByDescending(l => l.CreatedDate)
+                    .Select(l => l.Id)
+                    .FirstOrDefault();
+
+                return leagueId;
+            }
+        }
+
+        public string GetCurrentLeagueIdFromLeagueName(string leagueName)
+        {
+            using (var session = _documentStore.OpenSession())
+            {
+                var leagueId = session.Query<League>()
+                    .Where(l => !l.IsComplete)
+                    .Where(l => l.Name == leagueName)
+                    .OrderByDescending(l => l.CreatedDate)
                     .Select(l => l.Id)
                     .FirstOrDefault();
 
@@ -61,19 +77,6 @@ namespace FIFA.QueryServices.Services
                     .ToList();
 
                 return results;
-            }
-        }
-
-        public IEnumerable<LeagueTableRow> GetCurrentLeagueTable()
-        {
-            using (var session = _documentStore.OpenSession())
-            {
-                var leagueId = session.Query<League>()
-                    .OrderByDescending(l => l.CreatedDate)
-                    .Select(l => l.Id)
-                    .FirstOrDefault();
-
-                return GetLeagueTable(session, leagueId);
             }
         }
 

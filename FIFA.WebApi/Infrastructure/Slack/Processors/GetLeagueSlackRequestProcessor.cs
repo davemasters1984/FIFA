@@ -9,6 +9,7 @@ namespace FIFA.WebApi.Infrastructure.Slack
     public class GetLeagueSlackRequestProcessor : SlackRequestProcessor
     {
         private ILeagueQueryService _queryService;
+        private string _leagueName;
 
         public override string CommandText
         {
@@ -25,7 +26,8 @@ namespace FIFA.WebApi.Infrastructure.Slack
 
         protected override void ExecuteRequest(SlackRequest request)
         {
-            var leagueTable = _queryService.GetCurrentLeagueTable();
+            var leagueId = _queryService.GetCurrentLeagueIdFromLeagueName(_leagueName);
+            var leagueTable = _queryService.GetLeagueTable(leagueId);
 
             var response = new StringBuilder();
             int currentPosition = 0;
@@ -113,7 +115,14 @@ namespace FIFA.WebApi.Infrastructure.Slack
 
         public override ValidationResult ValidateRequest(SlackRequest request)
         {
-            return ValidationResult.ValidResult("`Retreiving league table`");
+            string[] commandWords = request.text.Split();
+
+            if (commandWords.Length < 2)
+                throw new Exception("`You must specify the league name`");
+
+            _leagueName = commandWords[1];
+
+            return ValidationResult.ValidResult(string.Format("`Retreiving {0} table`", _leagueName));
         }
     }
 }
