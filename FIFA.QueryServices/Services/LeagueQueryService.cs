@@ -106,6 +106,18 @@ namespace FIFA.QueryServices.Services
             }
         }
 
+        public IEnumerable<FixtureSummary> GetFixturesForLeagueId(string leagueId)
+        {
+            using (var session = _documentStore.OpenSession())
+            {
+                var fixtures = session.Query<FixtureSummary, FixturesIndex>()
+                    .Where(l => l.LeagueId == leagueId)
+                    .ToList();
+
+                return fixtures;
+            }
+        }
+
         public IEnumerable<LeagueTableRow> GetLeagueTable(string leagueId)
         {
             using (var session = _documentStore.OpenSession())
