@@ -181,6 +181,7 @@
     <Compile Include="Infrastructure\Slack\Processors\GetResultsSlackRequestProcessor.cs" />
     <Compile Include="Infrastructure\Slack\Processors\GetTopGoalScorersSlackProcessors.cs" />
     <Compile Include="Infrastructure\Slack\Processors\GetWeeklySummarySlackRequestProcessor.cs" />
+    <Compile Include="Infrastructure\Slack\Processors\GetWhosWhoSlackRequestProcessor.cs" />
     <Compile Include="Infrastructure\Slack\Processors\PostResultSlackRequestProcessor.cs" />
     <Compile Include="Infrastructure\Slack\SlackRequestProcessor.cs" />
     <Compile Include="Infrastructure\Slack\SlackRequestService.cs" />
