@@ -93,6 +93,12 @@ namespace FIFA.QueryServices.Services
                 return GetLeagueTable(session, leagueId);
         }
 
+        public IEnumerable<LeagueTableRow> GetLeagueTableWithPositionHistory(string leagueId)
+        {
+            using (var session = _documentStore.OpenSession())
+                return GetLeagueTable(session, leagueId, false, true);
+        }
+
         public IEnumerable<LeagueTableRow> GetLeagueTableWaitForIndex(string leagueId)
         {
             using (var session = _documentStore.OpenSession())
@@ -272,7 +278,7 @@ namespace FIFA.QueryServices.Services
             return leagueId;
         }
 
-        private IEnumerable<LeagueTableRow> GetLeagueTable(IDocumentSession session, string leagueId, bool waitForFreshIndex)
+        private IEnumerable<LeagueTableRow> GetLeagueTable(IDocumentSession session, string leagueId, bool waitForFreshIndex, bool includePositionHistory = false)
         {
             var leagueTableQuery
                 = session.Query<LeagueTableRow, LeagueTableIndex>();
@@ -299,7 +305,24 @@ namespace FIFA.QueryServices.Services
 
             AddPreviousPositionsToRows(orderedleagueTable, lastSnapshot);
 
+            if (includePositionHistory)
+                AddPositionHistoryToRows(orderedleagueTable, leagueId, session);
+
             return orderedleagueTable;
+        }
+
+        private void AddPositionHistoryToRows(List<LeagueTableRow> orderedleagueTable, string leagueId, IDocumentSession session)
+        {
+            var snapshots = session.Query<LeagueTableSnapshot>()
+                .Where(s => s.LeagueId == leagueId)
+                .ToList();
+
+            foreach (var row in orderedleagueTable)
+            {
+                var history = GetPlayerPositionHistory(snapshots, row.PlayerId, session);
+                row.PositionHistory = history.History;
+            }
+                
         }
 
         private IEnumerable<LeagueTableRow> GetLeagueTable(IDocumentSession session, string leagueId)

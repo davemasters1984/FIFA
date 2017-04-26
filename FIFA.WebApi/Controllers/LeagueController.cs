@@ -85,10 +85,7 @@ namespace FIFA.WebApi.Controllers
 
             using (var session = DocumentStore.OpenSession())
             {
-                var leagueTable
-                    = session.Query<LeagueTableRow, LeagueTableIndex>()
-                        .Where(l => l.LeagueId == key)
-                        .ToList();
+                var leagueTable = _leagueQueryService.GetLeagueTableWithPositionHistory(key);
 
                 return Ok(leagueTable);
             }
