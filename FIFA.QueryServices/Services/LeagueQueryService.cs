@@ -248,6 +248,31 @@ namespace FIFA.QueryServices.Services
 
         #region Private Methods 
 
+        private IEnumerable<LeagueTableRecentResult> GetRecentResultsForPlayer(League league, List<LeagueTableRow> leagueRows, string playerId, IDocumentSession session)
+        {
+            var recentResults
+                = league.Fixtures
+                    .Where(f => f.Result != null)
+                    .Where(f => f.HomePlayerId == playerId || f.AwayPlayerId == playerId)
+                    .OrderByDescending(f => f.Result.Date)
+                    .Take(4)
+                    .Select(f => new LeagueTableRecentResult
+                    {
+                        ResultDate = f.Result.Date,
+                        OpponentGoals = (f.HomePlayerId == playerId) ? f.Result.AwayPlayerGoals : f.Result.HomePlayerGoals,
+                        PlayerGoals = (f.HomePlayerId == playerId) ? f.Result.HomePlayerGoals : f.Result.AwayPlayerGoals,
+                        OpponentPlayerName = (f.HomePlayerId == playerId)
+                            ? leagueRows.Where(p => p.PlayerId == f.AwayPlayerId).Select(p => p.PlayerName).FirstOrDefault()
+                            : leagueRows.Where(p => p.PlayerId == f.HomePlayerId).Select(p => p.PlayerName).FirstOrDefault(),
+                        OpponentTeamName = (f.HomePlayerId == playerId)
+                            ? leagueRows.Where(p => p.PlayerId == f.AwayPlayerId).Select(p => p.TeamName).FirstOrDefault()
+                            : leagueRows.Where(p => p.PlayerId == f.HomePlayerId).Select(p => p.TeamName).FirstOrDefault(),
+                    })
+                    .ToList();
+
+            return recentResults;
+        }
+
         private PlayerPositionHistory GetPlayerPositionHistory(IEnumerable<LeagueTableSnapshot> snapshots, string playerId, IDocumentSession session)
         {
             var player = session.Load<Player>(playerId);
@@ -306,9 +331,20 @@ namespace FIFA.QueryServices.Services
             AddPreviousPositionsToRows(orderedleagueTable, lastSnapshot);
 
             if (includePositionHistory)
+            {
                 AddPositionHistoryToRows(orderedleagueTable, leagueId, session);
+                AddRecentResultsToRows(orderedleagueTable, leagueId, session);
+            }
 
             return orderedleagueTable;
+        }
+
+        private void AddRecentResultsToRows(List<LeagueTableRow> leagueTable, string leagueId, IDocumentSession session)
+        {
+            var league = session.Load<League>(leagueId);
+
+            foreach (var row in leagueTable)
+                row.RecentResults = GetRecentResultsForPlayer(league, leagueTable, row.PlayerId, session);
         }
 
         private void AddPositionHistoryToRows(List<LeagueTableRow> orderedleagueTable, string leagueId, IDocumentSession session)
