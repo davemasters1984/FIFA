@@ -18,6 +18,8 @@ namespace FIFA.QueryServices.Interface.Models
 
         public string OpponentPlayerName { get; set; }
 
+        public string OpponentPlayerFace { get; set; }
+
         public int OpponentGoals { get; set; }
 
         public int PlayerGoals { get; set; }

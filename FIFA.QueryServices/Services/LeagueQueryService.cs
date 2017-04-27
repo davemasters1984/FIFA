@@ -267,6 +267,9 @@ namespace FIFA.QueryServices.Services
                         OpponentTeamName = (f.HomePlayerId == playerId)
                             ? leagueRows.Where(p => p.PlayerId == f.AwayPlayerId).Select(p => p.TeamName).FirstOrDefault()
                             : leagueRows.Where(p => p.PlayerId == f.HomePlayerId).Select(p => p.TeamName).FirstOrDefault(),
+                        OpponentPlayerFace = (f.HomePlayerId == playerId)
+                            ? leagueRows.Where(p => p.PlayerId == f.AwayPlayerId).Select(p => p.PlayerFace).FirstOrDefault()
+                            : leagueRows.Where(p => p.PlayerId == f.HomePlayerId).Select(p => p.PlayerFace).FirstOrDefault(),
                     })
                     .ToList();
 
