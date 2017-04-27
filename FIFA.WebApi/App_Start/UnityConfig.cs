@@ -35,6 +35,7 @@ namespace FIFA.WebApi
 
             container.RegisterType<ILeagueCommandService, LeagueCommandService>();
             container.RegisterType<ITeamCommandService, TeamCommandService>();
+            container.RegisterType<IPlayerCommandService, PlayerCommandService>();
 
             container.RegisterType<ILeagueQueryService, LeagueQueryService>();
             container.RegisterType<IStatisticQueryService, StatisticQueryService>();
@@ -54,6 +55,7 @@ namespace FIFA.WebApi
             container.RegisterType<ISlackRequestProcessor, GetTopGoalScorersSlackProcessors>("golden-boot");
             container.RegisterType<ISlackRequestProcessor, GetPredictedLeagueTableSlackRequestProcessor>("predicted");
             container.RegisterType<ISlackRequestProcessor, GetHeadToHeadForLeagueSlackRequestProcessor>("h2h");
+            container.RegisterType<ISlackRequestProcessor, UpdatePlayerSlackRequestProcessor>("update-player");
         }
     }
 }

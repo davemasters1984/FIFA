@@ -14,6 +14,8 @@ namespace FIFA.Model
 
         public string Face { get; set; }
 
+        public string SlackUsername { get; set; }
+
         public decimal OverallScore { get; set; }
 
         public bool IsNew { get; set; }
