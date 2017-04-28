@@ -28,6 +28,23 @@ namespace FIFA.WebApi.Infrastructure.Slack.Processors
             }
         }
 
+        public override string ExampleRequest
+        {
+            get
+            {
+                return $"`{SlackSlashCommand} {CommandText}` or `{SlackSlashCommand} {CommandText} 10`";
+            }
+        }
+
+        public override string Description
+        {
+            get
+            {
+                return "Returns the form table. Optionally provide the number of games you want to include";
+            }
+        }
+
+
         protected override void ExecuteRequest(SlackRequest request)
         {
             var currentLeagueId = _leagueQueryService.GetCurrentLeagueIdFromLeagueName(_leagueName);

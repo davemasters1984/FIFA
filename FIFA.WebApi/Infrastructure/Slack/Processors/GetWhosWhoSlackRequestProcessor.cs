@@ -23,6 +23,22 @@ namespace FIFA.WebApi.Infrastructure.Slack.Processors
             }
         }
 
+        public override string ExampleRequest
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+        }
+
+        public override string Description
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+        }
+
         public override ValidationResult ValidateRequest(SlackRequest request)
         {
             string[] commandWords = request.text.Split();

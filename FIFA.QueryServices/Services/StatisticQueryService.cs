@@ -113,26 +113,15 @@ namespace FIFA.QueryServices.Services
             using (var session = _documentStore.OpenSession())
             {
                 var league = session.Load<League>(leagueId);
-
-                var playerNames = session.Query<Player>()
-                    .Select(p => new { p.Id, p.Face, p.Name })
-                    .ToList();
-
+                var players = session.Query<Player>().ToList();
                 var allPlayerGoals = league.Participants.Select(p => new PlayerWithGoalsScored
                 {
-                    Face = playerNames
-                        .Where(f => f.Id == p.PlayerId)
-                        .Select(f => f.Face)
-                        .FirstOrDefault(),
-                    Name = playerNames
-                        .Where(f => f.Id == p.PlayerId)
-                        .Select(f => f.Name)
-                        .FirstOrDefault(),
+                    GoalsScored = p.GoalsFor,
                     PlayerId = p.PlayerId,
-                    GoalsScored = p.GoalsFor
+                    Face = players.Where(pl => pl.Id == p.PlayerId).Select(pl => pl.Face).FirstOrDefault(),
+                    Name = players.Where(pl => pl.Id == p.PlayerId).Select(pl => pl.Name).FirstOrDefault(),
                 })
-                .OrderByDescending(p => p.GoalsScored)
-                .ToList();
+                .OrderByDescending(apg => apg.GoalsScored);
 
                 return new TopGoalScorers
                 {

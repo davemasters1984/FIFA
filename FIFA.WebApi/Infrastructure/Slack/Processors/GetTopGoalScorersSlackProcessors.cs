@@ -22,7 +22,24 @@ namespace FIFA.WebApi.Infrastructure.Slack.Processors
             }
         }
 
-        public GetTopGoalScorersSlackProcessors(IStatisticQueryService queryService, ILeagueQueryService leagueQueryService)
+        public override string ExampleRequest
+        {
+            get
+            {
+                return $"`{SlackSlashCommand} {CommandText}`";
+            }
+        }
+
+        public override string Description
+        {
+            get
+            {
+                return "Returns the top 5 goal scorers in the league ";
+            }
+        }
+
+        public GetTopGoalScorersSlackProcessors(IStatisticQueryService queryService, 
+            ILeagueQueryService leagueQueryService)
         {
             _queryService = queryService;
             _leagueQueryService = leagueQueryService;

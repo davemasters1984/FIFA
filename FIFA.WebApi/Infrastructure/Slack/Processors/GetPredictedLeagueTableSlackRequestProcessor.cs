@@ -22,7 +22,24 @@ namespace FIFA.WebApi.Infrastructure.Slack.Processors
             }
         }
 
-        public GetPredictedLeagueTableSlackRequestProcessor(IStatisticQueryService queryService, ILeagueQueryService leagueQueryService)
+        public override string ExampleRequest
+        {
+            get
+            {
+                return $"`{SlackSlashCommand} {CommandText}`";
+            }
+        }
+
+        public override string Description
+        {
+            get
+            {
+                return "Returns the predicted finishing positions of the league";
+            }
+        }
+
+        public GetPredictedLeagueTableSlackRequestProcessor(IStatisticQueryService queryService, 
+            ILeagueQueryService leagueQueryService)
         {
             _queryService = queryService;
             _leagueQueryService = leagueQueryService;

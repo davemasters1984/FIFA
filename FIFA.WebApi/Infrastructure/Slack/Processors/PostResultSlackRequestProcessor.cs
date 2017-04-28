@@ -28,6 +28,22 @@ namespace FIFA.WebApi.Infrastructure.Slack
             }
         }
 
+        public override string ExampleRequest
+        {
+            get
+            {
+                return $"`{SlackSlashCommand} {CommandText} :dave: 10 - 0 :craig:`";
+            }
+        }
+
+        public override string Description
+        {
+            get
+            {
+                return "Posts a result into the league. Spaces must be exact. *Don't post incorrect results because it's painful to correct!*";
+            }
+        }
+
         public PostResultSlackRequestProcessor(IDocumentStore documentStore, 
             IPlayerQueryService playerQueryService,
             ILeagueCommandService leagueCommandService)

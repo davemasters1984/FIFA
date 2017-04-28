@@ -43,11 +43,13 @@
     <Compile Include="CreateLeagueCommand.cs" />
     <Compile Include="Extensions.cs" />
     <Compile Include="ILeagueCommandService.cs" />
+    <Compile Include="IPlayerCommandService.cs" />
     <Compile Include="PostResultCommand.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ITeamCommandService.cs" />
     <Compile Include="SetTeamBadgeCommand.cs" />
     <Compile Include="TakeSnapshotCommand.cs" />
+    <Compile Include="UpdatePlayerCommand.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\FIFA.Model\FIFA.Model.csproj">

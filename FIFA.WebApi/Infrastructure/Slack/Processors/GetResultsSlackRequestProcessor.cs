@@ -19,6 +19,22 @@ namespace FIFA.WebApi.Infrastructure.Slack.Processors
             }
         }
 
+        public override string ExampleRequest
+        {
+            get
+            {
+                return $"`{SlackSlashCommand} {CommandText} :dave:`";
+            }
+        }
+
+        public override string Description
+        {
+            get
+            {
+                return "Returns all results for a particular player";
+            }
+        }
+
         public GetResultsSlackRequestProcessor(ILeagueQueryService leagueQueryService)
         {
             _leagueQueryService = leagueQueryService;

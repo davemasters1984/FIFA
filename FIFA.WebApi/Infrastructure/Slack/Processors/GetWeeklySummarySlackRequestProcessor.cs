@@ -19,7 +19,24 @@ namespace FIFA.WebApi.Infrastructure.Slack.Processors
             }
         }
 
-        public GetWeeklySummarySlackRequestProcessor(IStatisticQueryService queryService, ILeagueQueryService leagueQueryService)
+        public override string ExampleRequest
+        {
+            get
+            {
+                return $"`{SlackSlashCommand} {CommandText}`";
+            }
+        }
+
+        public override string Description
+        {
+            get
+            {
+                return "Returns a summary of statistics for the past week";
+            }
+        }
+
+        public GetWeeklySummarySlackRequestProcessor(IStatisticQueryService queryService, 
+            ILeagueQueryService leagueQueryService)
         {
             _queryService = queryService;
             _leagueQueryService = leagueQueryService;
