@@ -35,6 +35,22 @@ namespace FIFA.WebApi.Infrastructure.Slack.Processors
             }
         }
 
+        public override string ExampleRequest
+        {
+            get
+            {
+                return $"`{SlackSlashCommand} {CommandText} :dave: slackUsername:@davemasters`";
+            }
+        }
+
+        public override string Description
+        {
+            get
+            {
+                return "Updates a player's fields. Available fields: `slackUsername`, `face`, `name`";
+            }
+        }
+
         public override ValidationResult ValidateRequest(SlackRequest request)
         {
             SetDataFromCommandText(request.text);

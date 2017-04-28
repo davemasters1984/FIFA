@@ -10,6 +10,12 @@ namespace FIFA.WebApi.Infrastructure.Slack
     {
         public abstract string CommandText { get; }
 
+        public abstract string ExampleRequest { get; }
+
+        public abstract string Description { get; }
+
+        public string SlackSlashCommand { get { return "/betafifa"; } }
+
         protected abstract void ExecuteRequest(SlackRequest request);
 
         public abstract ValidationResult ValidateRequest(SlackRequest request);

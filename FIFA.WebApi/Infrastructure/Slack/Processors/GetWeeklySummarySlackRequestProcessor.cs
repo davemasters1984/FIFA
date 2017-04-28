@@ -20,6 +20,22 @@ namespace FIFA.WebApi.Infrastructure.Slack.Processors
             }
         }
 
+        public override string ExampleRequest
+        {
+            get
+            {
+                return $"`{SlackSlashCommand} {CommandText}`";
+            }
+        }
+
+        public override string Description
+        {
+            get
+            {
+                return "Returns a summary of statistics for the past week";
+            }
+        }
+
         public GetWeeklySummarySlackRequestProcessor(IStatisticQueryService queryService)
         {
             _queryService = queryService;

@@ -18,6 +18,22 @@ namespace FIFA.WebApi.Infrastructure.Slack
             }
         }
 
+        public override string ExampleRequest
+        {
+            get
+            {
+                return $"`{SlackSlashCommand} {CommandText}`";
+            }
+        }
+
+        public override string Description
+        {
+            get
+            {
+                return "Returns the league table";
+            }
+        }
+
         public GetLeagueSlackRequestProcessor(ILeagueQueryService queryService)
         {
             _queryService = queryService;

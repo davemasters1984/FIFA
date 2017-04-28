@@ -22,6 +22,22 @@ namespace FIFA.WebApi.Infrastructure.Slack.Processors
             }
         }
 
+        public override string ExampleRequest
+        {
+            get
+            {
+                return $"`{SlackSlashCommand} {CommandText} :dave: :dom:`";
+            }
+        }
+
+        public override string Description
+        {
+            get
+            {
+                return "Returns previous results between two players";
+            }
+        }
+
         public GetHeadToHeadForLeagueSlackRequestProcessor(ILeagueQueryService leagueQueryService)
         {
             _leagueQueryService = leagueQueryService;

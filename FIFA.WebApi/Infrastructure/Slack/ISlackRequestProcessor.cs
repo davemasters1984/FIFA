@@ -6,6 +6,10 @@ namespace FIFA.WebApi.Infrastructure.Slack
     {
         string CommandText { get; }
 
+        string ExampleRequest { get; }
+
+        string Description { get; }
+
         void Execute(SlackRequest request);
 
         ValidationResult ValidateRequest(SlackRequest request);

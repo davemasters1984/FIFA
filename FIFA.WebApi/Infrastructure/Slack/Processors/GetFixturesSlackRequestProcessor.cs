@@ -26,6 +26,22 @@ namespace FIFA.WebApi.Infrastructure.Slack.Processors
             }
         }
 
+        public override string ExampleRequest
+        {
+            get
+            {
+                return $"`{SlackSlashCommand} {CommandText} :dave:`";
+            }
+        }
+
+        public override string Description
+        {
+            get
+            {
+                return "Returns the list of remaining fixtures for the player";
+            }
+        }
+
         protected override void ExecuteRequest(SlackRequest request)
         {
             SetDataFromCommandText(request.text);

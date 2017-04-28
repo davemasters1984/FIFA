@@ -21,12 +21,30 @@ namespace FIFA.WebApi.Infrastructure.Slack.Processors
             get { return "chart"; }
         }
 
+
+        public override string ExampleRequest
+        {
+            get
+            {
+                return $"`{SlackSlashCommand} {CommandText} :dave: :dom: :liam:`";
+            }
+        }
+
+        public override string Description
+        {
+            get
+            {
+                return "Returns the position history chart for one or more players ";
+            }
+        }
+
         public GetPlayerPositionChartSlackRequestProcessor(ILeagueQueryService queryService,
             IPlayerQueryService playerQueryService)
         {
             _queryService = queryService;
             _playerQueryService = playerQueryService;
         }
+
 
         protected override void ExecuteRequest(SlackRequest request)
         {
