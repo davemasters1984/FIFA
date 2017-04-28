@@ -27,7 +27,7 @@ namespace FIFA.WebApi.Infrastructure.Slack.Processors
         {
             get
             {
-                throw new NotImplementedException();
+                return $"`{SlackSlashCommand} {CommandText} prem`";
             }
         }
 
@@ -35,7 +35,7 @@ namespace FIFA.WebApi.Infrastructure.Slack.Processors
         {
             get
             {
-                throw new NotImplementedException();
+                return "Returns a summary of statistics for the past week";
             }
         }
 

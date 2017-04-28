@@ -41,7 +41,7 @@ namespace FIFA.WebApi.Infrastructure.Slack.Processors
         {
             get
             {
-                return $"`{SlackSlashCommand} {CommandText} :dave:`";
+                return $"`{SlackSlashCommand} {CommandText} :dave:` or `{SlackSlashCommand} {CommandText} prem`";
             }
         }
 

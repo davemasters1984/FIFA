@@ -54,11 +54,13 @@ namespace FIFA.QueryServices.Services
 
         public string GetCurrentLeagueIdFromLeagueName(string leagueName)
         {
+            var resolvedName = LeagueNameHelper.ResolveLeagueName(leagueName);
+
             using (var session = _documentStore.OpenSession())
             {
                 var leagueId = session.Query<League>()
                     .Where(l => !l.IsComplete)
-                    .Where(l => l.Name == leagueName)
+                    .Where(l => l.Name == resolvedName)
                     .OrderByDescending(l => l.CreatedDate)
                     .Select(l => l.Id)
                     .FirstOrDefault();
