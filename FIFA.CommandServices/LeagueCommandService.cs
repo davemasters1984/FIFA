@@ -5,6 +5,7 @@ using FIFA.Model.Services;
 using FIFA.QueryServices.Interface;
 using FIFA.QueryServices.Interface.Models;
 using Microsoft.ApplicationInsights;
+using Raven.Client;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,8 +20,10 @@ namespace FIFA.CommandServices
         private IRepository _repository;
         private ILeagueQueryService _leagueQueryService;
         private TelemetryClient telemetry = new TelemetryClient();
+        private IDocumentStore _documentStore;
 
         public LeagueCommandService(IRepository repository, 
+            IDocumentStore documentStore,
             ILeagueService leagueService, 
             IResultService resultService,
             ILeagueQueryService leagueQueryService)
@@ -29,13 +32,17 @@ namespace FIFA.CommandServices
             _leagueService = leagueService;
             _resultService = resultService;
             _leagueQueryService = leagueQueryService;
+            _documentStore = documentStore;
         }
 
         public void CreateLeague(CreateLeagueCommand command)
         {
-            var helper = new CreateLeagueHelper();
+            var helper = new CreateLeagueHelper(_documentStore);
 
-            var args = helper.CreateLeagueArgs(command.ParticipantFaces);
+            var args = helper.CreateLeagueArgs(command.ParticipantFaces,
+                command.Name,
+                command.MinimumTeamRating,
+                command.MaximumTeamRating);
 
             var leagueService = new LeagueService();
 

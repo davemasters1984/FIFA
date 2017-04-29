@@ -10,16 +10,26 @@ namespace FIFA.Model.Services
     public class CreateLeagueHelper
     {
         private IDocumentStore _documentStore;
-        private IEnumerable<TeamAssignment> _assignments;
         private IEnumerable<string> _participantNames;
         private IEnumerable<Player> _players;
         private IEnumerable<Team> _teams;
         private IEnumerable<League> _previousLeagues;
         private IEnumerable<int> _possibleTeamRatings;
+        private decimal _minimumTeamRating;
+        private decimal _maximumTeamRating;
 
-        public CreateLeagueArgs CreateLeagueArgs(IEnumerable<string> participantNames)
+        public CreateLeagueHelper(IDocumentStore documentStore)
         {
-            CreateDocumentStore();
+            _documentStore = documentStore;
+        }
+
+        public CreateLeagueArgs CreateLeagueArgs(IEnumerable<string> participantNames, 
+            string leagueName, 
+            decimal minimumTeamRating, 
+            decimal maximumTeamRating)
+        {
+            _minimumTeamRating = minimumTeamRating;
+            _maximumTeamRating = maximumTeamRating;
 
             SetParticipantNames(participantNames);
 
@@ -31,6 +41,7 @@ namespace FIFA.Model.Services
                 PossibleTeamRatings = _possibleTeamRatings,
                 PreviousLeagues = _previousLeagues,
                 Teams = _teams,
+                Name = leagueName,
             };
         }
 
@@ -45,17 +56,6 @@ namespace FIFA.Model.Services
                 eligibleTeamRatings
                     .Select(r => r.ToString())
                     .ToArray());
-        }
-
-        public void CreateDocumentStore()
-        {
-            _documentStore = new DocumentStore
-            {
-                ConnectionStringName = "RavenHQ",
-                DefaultDatabase = "FIFA",
-            };
-
-            _documentStore.Initialize();
         }
 
         private void FetchRequiredData()
@@ -101,6 +101,8 @@ namespace FIFA.Model.Services
             {
                 _possibleTeamRatings = session.Query<Team>()
                     .Where(tr => tr.OverallRating != 0)
+                    .Where(tr => tr.OverallRating >= _minimumTeamRating)
+                    .Where(tr => tr.OverallRating <= _maximumTeamRating)
                     .Select(t => t.OverallRating)
                     .Distinct()
                     .ToList()

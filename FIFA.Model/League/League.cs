@@ -33,10 +33,12 @@ namespace FIFA.Model
 
         }
 
-        public League(DateTime createdDate, 
+        public League(string name,
+            DateTime createdDate, 
             List<Participant> participants, 
             List<Fixture> fixtures)
         {
+            Name = name;
             Participants = participants;
             Fixtures = fixtures;
             CreatedDate = createdDate;

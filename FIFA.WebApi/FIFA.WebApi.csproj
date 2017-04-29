@@ -170,6 +170,7 @@
     <Compile Include="Infrastructure\Charting\DateAxisDrawer.cs" />
     <Compile Include="Infrastructure\Charting\LinePlotter.cs" />
     <Compile Include="Infrastructure\Charting\PositionAxisDrawer.cs" />
+    <Compile Include="Infrastructure\Slack\Processors\CreateNewLeagueSlackRequestProcessor.cs" />
     <Compile Include="Infrastructure\Slack\Processors\GetFixturesSlackRequestProcessor.cs" />
     <Compile Include="Infrastructure\Slack\Processors\GetFormTableSlackRequestProcessor.cs" />
     <Compile Include="Infrastructure\Slack\Processors\GetHeadToHeadForLeagueSlackRequestProcessor.cs" />

@@ -14,7 +14,7 @@ namespace FIFA.Model.Services
 
             var fixtures = GenerateFixtures(participants);
 
-            var newLeague = new League(DateTime.Now, participants, fixtures);
+            var newLeague = new League(args.Name, DateTime.Now, participants, fixtures);
 
             return newLeague;
         }
