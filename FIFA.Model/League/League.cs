@@ -69,7 +69,7 @@ namespace FIFA.Model
         {
             UpdateHomeParticipantForPostedResult(fixture);
             UpdateAwayParticipantForPostedResult(fixture);
-            AssignPositions();
+            ReAssignPositionsFromResult(fixture);
         }
 
         private void UpdateHomeParticipantForPostedResult(Fixture fixture)
@@ -157,12 +157,12 @@ namespace FIFA.Model
             };
         }
 
-        private void AssignPositions()
+        private void ReAssignPositionsFromResult(Fixture fixtureWithResult)
         {
-            AssignPositionsFromPoints();
+            AssignPositionsFromPoints(fixtureWithResult);
         }
 
-        private void AssignPositionsFromPoints()
+        private void AssignPositionsFromPoints(Fixture fixtureWithResult)
         {
             var participantsOrderedByPoints
                 = Participants
@@ -173,7 +173,7 @@ namespace FIFA.Model
             int position = 1;
 
             foreach (var participant in participantsOrderedByPoints)
-                participant.Position = position++;
+                participant.UpdatePositionFromResult(position++, fixtureWithResult);
         }
     }
 }

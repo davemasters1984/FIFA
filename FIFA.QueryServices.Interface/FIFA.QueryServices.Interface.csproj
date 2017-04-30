@@ -49,6 +49,7 @@
     <Compile Include="Models\FormTableRow.cs" />
     <Compile Include="Models\LeagueTableRecentResult.cs" />
     <Compile Include="Models\LeagueTableRow.cs" />
+    <Compile Include="Models\PlayerPositionAtGamesPlayed.cs" />
     <Compile Include="Models\PlayerPositionHistory.cs" />
     <Compile Include="Models\PlayerPositionHistoryComparison.cs" />
     <Compile Include="Models\LeagueStatisticsForPeriod.cs" />

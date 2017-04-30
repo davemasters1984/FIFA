@@ -12,16 +12,16 @@ namespace FIFA.QueryServices.Interface.Models
 
         public string PlayerOneName { get; set; }
 
-        public IEnumerable<PlayerPosition> PlayerOnePositionHistory { get; set; }
+        public IEnumerable<PlayerPositionAtDate> PlayerOnePositionHistory { get; set; }
 
         public string PlayerTwoId { get; set; }
 
         public string PlayerTwoName { get; set; }
 
-        public IEnumerable<PlayerPosition> PlayerTwoPositionHistory { get; set; }
+        public IEnumerable<PlayerPositionAtDate> PlayerTwoPositionHistory { get; set; }
     }
 
-    public class PlayerPosition
+    public class PlayerPositionAtDate
     {
         public DateTime Date { get; set; }
 
