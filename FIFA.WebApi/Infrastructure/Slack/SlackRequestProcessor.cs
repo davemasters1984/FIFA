@@ -28,7 +28,7 @@ namespace FIFA.WebApi.Infrastructure.Slack
             }
             catch (Exception ex)
             {
-                string errorMessage = string.Format("`Command: '{0}' failed. Error: {1}", request.text, ex.Message);
+                string errorMessage = string.Format("`Command: '{0}' failed. Error: {1}`", request.text, ex.Message);
                 SendResponse(request.response_url, errorMessage);
                 throw;
             }

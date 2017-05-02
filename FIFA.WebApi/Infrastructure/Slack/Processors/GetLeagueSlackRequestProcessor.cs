@@ -134,7 +134,7 @@ namespace FIFA.WebApi.Infrastructure.Slack
             string[] commandWords = request.text.Split();
 
             if (commandWords.Length < 2)
-                throw new Exception("`You must specify the league name`");
+                return ValidationResult.InvalidResult("`You must specify the league name`");
 
             _leagueName = commandWords[1];
 
