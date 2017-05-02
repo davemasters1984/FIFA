@@ -5,6 +5,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
+using FIFA.QueryServices.Interface.Models;
+using FIFA.Infrastructure;
 
 namespace FIFA.QueryServices.Services
 {
@@ -61,6 +63,19 @@ namespace FIFA.QueryServices.Services
             }
                 
             return dictionary;
+        }
+
+        public IEnumerable<PlayerSummary> GetPlayers()
+        {
+            using (var session = _documentStore.OpenSession())
+            {
+                return session.GetAll<Player>().Select(p => new PlayerSummary
+                {
+                    Face = p.Face,
+                    Name = p.Name,
+                    OverallScore = p.OverallScore
+                });
+            }
         }
     }
 }

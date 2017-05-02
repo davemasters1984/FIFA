@@ -54,6 +54,7 @@
     <Compile Include="Models\PlayerPositionHistoryComparison.cs" />
     <Compile Include="Models\LeagueStatisticsForPeriod.cs" />
     <Compile Include="Models\PlayerStatisticsSummary.cs" />
+    <Compile Include="Models\PlayerSummary.cs" />
     <Compile Include="Models\PredictedLeagueTableRow.cs" />
     <Compile Include="Models\ResultSummary.cs" />
     <Compile Include="Models\StatisticSummary.cs" />

@@ -5,6 +5,7 @@ using System.Web;
 using FIFA.WebApi.Models.Slack;
 using FIFA.CommandServices.Interface;
 using FIFA.QueryServices.Interface;
+using System.Text;
 
 namespace FIFA.WebApi.Infrastructure.Slack.Processors
 {
@@ -80,7 +81,15 @@ namespace FIFA.WebApi.Infrastructure.Slack.Processors
                 OverallScore = _updatedOverallScore
             });
 
-            SendResponse(request.response_url, string.Format("{0} `updated successfully`", _face));
+            var players = _playerQueryService.GetPlayers();
+            var stringBuilder = new StringBuilder();
+
+            foreach (var player in players.OrderByDescending(p => p.OverallScore))
+                stringBuilder.Append($"\n`{player.Face} {player.Name} [{player.OverallScore}]`");
+
+            var responseString = $"{_face} `updated successfully`\n{stringBuilder.ToString()}";
+
+            SendResponse(request.response_url, responseString);
         }
 
         private void SetDataFromCommandText(string commandText)
