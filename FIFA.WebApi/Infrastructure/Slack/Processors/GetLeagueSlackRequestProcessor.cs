@@ -15,7 +15,7 @@ namespace FIFA.WebApi.Infrastructure.Slack
         {
             get
             {
-                return "league";
+                return "table";
             }
         }
 

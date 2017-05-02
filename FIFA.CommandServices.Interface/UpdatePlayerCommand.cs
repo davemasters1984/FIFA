@@ -15,5 +15,7 @@ namespace FIFA.CommandServices.Interface
         public string Name { get; set; }
 
         public string SlackUsername { get; set; }
+
+        public decimal OverallScore { get; set; }
     }
 }

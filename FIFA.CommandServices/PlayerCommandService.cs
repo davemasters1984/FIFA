@@ -29,6 +29,9 @@ namespace FIFA.CommandServices
                 if (!string.IsNullOrEmpty(command.Name))
                     player.Name = command.Name;
 
+                if (command.OverallScore != 0)
+                    player.OverallScore = command.OverallScore;
+
                 _repository.Store(player);
             }
         }

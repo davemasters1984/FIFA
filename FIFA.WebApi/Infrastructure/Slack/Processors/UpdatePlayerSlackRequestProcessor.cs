@@ -16,9 +16,11 @@ namespace FIFA.WebApi.Infrastructure.Slack.Processors
         private string _updatedFace;
         private string _updatedName;
         private string _updatedSlackUsername;
+        private decimal _updatedOverallScore;
         private const string _facePropertyName = "face";
         private const string _playerNamePropertyName = "name";
         private const string _slackUsernamePropertyName = "slackusername";
+        private const string _overallScorePropertyName = "overallscore";
 
         public UpdatePlayerSlackRequestProcessor(IPlayerCommandService commandService, 
             IPlayerQueryService playerQueryService)
@@ -53,9 +55,16 @@ namespace FIFA.WebApi.Infrastructure.Slack.Processors
 
         public override ValidationResult ValidateRequest(SlackRequest request)
         {
-            SetDataFromCommandText(request.text);
+            try
+            {
+                SetDataFromCommandText(request.text);
+            }
+            catch (Exception ex)
+            {
+                return ValidationResult.InvalidResult(ex.Message);
+            }
 
-            return ValidationResult.ValidResult("Updating data for ");
+            return ValidationResult.ValidResult($"Updating data for {_updatedFace}");
         }
 
         protected override void ExecuteRequest(SlackRequest request)
@@ -78,7 +87,7 @@ namespace FIFA.WebApi.Infrastructure.Slack.Processors
             string[] commandWords = commandText.Split();
 
             if (commandWords.Length < 3)
-                throw new Exception("Invalid Command");
+                throw new Exception($"Could not understand command: '{commandText}'.");
 
             _face = commandWords[1];
 
@@ -91,14 +100,20 @@ namespace FIFA.WebApi.Infrastructure.Slack.Processors
 
                 var keyValue = property.Split(':');
 
-                if (keyValue[0] == _playerNamePropertyName)
+                if (keyValue[0].ToLower() == _playerNamePropertyName)
                     _updatedName = keyValue[1];
 
-                if (keyValue[0] == _facePropertyName)
+                if (keyValue[0].ToLower() == _facePropertyName)
                     _updatedFace = keyValue[1];
 
-                if (keyValue[0] == _slackUsernamePropertyName)
+                if (keyValue[0].ToLower() == _slackUsernamePropertyName)
                     _updatedSlackUsername = keyValue[1];
+
+                if (keyValue[0].ToLower() == _overallScorePropertyName)
+                {
+                    if (!decimal.TryParse(keyValue[1], out _updatedOverallScore))
+                        throw new Exception("Overall score must be a number");
+                }
             }
         }
     }
