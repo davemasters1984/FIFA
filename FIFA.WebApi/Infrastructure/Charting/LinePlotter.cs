@@ -8,7 +8,7 @@ namespace FIFA.WebApi.Infrastructure.Charting
     public class LinePlotter
     {
         private string _playerName;
-        private List<PlayerPosition> _positions;
+        private List<PlayerPositionAtDate> _positions;
         private readonly double _xAxisIncrementAmount;
         private readonly double _yAxisIncrementAmount;
         private Point _currentPoint = new Point(50, 750);
@@ -16,7 +16,7 @@ namespace FIFA.WebApi.Infrastructure.Charting
         private bool _isFirstResult = true;
         private Color _color;
 
-        public LinePlotter(Graphics graphics, Color color, string playerName, IEnumerable<PlayerPosition> positions)
+        public LinePlotter(Graphics graphics, Color color, string playerName, IEnumerable<PlayerPositionAtDate> positions)
         {
             _positions = positions.ToList();
             _playerName = playerName;
@@ -35,7 +35,7 @@ namespace FIFA.WebApi.Infrastructure.Charting
             RenderPlayerName();
         }
 
-        private void PlotNext(PlayerPosition position)
+        private void PlotNext(PlayerPositionAtDate position)
         {
             var newYPosition = _yAxisIncrementAmount * position.Position;
 
@@ -54,7 +54,7 @@ namespace FIFA.WebApi.Infrastructure.Charting
             _isFirstResult = false;
         }
 
-        private void RenderPositionNumber(PlayerPosition position)
+        private void RenderPositionNumber(PlayerPositionAtDate position)
         {
             if (position != _positions[_positions.Count - 1])
                 return;

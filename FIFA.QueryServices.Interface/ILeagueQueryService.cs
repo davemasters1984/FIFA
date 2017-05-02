@@ -5,7 +5,9 @@ namespace FIFA.QueryServices.Interface
 {
     public interface ILeagueQueryService
     {
-        string GetCurrentLeagueId();
+        string GetCurrentLeagueIdForPlayer(string face);
+
+        string GetCurrentLeagueIdFromLeagueName(string leagueName);
 
         IEnumerable<LeagueTableRow> GetLeagueTable(string leagueId);
 
@@ -13,11 +15,11 @@ namespace FIFA.QueryServices.Interface
 
         IEnumerable<LeagueTableRow> GetLeagueTableWaitForIndex(string leagueId);
 
-        IEnumerable<LeagueTableRow> GetCurrentLeagueTable();
-
         IEnumerable<FixtureSummary> GetFixturesForPlayer(string leagueId, string playerId);
 
         IEnumerable<FixtureSummary> GetFixturesForPlayerByFace(string leagueId, string face);
+
+        IEnumerable<FixtureSummary> GetFixturesForLeagueId(string leagueId);
 
         IEnumerable<ResultSummary> GetResultsForPlayerByFace(string leagueId, string face);
 

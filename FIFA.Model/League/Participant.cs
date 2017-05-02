@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace FIFA.Model
 {
@@ -11,6 +13,8 @@ namespace FIFA.Model
         public IEnumerable<int> EligibleTeamRatings { get; set; }
 
         public int Position { get; set; }
+
+        public List<PositionInHistory> PositionHistory { get; set; }
 
         public int GamesPlayed { get; set; }
 
@@ -55,5 +59,43 @@ namespace FIFA.Model
             if (result.AwayPoints == 1)
                 GamesDrawn++;
         }
+
+        public void UpdatePositionFromResult(int position, Fixture fixture)
+        {
+            Position = position;
+
+            if (GamesPlayed == 0)
+                return;
+
+            if (PositionHistory == null)
+                PositionHistory = new List<PositionInHistory>();
+
+            var positionInHistory = PositionHistory.FirstOrDefault(p => p.GamesPlayed == GamesPlayed);
+
+            if (positionInHistory == null)
+            {
+                positionInHistory = new PositionInHistory { GamesPlayed = GamesPlayed, Position = Position };
+                PositionHistory.Add(positionInHistory);
+            }
+                
+            if (fixture.AwayPlayerId == PlayerId || fixture.HomePlayerId == PlayerId)
+            {
+                positionInHistory.AwayPlayerId = fixture.AwayPlayerId;
+                positionInHistory.HomePlayerId = fixture.HomePlayerId;
+            }
+        }
+
+        
+    }
+
+    public class PositionInHistory
+    {
+        public int GamesPlayed { get; set; }
+
+        public int Position { get; set; }
+
+        public string HomePlayerId { get; set; }
+
+        public string AwayPlayerId { get; set; }
     }
 }

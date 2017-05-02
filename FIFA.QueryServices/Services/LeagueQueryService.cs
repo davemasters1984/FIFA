@@ -35,6 +35,40 @@ namespace FIFA.QueryServices.Services
             }
         }
 
+        public string GetCurrentLeagueIdForPlayer(string face)
+        {
+            var playerId = _playerQueryService.ResolvePlayerId(face);
+
+            using (var session = _documentStore.OpenSession())
+            {
+                var leagueId = session.Query<League>()
+                    .Where(l => !l.IsComplete)
+                    .Where(l => l.Participants.Any(p => p.PlayerId == playerId))
+                    .OrderByDescending(l => l.CreatedDate)
+                    .Select(l => l.Id)
+                    .FirstOrDefault();
+
+                return leagueId;
+            }
+        }
+
+        public string GetCurrentLeagueIdFromLeagueName(string leagueName)
+        {
+            var resolvedName = LeagueNameHelper.ResolveLeagueName(leagueName);
+
+            using (var session = _documentStore.OpenSession())
+            {
+                var leagueId = session.Query<League>()
+                    .Where(l => !l.IsComplete)
+                    .Where(l => l.Name == resolvedName)
+                    .OrderByDescending(l => l.CreatedDate)
+                    .Select(l => l.Id)
+                    .FirstOrDefault();
+
+                return leagueId;
+            }
+        }
+
         public IEnumerable<ResultSummary> GetResultsForPlayerByFace(string leagueId, string face)
         {
             using (var session = _documentStore.OpenSession())
@@ -45,19 +79,6 @@ namespace FIFA.QueryServices.Services
                     .ToList();
 
                 return results;
-            }
-        }
-
-        public IEnumerable<LeagueTableRow> GetCurrentLeagueTable()
-        {
-            using (var session = _documentStore.OpenSession())
-            {
-                var leagueId = session.Query<League>()
-                    .OrderByDescending(l => l.CreatedDate)
-                    .Select(l => l.Id)
-                    .FirstOrDefault();
-
-                return GetLeagueTable(session, leagueId);
             }
         }
 
@@ -81,6 +102,18 @@ namespace FIFA.QueryServices.Services
                 var fixtures = session.Query<FixtureSummary, FixturesIndex>()
                     .Where(l => l.LeagueId == leagueId)
                     .Where(l => l.HomePlayerFace == face || l.AwayPlayerFace == face)
+                    .ToList();
+
+                return fixtures;
+            }
+        }
+
+        public IEnumerable<FixtureSummary> GetFixturesForLeagueId(string leagueId)
+        {
+            using (var session = _documentStore.OpenSession())
+            {
+                var fixtures = session.Query<FixtureSummary, FixturesIndex>()
+                    .Where(l => l.LeagueId == leagueId)
                     .ToList();
 
                 return fixtures;
@@ -221,7 +254,7 @@ namespace FIFA.QueryServices.Services
                     .ToList();
 
                 playerHistory.PlayerOnePositionHistory = snapshots
-                    .Select(r => new PlayerPosition
+                    .Select(r => new PlayerPositionAtDate
                     {
                         Date = r.SnapshotDate,
                         Position = r.Rows.Where(x => x.PlayerId == playerOneId)
@@ -231,7 +264,7 @@ namespace FIFA.QueryServices.Services
                     .ToList();
 
                 playerHistory.PlayerTwoPositionHistory = snapshots
-                    .Select(r => new PlayerPosition
+                    .Select(r => new PlayerPositionAtDate
                     {
                         Date = r.SnapshotDate,
                         Position = r.Rows.Where(x => x.PlayerId == playerTwoId)
@@ -285,7 +318,7 @@ namespace FIFA.QueryServices.Services
                 PlayerId = playerId,
                 PlayerFace = player.Face,
                 PlayerName = player.Name,
-                History = snapshots.Select(r => new PlayerPosition
+                History = snapshots.Select(r => new PlayerPositionAtDate
                 {
                     Date = r.SnapshotDate,
                     Position = r.Rows.Where(x => x.PlayerId == playerId)
@@ -328,40 +361,105 @@ namespace FIFA.QueryServices.Services
                     .OrderByDescending(l => l.SnapshotDate)
                     .FirstOrDefault();
 
-            if (lastSnapshot == null)
-                return orderedleagueTable;
-
             AddPreviousPositionsToRows(orderedleagueTable, lastSnapshot);
 
             if (includePositionHistory)
-            {
                 AddPositionHistoryToRows(orderedleagueTable, leagueId, session);
-                AddRecentResultsToRows(orderedleagueTable, leagueId, session);
-            }
 
             return orderedleagueTable;
         }
 
-        private void AddRecentResultsToRows(List<LeagueTableRow> leagueTable, string leagueId, IDocumentSession session)
-        {
-            var league = session.Load<League>(leagueId);
-
-            foreach (var row in leagueTable)
-                row.RecentResults = GetRecentResultsForPlayer(league, leagueTable, row.PlayerId, session);
-        }
 
         private void AddPositionHistoryToRows(List<LeagueTableRow> orderedleagueTable, string leagueId, IDocumentSession session)
         {
-            var snapshots = session.Query<LeagueTableSnapshot>()
-                .Where(s => s.LeagueId == leagueId)
-                .ToList();
+            var league = session.Load<League>(leagueId);
 
             foreach (var row in orderedleagueTable)
             {
-                var history = GetPlayerPositionHistory(snapshots, row.PlayerId, session);
-                row.PositionHistory = history.History;
+                var history = league.Participants
+                    .First(p => p.PlayerId == row.PlayerId)
+                    .PositionHistory;
+
+                row.PositionHistory = GetPositionHistoryForPlayer(row, league, orderedleagueTable);
             }
                 
+        }
+
+        private IEnumerable<PlayerPositionAtGamesPlayed> GetPositionHistoryForPlayer(LeagueTableRow row, 
+            League league, 
+            List<LeagueTableRow> orderedleagueTable)
+        {
+            var historyAtGamesPlayed = new List<PlayerPositionAtGamesPlayed>();
+
+            var history = league.Participants
+                .First(p => p.PlayerId == row.PlayerId)
+                .PositionHistory;
+
+            if (history == null)
+                return historyAtGamesPlayed;
+
+            foreach (var historyItem in history)
+            {
+                var positionAtGamesPlayed = new PlayerPositionAtGamesPlayed
+                {
+                    Position = historyItem.Position,
+                    GamesPlayed = historyItem.Position
+                };
+
+                historyAtGamesPlayed.Add(positionAtGamesPlayed);
+
+                var fixture = GetFixture(league, historyItem.HomePlayerId, historyItem.AwayPlayerId);
+
+                if (fixture == null)
+                    continue;
+
+                positionAtGamesPlayed.HomePlayerId = fixture.HomePlayerId;               
+                positionAtGamesPlayed.AwayPlayerId = fixture.AwayPlayerId;
+
+                if (fixture.Result == null)
+                    continue;
+
+                positionAtGamesPlayed.ResultDate = fixture.Result.Date;
+
+                positionAtGamesPlayed.HomeGoals = fixture.Result.HomePlayerGoals;
+                positionAtGamesPlayed.HomePlayerFace = GetPlayerFaceFromLeagueRows(fixture.HomePlayerId, orderedleagueTable);
+                positionAtGamesPlayed.HomePlayerName = GetPlayerNameFromLeagueRows(fixture.HomePlayerId, orderedleagueTable);
+                positionAtGamesPlayed.HomePlayerTeamName = GetPlayersTeamNameFromLeagueRows(fixture.HomePlayerId, orderedleagueTable);
+                positionAtGamesPlayed.HomePlayerTeamBadge = GetPlayersTeamBadgeFaceFromLeagueRows(fixture.HomePlayerId, orderedleagueTable);
+
+                positionAtGamesPlayed.AwayGoals = fixture.Result.AwayPlayerGoals;
+                positionAtGamesPlayed.AwayPlayerFace = GetPlayerFaceFromLeagueRows(fixture.AwayPlayerId, orderedleagueTable);
+                positionAtGamesPlayed.AwayPlayerName = GetPlayerNameFromLeagueRows(fixture.AwayPlayerId, orderedleagueTable);
+                positionAtGamesPlayed.AwayPlayerTeamName = GetPlayersTeamNameFromLeagueRows(fixture.AwayPlayerId, orderedleagueTable);
+                positionAtGamesPlayed.AwayPlayerTeamBadge = GetPlayersTeamBadgeFaceFromLeagueRows(fixture.AwayPlayerId, orderedleagueTable);
+            }
+
+            return historyAtGamesPlayed;
+        }
+
+        private string GetPlayerNameFromLeagueRows(string playerId, List<LeagueTableRow> leagueRows)
+        {
+            return leagueRows.Select(l => l.PlayerName).FirstOrDefault();
+        }
+
+        private string GetPlayerFaceFromLeagueRows(string playerId, List<LeagueTableRow> leagueRows)
+        {
+            return leagueRows.Select(l => l.PlayerName).FirstOrDefault();
+        }
+
+        private string GetPlayersTeamNameFromLeagueRows(string playerId, List<LeagueTableRow> leagueRows)
+        {
+            return leagueRows.Select(l => l.TeamName).FirstOrDefault();
+        }
+
+        private string GetPlayersTeamBadgeFaceFromLeagueRows(string playerId, List<LeagueTableRow> leagueRows)
+        {
+            return leagueRows.Select(l => l.TeamBadge).FirstOrDefault();
+        }
+
+        private Fixture GetFixture(League league, string homePlayerId, string awayPlayerId)
+        {
+            return league.Fixtures.FirstOrDefault(f => f.HomePlayerId == homePlayerId && f.AwayPlayerId == awayPlayerId);
         }
 
         private IEnumerable<LeagueTableRow> GetLeagueTable(IDocumentSession session, string leagueId)
@@ -372,6 +470,9 @@ namespace FIFA.QueryServices.Services
 
         private void AddPreviousPositionsToRows(List<LeagueTableRow> leagueTable, LeagueTableSnapshot lastSnapshot)
         {
+            if (lastSnapshot == null)
+                return;
+
             foreach(var row in leagueTable)
             {
                 var correspondingPlayerRow = lastSnapshot.Rows

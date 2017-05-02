@@ -11,7 +11,18 @@ namespace FIFA.WebApi.Infrastructure.Slack.Processors
     public class GetFixturesSlackRequestProcessor : SlackRequestProcessor
     {
         private ILeagueQueryService _leagueQueryService;
-        private string _face;
+        private string _faceOrLeagueName;
+
+        private bool IsByFace
+        {
+            get
+            {
+                if (_faceOrLeagueName.Contains(":"))
+                    return true;
+
+                return false;
+            }
+        }
 
         public GetFixturesSlackRequestProcessor(ILeagueQueryService leagueQueryService)
         {
@@ -30,7 +41,7 @@ namespace FIFA.WebApi.Infrastructure.Slack.Processors
         {
             get
             {
-                return $"`{SlackSlashCommand} {CommandText} :dave:`";
+                return $"`{SlackSlashCommand} {CommandText} :dave:` or `{SlackSlashCommand} {CommandText} prem`";
             }
         }
 
@@ -44,11 +55,11 @@ namespace FIFA.WebApi.Infrastructure.Slack.Processors
 
         protected override void ExecuteRequest(SlackRequest request)
         {
-            SetDataFromCommandText(request.text);
+            var leagueId = GetLeagueId();
 
-            var leagueId = _leagueQueryService.GetCurrentLeagueId();
-
-            var fixtures = _leagueQueryService.GetFixturesForPlayerByFace(leagueId, _face);
+            var fixtures = (IsByFace)
+                ? _leagueQueryService.GetFixturesForPlayerByFace(leagueId, _faceOrLeagueName)
+                : _leagueQueryService.GetFixturesForLeagueId(leagueId);
 
             var responseString = new StringBuilder();
 
@@ -64,6 +75,14 @@ namespace FIFA.WebApi.Infrastructure.Slack.Processors
             SendResponse(request.response_url, responseString.ToString());
         }
 
+        private string GetLeagueId()
+        {
+            if (IsByFace)
+                return _leagueQueryService.GetCurrentLeagueIdForPlayer(_faceOrLeagueName);
+            else
+                return _leagueQueryService.GetCurrentLeagueIdFromLeagueName(_faceOrLeagueName);
+        }
+
         private void SetDataFromCommandText(string commandText)
         {
             //fifaleague fixtures :dave: 
@@ -73,13 +92,15 @@ namespace FIFA.WebApi.Infrastructure.Slack.Processors
             if (commandText.Length < 6)
                 throw new Exception("Invalid Command");
 
-            _face = commandWords[1];
+            _faceOrLeagueName = commandWords[1];
         }
 
         public override ValidationResult ValidateRequest(SlackRequest request)
         {
+            SetDataFromCommandText(request.text);
+
             return ValidationResult.ValidResult(string.Format("`Retreiving fixtures for:` {0}",
-                _face,
+                _faceOrLeagueName,
                 request.user_name));
         }
     }

@@ -11,6 +11,8 @@ namespace FIFA.WebApi.Infrastructure.Slack.Processors
     public class GetPredictedLeagueTableSlackRequestProcessor : SlackRequestProcessor
     {
         private IStatisticQueryService _queryService;
+        private ILeagueQueryService _leagueQueryService;
+        private string _leagueName;
 
         public override string CommandText
         {
@@ -24,7 +26,7 @@ namespace FIFA.WebApi.Infrastructure.Slack.Processors
         {
             get
             {
-                return $"`{SlackSlashCommand} {CommandText}`";
+                return $"`{SlackSlashCommand} {CommandText} prem`";
             }
         }
 
@@ -36,19 +38,29 @@ namespace FIFA.WebApi.Infrastructure.Slack.Processors
             }
         }
 
-        public GetPredictedLeagueTableSlackRequestProcessor(IStatisticQueryService queryService)
+        public GetPredictedLeagueTableSlackRequestProcessor(IStatisticQueryService queryService, 
+            ILeagueQueryService leagueQueryService)
         {
             _queryService = queryService;
+            _leagueQueryService = leagueQueryService;
         }
 
         public override ValidationResult ValidateRequest(SlackRequest request)
         {
+            string[] commandWords = request.text.Split();
+
+            if (commandWords.Length < 2)
+                throw new Exception("`You must specify the league name`");
+
+            _leagueName = commandWords[1];
+
             return ValidationResult.ValidResult("`Retreiving predicted table`");
         }
 
         protected override void ExecuteRequest(SlackRequest request)
         {
-            var predictedTable = _queryService.GetPredictedTable("leagues/417");
+            var leagueId = _leagueQueryService.GetCurrentLeagueIdFromLeagueName(_leagueName);
+            var predictedTable = _queryService.GetPredictedTable(leagueId);
 
             var response = new StringBuilder();
             int currentPosition = 0;
@@ -57,6 +69,8 @@ namespace FIFA.WebApi.Infrastructure.Slack.Processors
             var relegationIcon = ":skull:";
             var relegationPlayOffIcon = ":scream:";
             var championIcon = ":crown:";
+
+            response.Append("`Predicted Final Table:`");
 
             foreach (var row in predictedTable)
             {

@@ -54,7 +54,7 @@ namespace FIFA.WebApi.Infrastructure.Slack.Processors
 
         protected override void ExecuteRequest(SlackRequest request)
         {
-            var leagueId = _leagueQueryService.GetCurrentLeagueId();
+            var leagueId = _leagueQueryService.GetCurrentLeagueIdForPlayer(_faceOne);
 
             var results = _leagueQueryService.GetHeadToHeadResults(leagueId, _faceOne, _faceTwo);
 

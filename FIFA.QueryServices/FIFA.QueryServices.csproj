@@ -55,6 +55,7 @@
     <Compile Include="Indexes\LeagueSummaryIndex.cs" />
     <Compile Include="Indexes\LeagueTableIndex.cs" />
     <Compile Include="Indexes\ResultsIndex.cs" />
+    <Compile Include="LeagueNameHelper.cs" />
     <Compile Include="Models\LeagueSummary.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\LeagueQueryService.cs" />

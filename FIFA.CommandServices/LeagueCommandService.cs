@@ -5,6 +5,7 @@ using FIFA.Model.Services;
 using FIFA.QueryServices.Interface;
 using FIFA.QueryServices.Interface.Models;
 using Microsoft.ApplicationInsights;
+using Raven.Client;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,8 +20,10 @@ namespace FIFA.CommandServices
         private IRepository _repository;
         private ILeagueQueryService _leagueQueryService;
         private TelemetryClient telemetry = new TelemetryClient();
+        private IDocumentStore _documentStore;
 
         public LeagueCommandService(IRepository repository, 
+            IDocumentStore documentStore,
             ILeagueService leagueService, 
             IResultService resultService,
             ILeagueQueryService leagueQueryService)
@@ -29,13 +32,17 @@ namespace FIFA.CommandServices
             _leagueService = leagueService;
             _resultService = resultService;
             _leagueQueryService = leagueQueryService;
+            _documentStore = documentStore;
         }
 
         public void CreateLeague(CreateLeagueCommand command)
         {
-            var helper = new CreateLeagueHelper();
+            var helper = new CreateLeagueHelper(_documentStore);
 
-            var args = helper.CreateLeagueArgs(command.ParticipantFaces);
+            var args = helper.CreateLeagueArgs(command.ParticipantFaces,
+                command.Name,
+                command.MinimumTeamRating,
+                command.MaximumTeamRating);
 
             var leagueService = new LeagueService();
 
@@ -54,13 +61,16 @@ namespace FIFA.CommandServices
                 _resultService.PostResult(command.AsArgs());
             }
 
-            Task.Factory.StartNew(() => TakeSnapshot(new TakeSnapshotCommand()));
+            Task.Factory.StartNew(() => TakeSnapshot(new TakeSnapshotCommand
+            {
+                LeagueId = command.LeagueId
+            }));
         }
 
         public void TakeSnapshot(TakeSnapshotCommand command)
         {
-            var currentLeagueId = _leagueQueryService.GetCurrentLeagueId();
-            var currentLeague = _leagueQueryService.GetLeagueTableWaitForIndex(currentLeagueId);
+            var leagueId = command.LeagueId;
+            var currentLeague = _leagueQueryService.GetLeagueTableWaitForIndex(leagueId);
             var currentDate = DateTime.Now.Date;
             var start = DateTime.Now;
 
@@ -68,7 +78,7 @@ namespace FIFA.CommandServices
             {
                 var snapshot = _repository.Query<LeagueTableSnapshot>()
                     .Where(s => s.SnapshotDate == currentDate)
-                    .Where(s => s.LeagueId == currentLeagueId)
+                    .Where(s => s.LeagueId == leagueId)
                     .FirstOrDefault();
 
                 if (snapshot == null)
@@ -76,7 +86,7 @@ namespace FIFA.CommandServices
 
                 snapshot.Rows = MapSnapshotRows(currentLeague);
                 snapshot.SnapshotDate = currentDate;
-                snapshot.LeagueId = currentLeagueId;
+                snapshot.LeagueId = leagueId;
 
                 _repository.Store(snapshot);
             }

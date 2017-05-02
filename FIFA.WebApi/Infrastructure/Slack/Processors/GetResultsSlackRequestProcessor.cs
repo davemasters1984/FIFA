@@ -44,7 +44,7 @@ namespace FIFA.WebApi.Infrastructure.Slack.Processors
         {
             SetDataFromCommandText(request.text);
 
-            var leagueId = _leagueQueryService.GetCurrentLeagueId();
+            var leagueId = _leagueQueryService.GetCurrentLeagueIdForPlayer(_face);
 
             var results = _leagueQueryService.GetResultsForPlayerByFace(leagueId, _face);
 

@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
+﻿using FIFA.QueryServices.Interface;
 using FIFA.WebApi.Models.Slack;
-using FIFA.QueryServices.Interface;
+using System;
 using System.Text;
 
 namespace FIFA.WebApi.Infrastructure.Slack.Processors
@@ -11,6 +8,8 @@ namespace FIFA.WebApi.Infrastructure.Slack.Processors
     public class GetWeeklySummarySlackRequestProcessor : SlackRequestProcessor
     {
         private IStatisticQueryService _queryService;
+        private ILeagueQueryService _leagueQueryService;
+        private string _leagueName;
 
         public override string CommandText
         {
@@ -24,7 +23,7 @@ namespace FIFA.WebApi.Infrastructure.Slack.Processors
         {
             get
             {
-                return $"`{SlackSlashCommand} {CommandText}`";
+                return $"`{SlackSlashCommand} {CommandText} prem`";
             }
         }
 
@@ -36,14 +35,17 @@ namespace FIFA.WebApi.Infrastructure.Slack.Processors
             }
         }
 
-        public GetWeeklySummarySlackRequestProcessor(IStatisticQueryService queryService)
+        public GetWeeklySummarySlackRequestProcessor(IStatisticQueryService queryService, 
+            ILeagueQueryService leagueQueryService)
         {
             _queryService = queryService;
+            _leagueQueryService = leagueQueryService;
         }
 
         protected override void ExecuteRequest(SlackRequest request)
         {
-            var summary = _queryService.GetWeeklySummary("leagues/417");
+            var leagueId = _leagueQueryService.GetCurrentLeagueIdFromLeagueName(_leagueName);
+            var summary = _queryService.GetWeeklySummary(leagueId);
 
             var builder = new StringBuilder();
 
@@ -101,6 +103,13 @@ namespace FIFA.WebApi.Infrastructure.Slack.Processors
 
         public override ValidationResult ValidateRequest(SlackRequest request)
         {
+            string[] commandWords = request.text.Split();
+
+            if (commandWords.Length < 2)
+                throw new Exception("`You must specify the league name`");
+
+            _leagueName = commandWords[1];
+
             return ValidationResult.ValidResult("`Fetching weekly summary`");
         }
     }

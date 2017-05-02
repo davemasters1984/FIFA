@@ -8,6 +8,8 @@ namespace FIFA.Model.Services
 {
     public class CreateLeagueArgs
     {
+        public string Name { get; set; }
+
         public IEnumerable<Team> Teams { get; set; }
 
         public IEnumerable<Player> Players { get; set; }

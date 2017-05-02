@@ -15,15 +15,30 @@ namespace FIFA.Model
 
         public List<Fixture> Fixtures { get; set; }
 
+        public string Name { get; set; }
+
+        public bool IsComplete
+        {
+            get
+            {
+                if (Fixtures == null)
+                    return false;
+
+                return Fixtures.Count() == Fixtures.Where(f => f.Result != null).Count();
+            }
+        }
+
         public League()
         {
 
         }
 
-        public League(DateTime createdDate, 
+        public League(string name,
+            DateTime createdDate, 
             List<Participant> participants, 
             List<Fixture> fixtures)
         {
+            Name = name;
             Participants = participants;
             Fixtures = fixtures;
             CreatedDate = createdDate;
@@ -54,7 +69,7 @@ namespace FIFA.Model
         {
             UpdateHomeParticipantForPostedResult(fixture);
             UpdateAwayParticipantForPostedResult(fixture);
-            AssignPositions();
+            ReAssignPositionsFromResult(fixture);
         }
 
         private void UpdateHomeParticipantForPostedResult(Fixture fixture)
@@ -142,12 +157,12 @@ namespace FIFA.Model
             };
         }
 
-        private void AssignPositions()
+        private void ReAssignPositionsFromResult(Fixture fixtureWithResult)
         {
-            AssignPositionsFromPoints();
+            AssignPositionsFromPoints(fixtureWithResult);
         }
 
-        private void AssignPositionsFromPoints()
+        private void AssignPositionsFromPoints(Fixture fixtureWithResult)
         {
             var participantsOrderedByPoints
                 = Participants
@@ -158,7 +173,7 @@ namespace FIFA.Model
             int position = 1;
 
             foreach (var participant in participantsOrderedByPoints)
-                participant.Position = position++;
+                participant.UpdatePositionFromResult(position++, fixtureWithResult);
         }
     }
 }

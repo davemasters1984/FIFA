@@ -9,5 +9,11 @@ namespace FIFA.CommandServices.Interface
     public class CreateLeagueCommand
     {
         public IEnumerable<string> ParticipantFaces { get; set; }
+
+        public string Name { get; set; }
+
+        public decimal MaximumTeamRating { get; set; }
+
+        public decimal MinimumTeamRating { get; set; }
     }
 }

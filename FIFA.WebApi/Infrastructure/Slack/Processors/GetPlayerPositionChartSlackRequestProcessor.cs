@@ -50,7 +50,7 @@ namespace FIFA.WebApi.Infrastructure.Slack.Processors
         {
             var response = new SlackSlashResponse(string.Empty);
 
-            var fullLeagueId = _queryService.GetCurrentLeagueId();
+            var fullLeagueId = _queryService.GetCurrentLeagueIdForPlayer(_playerFaces.First());
 
             var leagueId = GetIdWithoutPrefix("leagues/", fullLeagueId);
 

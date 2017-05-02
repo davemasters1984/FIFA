@@ -55,7 +55,9 @@ namespace FIFA.WebApi
             container.RegisterType<ISlackRequestProcessor, GetTopGoalScorersSlackProcessors>("golden-boot");
             container.RegisterType<ISlackRequestProcessor, GetPredictedLeagueTableSlackRequestProcessor>("predicted");
             container.RegisterType<ISlackRequestProcessor, GetHeadToHeadForLeagueSlackRequestProcessor>("h2h");
+            container.RegisterType<ISlackRequestProcessor, GetWhosWhoSlackRequestProcessor>("whos-who");
             container.RegisterType<ISlackRequestProcessor, UpdatePlayerSlackRequestProcessor>("update-player");
+            container.RegisterType<ISlackRequestProcessor, CreateNewLeagueSlackRequestProcessor>("create-league");
         }
     }
 }
