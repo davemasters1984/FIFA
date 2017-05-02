@@ -45,7 +45,5 @@ namespace FIFA.QueryServices.Interface.Models
         public int PositionChange { get; set; }
 
         public IEnumerable<PlayerPositionAtGamesPlayed> PositionHistory { get; set; }
-
-        public IEnumerable<LeagueTableRecentResult> RecentResults { get; set; }
     }
 }

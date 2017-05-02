@@ -364,21 +364,11 @@ namespace FIFA.QueryServices.Services
             AddPreviousPositionsToRows(orderedleagueTable, lastSnapshot);
 
             if (includePositionHistory)
-            {
                 AddPositionHistoryToRows(orderedleagueTable, leagueId, session);
-                AddRecentResultsToRows(orderedleagueTable, leagueId, session);
-            }
 
             return orderedleagueTable;
         }
 
-        private void AddRecentResultsToRows(List<LeagueTableRow> leagueTable, string leagueId, IDocumentSession session)
-        {
-            var league = session.Load<League>(leagueId);
-
-            foreach (var row in leagueTable)
-                row.RecentResults = GetRecentResultsForPlayer(league, leagueTable, row.PlayerId, session);
-        }
 
         private void AddPositionHistoryToRows(List<LeagueTableRow> orderedleagueTable, string leagueId, IDocumentSession session)
         {
