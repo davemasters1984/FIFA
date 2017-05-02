@@ -29,7 +29,7 @@ namespace FIFA.QueryServices
             if (_premiershipAliases.Any(p => p == name.ToLower()))
                 return "premiership";
 
-            if (_premiershipAliases.Any(p => p == name.ToLower()))
+            if (_championshipAliases.Any(p => p == name.ToLower()))
                 return "championship";
 
             return name;
