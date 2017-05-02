@@ -77,6 +77,7 @@ namespace FIFA.WebApi.Infrastructure.Slack.Processors
                 Face = _updatedFace,
                 Name = _updatedName,
                 SlackUsername = _updatedSlackUsername,
+                OverallScore = _updatedOverallScore
             });
 
             SendResponse(request.response_url, string.Format("{0} `updated successfully`", _face));
