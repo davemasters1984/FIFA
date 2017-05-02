@@ -227,7 +227,9 @@ namespace FIFA.QueryServices.Services
                 foreach(var player in orderedleagueTable)
                 {
                     var gamesRemaining = numberOfGamesToPlay - player.GamesPlayed;
-                    decimal averagePointsPerGame = (decimal)player.Points / (decimal)player.GamesPlayed;
+                    decimal averagePointsPerGame = (player.GamesPlayed > 0)
+                         ? (decimal)player.Points / (decimal)player.GamesPlayed
+                         : 0;
 
                     predictedTable.Add(new PredictedLeagueTableRow
                     {
