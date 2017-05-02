@@ -16,6 +16,7 @@ namespace FIFA.WebApi.Infrastructure.Slack
         private string _awayPlayerFace;
         private string _awayPlayerId;
         private int _awayGoals;
+        private ILeagueQueryService _leagueQueryService;
         private IDocumentStore _documentStore;
         private ILeagueCommandService _leagueCommandService;
         private IPlayerQueryService _playerQueryService;
@@ -45,28 +46,23 @@ namespace FIFA.WebApi.Infrastructure.Slack
         }
 
         public PostResultSlackRequestProcessor(IDocumentStore documentStore, 
+            ILeagueQueryService leagueQueryService,
             IPlayerQueryService playerQueryService,
             ILeagueCommandService leagueCommandService)
         {
             _documentStore = documentStore;
             _leagueCommandService = leagueCommandService;
             _playerQueryService = playerQueryService;
+            _leagueQueryService = leagueQueryService;
         }
 
         protected override void ExecuteRequest(SlackRequest request)
         {
-            League league;
-
-            using (var session = _documentStore.OpenSession())
-            {
-                league = session.Query<League>()
-                    .OrderByDescending(l => l.CreatedDate)
-                    .FirstOrDefault();
-            }
+            string leagueId = _leagueQueryService.GetCurrentLeagueIdForPlayer(_homePlayerFace);
 
             _leagueCommandService.PostResult(new PostResultCommand
             {
-                LeagueId = league.Id,
+                LeagueId = leagueId,
                 HomePlayerId = _homePlayerId,
                 AwayPlayerId = _awayPlayerId,
                 HomePlayerGoals = _homeGoals,

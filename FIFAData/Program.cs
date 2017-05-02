@@ -25,11 +25,25 @@ namespace FIFAData
         {
             CreateDocumentStore();
             //GetTeam();
-            ImportTeams();
+            //ImportTeams();
+            ReSaveLeague();
 
             Console.WriteLine("Complete.");
 
             Console.Read();
+        }
+
+        private static void ReSaveLeague()
+        {
+            using (var session = _documentStore.OpenSession())
+            {
+                var league = session.Load<League>("leagues/385");
+
+                league.Name = "premiership";
+
+                session.Store(league);
+                session.SaveChanges();
+            }
         }
 
         private static void GetTeam()
