@@ -6,9 +6,6 @@ namespace FIFAData
     [DelimitedRecord(",")]
     public class TeamCsvItem
     {
-        [FieldConverter(ConverterKind.Decimal, ".")]
-        public decimal Stars;
-
         public string LogoUrl;
 
         public string TeamName;
@@ -22,7 +19,6 @@ namespace FIFAData
         {
             return new Team
             {
-                Stars = this.Stars,
                 LogoUrl = this.LogoUrl,
                 TeamName = this.TeamName,
                 League = this.League,

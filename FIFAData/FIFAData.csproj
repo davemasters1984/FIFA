@@ -80,7 +80,7 @@
       <DependentUpon>App.config</DependentUpon>
       <IsTransformFile>True</IsTransformFile>
     </None>
-    <None Include="DataImport\FIFA.csv" />
+    <None Include="DataImport\fifa.csv" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>

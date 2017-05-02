@@ -21,5 +21,9 @@ namespace FIFA.Model
         public string League { get; set; }
 
         public int OverallRating { get; set; }
+
+        public DateTime Created { get; set; }
+
+        public DateTime Updated { get; set; }
     }
 }

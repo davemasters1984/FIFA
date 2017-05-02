@@ -24,13 +24,25 @@ namespace FIFAData
         static void Main(string[] args)
         {
             CreateDocumentStore();
-
-            //DeployIndexes();
-            GenerateStatistics();
+            //GetTeam();
+            ImportTeams();
 
             Console.WriteLine("Complete.");
 
             Console.Read();
+        }
+
+        private static void GetTeam()
+        {
+            using (var session = _documentStore.OpenSession())
+            {
+                var teams = session.GetAll<Team>();
+
+                var fern = teams.Where(t => t.TeamName.ToLower().Contains("rangers"));
+                var fernTeam = fern.FirstOrDefault();
+
+                Console.WriteLine(fernTeam.TeamName);
+            }
         }
 
         private static void GetWeeklyStatistic()
