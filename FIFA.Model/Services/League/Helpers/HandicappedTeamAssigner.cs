@@ -133,7 +133,7 @@ namespace FIFA.Model.Services
 
         private decimal CalculateRatingsRangeIncrement()
         {
-            return (_possibleTeamRatings.Max() - _possibleTeamRatings.Min()) / _playersOrderedByOverallRanking.Count();
+            return ((decimal)_possibleTeamRatings.Max() - (decimal)_possibleTeamRatings.Min()) / (decimal)_playersOrderedByOverallRanking.Count();
         }
 
         private bool IsWithinCurrentRatingsRange(int possibleTeamRating)

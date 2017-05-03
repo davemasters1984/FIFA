@@ -1,6 +1,7 @@
 ﻿using FIFA.QueryServices.Interface;
 using FIFA.WebApi.Models.Slack;
 using System;
+using System.Linq;
 using System.Text;
 
 namespace FIFA.WebApi.Infrastructure.Slack.Processors
@@ -60,13 +61,14 @@ namespace FIFA.WebApi.Infrastructure.Slack.Processors
 
             response.AppendFormat("`Whos-who for league: {0}` \n", _leagueName);
 
-            foreach(var row in league)
+            foreach (var row in league.OrderByDescending(r => r.TeamRating))
             {
-                response.AppendFormat("\n{0} {1} *is* {2} {3} ",
-                    row.PlayerName,
+                response.AppendFormat("\n{0} *{1}* is {2} *{3}* `[{4}]`",
                     row.PlayerFace,
+                    row.PlayerName,
+                    row.TeamBadge,
                     row.TeamName,
-                    row.TeamBadge);
+                    row.TeamRating);
             }
 
             SendResponse(request.response_url, response.ToString());

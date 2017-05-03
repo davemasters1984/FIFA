@@ -478,6 +478,9 @@ namespace FIFA.QueryServices.Services
                 var correspondingPlayerRow = lastSnapshot.Rows
                     .FirstOrDefault(r => r.PlayerFace == row.PlayerFace);
 
+                if (correspondingPlayerRow == null)
+                    continue;
+
                 var difference = Math.Abs(correspondingPlayerRow.Position - row.Position);
 
                 row.PositionChange = (row.Position < correspondingPlayerRow.Position)
