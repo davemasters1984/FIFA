@@ -52,6 +52,8 @@ namespace FIFA.WebApi.Infrastructure.Slack
             var relegationIcon = ":skull:";
             var relegationPlayOffIcon = ":scream:";
 
+            response.Append($":trophy: *{_leagueName.ToUpper()} TABLE* :trophy:\n\n");
+
             foreach (var row in leagueTable)
             {
                 currentPosition++;
