@@ -11,6 +11,8 @@ namespace FIFA.QueryServices.Interface
 
         IEnumerable<LeagueTableRow> GetLeagueTable(string leagueId);
 
+        LeagueTable GetLeagueTableWithHeader(string leagueId);
+
         IEnumerable<LeagueTableRow> GetLeagueTableWithPositionHistory(string leagueId);
 
         IEnumerable<LeagueTableRow> GetLeagueTableWaitForIndex(string leagueId);

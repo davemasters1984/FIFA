@@ -17,6 +17,10 @@ namespace FIFA.Model
 
         public string Name { get; set; }
 
+        public bool IsTopLeague { get; set; }
+
+        public bool IsBottomLeague { get; set; }
+
         public bool IsComplete
         {
             get

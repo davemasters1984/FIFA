@@ -523,6 +523,25 @@ namespace FIFA.QueryServices.Services
             }
         }
 
+        public LeagueTable GetLeagueTableWithHeader(string leagueId)
+        {
+            using (var session = _documentStore.OpenSession())
+            {
+                var league = session.Load<League>(leagueId);
+
+                var leagueTable = new LeagueTable
+                {
+                    LeagueName = league.Name,
+                    IsBottomLeague = league.IsBottomLeague,
+                    IsTopLeague = league.IsTopLeague,
+                };
+
+                leagueTable.Rows = GetLeagueTable(session, leagueId);
+
+                return leagueTable;
+            }
+        }
+
         #endregion
     }
 }

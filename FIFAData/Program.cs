@@ -27,8 +27,8 @@ namespace FIFAData
             //GetTeam();
             //ImportTeams();
             //ReSaveLeague();
-            AddPlayer(":ian:", "Ian");
-            AddPlayer(":alec:", "Alec");
+            //AddPlayer(":ian:", "Ian");
+            //AddPlayer(":alec:", "Alec");
 
             Console.WriteLine("Complete.");
 

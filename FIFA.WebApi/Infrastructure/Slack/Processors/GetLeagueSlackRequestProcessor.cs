@@ -40,21 +40,27 @@ namespace FIFA.WebApi.Infrastructure.Slack
             _queryService = queryService;
         }
 
+        private const string _topLeagueHeader = ". . : : : / / / :star: :soccer: :trophy-prem: *{0} TABLE* :trophy-prem: :soccer: :star: \\ \\ \\ : : : . .";
+        private const string _bottomLeagueHeader = ". . : : : / / :balloon: :soccer: :trophy-champ: *{0} TABLE* :trophy-champ: :soccer: :balloon: \\ \\ : : : . .";
+
         protected override void ExecuteRequest(SlackRequest request)
         {
             var leagueId = _queryService.GetCurrentLeagueIdFromLeagueName(_leagueName);
-            var leagueTable = _queryService.GetLeagueTable(leagueId);
+            var leagueTable = _queryService.GetLeagueTableWithHeader(leagueId);
 
             var response = new StringBuilder();
             int currentPosition = 0;
-            int relegationPosition = leagueTable.Count();
-            int relegationPlayOffPosition = leagueTable.Count() - 2;
+            int relegationPosition = leagueTable.Rows.Count();
+            int relegationPlayOffPosition = leagueTable.Rows.Count() - 2;
             var relegationIcon = ":skull:";
             var relegationPlayOffIcon = ":scream:";
 
-            response.Append($":trophy: *{_leagueName.ToUpper()} TABLE* :trophy:\n\n");
+            if (leagueTable.IsTopLeague)
+                response.AppendFormat(_topLeagueHeader, _leagueName.ToUpper());
+            if (leagueTable.IsBottomLeague)
+                response.AppendFormat(_bottomLeagueHeader, _leagueName.ToUpper());
 
-            foreach (var row in leagueTable)
+            foreach (var row in leagueTable.Rows)
             {
                 currentPosition++;
                 var positionString = GetFormattedNumberString(currentPosition);
@@ -68,14 +74,20 @@ namespace FIFA.WebApi.Infrastructure.Slack
                 var goalDifferenceString = GetGoalDifferenceNumberString(row.GoalsFor - row.GoalsAgainst);
                 var pointsString = GetFormattedNumberString(row.Points);
 
-                var relegationOrPlayOffIcon = (currentPosition >= relegationPosition) 
-                    ? relegationIcon
-                    : (currentPosition >= relegationPlayOffPosition) 
-                        ? relegationPlayOffIcon 
-                        : string.Empty;
 
-                if (currentPosition == relegationPosition || currentPosition == relegationPlayOffPosition)
-                    response.Append("\n-----------------------------------------------------------------------------------");
+                var relegationOrPlayOffIcon = string.Empty;
+
+                if (leagueTable.IsTopLeague)
+                {
+                    relegationOrPlayOffIcon = (currentPosition >= relegationPosition)
+                        ? relegationIcon
+                        : (currentPosition >= relegationPlayOffPosition)
+                            ? relegationPlayOffIcon
+                            : string.Empty;
+
+                    if (currentPosition == relegationPosition || currentPosition == relegationPlayOffPosition)
+                        response.Append("\n-----------------------------------------------------------------------------------");
+                }
 
                 response.AppendFormat(string.Format("\n{0}{1} {2} Played: *{3}*   W: *{4}*   D: *{5}*   L: *{6}*   GD: {7}   Pts: *{8}* {9} {10} {11}",
                     positionString,
