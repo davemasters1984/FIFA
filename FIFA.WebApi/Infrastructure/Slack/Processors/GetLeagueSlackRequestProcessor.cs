@@ -40,8 +40,8 @@ namespace FIFA.WebApi.Infrastructure.Slack
             _queryService = queryService;
         }
 
-        private const string _topLeagueHeader = ". . : : : / / / :star: :soccer: :trophy-prem: *{0} TABLE* :trophy-prem: :soccer: :star: \\ \\ \\ : : : . .";
-        private const string _bottomLeagueHeader = ". . : : : / / :balloon: :soccer: :trophy-champ: *{0} TABLE* :trophy-champ: :soccer: :balloon: \\ \\ : : : . .";
+        private const string _topLeagueHeader = ". . : : : / / / :star: :soccer: :trophy-prem: *{0} TABLE* :trophy-prem: :soccer: :star: \\ \\ \\ : : : . .\n";
+        private const string _bottomLeagueHeader = ". . : : : / / :balloon: :soccer: :trophy-champ: *{0} TABLE* :trophy-champ: :soccer: :balloon: \\ \\ : : : . .\n";
 
         protected override void ExecuteRequest(SlackRequest request)
         {
@@ -52,8 +52,11 @@ namespace FIFA.WebApi.Infrastructure.Slack
             int currentPosition = 0;
             int relegationPosition = leagueTable.Rows.Count();
             int relegationPlayOffPosition = leagueTable.Rows.Count() - 2;
+            int promotionPlayOffPosition = 3;
             var relegationIcon = ":skull:";
             var relegationPlayOffIcon = ":scream:";
+            var promotionIcon = ":sunglasses:";
+            var promotionPlayOffIcon = ":slightly_smiling_face:";
 
             if (leagueTable.IsTopLeague)
                 response.AppendFormat(_topLeagueHeader, _leagueName.ToUpper());
@@ -75,21 +78,34 @@ namespace FIFA.WebApi.Infrastructure.Slack
                 var pointsString = GetFormattedNumberString(row.Points);
 
 
-                var relegationOrPlayOffIcon = string.Empty;
+                var leaguePositionIcon = string.Empty;
 
                 if (leagueTable.IsTopLeague)
                 {
-                    relegationOrPlayOffIcon = (currentPosition >= relegationPosition)
+                    leaguePositionIcon = (currentPosition >= relegationPosition)
                         ? relegationIcon
                         : (currentPosition >= relegationPlayOffPosition)
                             ? relegationPlayOffIcon
-                            : string.Empty;
+                            : "     ";
 
                     if (currentPosition == relegationPosition || currentPosition == relegationPlayOffPosition)
                         response.Append("\n-----------------------------------------------------------------------------------");
                 }
 
-                response.AppendFormat(string.Format("\n{0}{1} {2} Played: *{3}*   W: *{4}*   D: *{5}*   L: *{6}*   GD: {7}   Pts: *{8}* {9} {10} {11}",
+                if (leagueTable.IsBottomLeague)
+                {
+                    leaguePositionIcon = (currentPosition == 1)
+                        ? promotionIcon
+                        : (currentPosition <= promotionPlayOffPosition)
+                            ? promotionPlayOffIcon
+                            : "     ";
+
+
+                    if (currentPosition == 2 || currentPosition == (promotionPlayOffPosition +1))
+                        response.Append("\n-----------------------------------------------------------------------------------");
+                }
+
+                response.AppendFormat(string.Format("\n{0}{1} {2} Played: *{3}*   W: *{4}*   D: *{5}*   L: *{6}*   GD: {7}   Pts: *{8}* {11} {9} {10}",
                     positionString,
                     row.PlayerFace,
                     row.TeamBadge,
@@ -101,7 +117,7 @@ namespace FIFA.WebApi.Infrastructure.Slack
                     pointsString,
                     positionChangeIcon,
                     positionChangeNumber,
-                    relegationOrPlayOffIcon));
+                    leaguePositionIcon));
             }
 
             var responseString = response.ToString();
