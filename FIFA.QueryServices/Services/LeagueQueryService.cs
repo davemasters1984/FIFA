@@ -439,22 +439,34 @@ namespace FIFA.QueryServices.Services
 
         private string GetPlayerNameFromLeagueRows(string playerId, List<LeagueTableRow> leagueRows)
         {
-            return leagueRows.Select(l => l.PlayerName).FirstOrDefault();
+            return leagueRows
+                .Where(r => r.PlayerId == playerId)
+                .Select(l => l.PlayerName)
+                .FirstOrDefault();
         }
 
         private string GetPlayerFaceFromLeagueRows(string playerId, List<LeagueTableRow> leagueRows)
         {
-            return leagueRows.Select(l => l.PlayerName).FirstOrDefault();
+            return leagueRows
+                .Where(r => r.PlayerId == playerId)
+                .Select(l => l.PlayerFace)
+                .FirstOrDefault();
         }
 
         private string GetPlayersTeamNameFromLeagueRows(string playerId, List<LeagueTableRow> leagueRows)
         {
-            return leagueRows.Select(l => l.TeamName).FirstOrDefault();
+            return leagueRows
+                .Where(r => r.PlayerId == playerId)
+                .Select(l => l.TeamName)
+                .FirstOrDefault();
         }
 
         private string GetPlayersTeamBadgeFaceFromLeagueRows(string playerId, List<LeagueTableRow> leagueRows)
         {
-            return leagueRows.Select(l => l.TeamBadge).FirstOrDefault();
+            return leagueRows
+                .Where(r => r.PlayerId == playerId)
+                .Select(l => l.TeamBadge)
+                .FirstOrDefault();
         }
 
         private Fixture GetFixture(League league, string homePlayerId, string awayPlayerId)
