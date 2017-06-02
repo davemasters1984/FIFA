@@ -37,5 +37,11 @@ namespace FIFA.QueryServices.Interface.Models
         public int HomeGoals { get; set; }
 
         public int AwayGoals { get; set; }
+
+        public bool IsWin { get;set;}
+
+        public bool IsLoss { get; set; }
+
+        public bool IsDraw { get; set; }
     }
 }

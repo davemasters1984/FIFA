@@ -403,8 +403,10 @@ namespace FIFA.QueryServices.Services
                 var positionAtGamesPlayed = new PlayerPositionAtGamesPlayed
                 {
                     Position = historyItem.Position,
-                    GamesPlayed = historyItem.Position
+                    GamesPlayed = historyItem.GamesPlayed
                 };
+
+
 
                 historyAtGamesPlayed.Add(positionAtGamesPlayed);
 
@@ -418,6 +420,14 @@ namespace FIFA.QueryServices.Services
 
                 if (fixture.Result == null)
                     continue;
+
+                positionAtGamesPlayed.IsWin = (row.PlayerId == historyItem.HomePlayerId && fixture.Result.HomePlayerGoals > fixture.Result.AwayPlayerGoals);
+                positionAtGamesPlayed.IsWin = (row.PlayerId == historyItem.AwayPlayerId && fixture.Result.AwayPlayerGoals > fixture.Result.HomePlayerGoals);
+
+                positionAtGamesPlayed.IsDraw = (row.PlayerId == historyItem.HomePlayerId && fixture.Result.HomePlayerGoals == fixture.Result.AwayPlayerGoals);
+
+                positionAtGamesPlayed.IsLoss = (row.PlayerId == historyItem.HomePlayerId && fixture.Result.AwayPlayerGoals > fixture.Result.HomePlayerGoals);
+                positionAtGamesPlayed.IsLoss = (row.PlayerId == historyItem.AwayPlayerId && fixture.Result.HomePlayerGoals > fixture.Result.AwayPlayerGoals);
 
                 positionAtGamesPlayed.ResultDate = fixture.Result.Date;
 
