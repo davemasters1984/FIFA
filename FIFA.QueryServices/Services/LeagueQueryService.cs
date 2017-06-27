@@ -424,8 +424,8 @@ namespace FIFA.QueryServices.Services
                     positionAtGamesPlayed.IsWin = (fixture.Result.HomePlayerGoals > fixture.Result.AwayPlayerGoals);
                 else
                     positionAtGamesPlayed.IsWin = (fixture.Result.AwayPlayerGoals > fixture.Result.HomePlayerGoals);
-
-                positionAtGamesPlayed.IsDraw = (row.PlayerId == historyItem.HomePlayerId && fixture.Result.HomePlayerGoals == fixture.Result.AwayPlayerGoals);
+                
+                positionAtGamesPlayed.IsDraw = (fixture.Result.HomePlayerGoals == fixture.Result.AwayPlayerGoals);
 
                 if (row.PlayerId == historyItem.HomePlayerId)
                     positionAtGamesPlayed.IsLoss = (fixture.Result.AwayPlayerGoals > fixture.Result.HomePlayerGoals);
