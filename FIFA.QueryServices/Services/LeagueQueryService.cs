@@ -59,7 +59,6 @@ namespace FIFA.QueryServices.Services
             using (var session = _documentStore.OpenSession())
             {
                 var leagueId = session.Query<League>()
-                    .Where(l => !l.IsComplete)
                     .Where(l => l.Name == resolvedName)
                     .OrderByDescending(l => l.CreatedDate)
                     .Select(l => l.Id)
@@ -421,13 +420,17 @@ namespace FIFA.QueryServices.Services
                 if (fixture.Result == null)
                     continue;
 
-                positionAtGamesPlayed.IsWin = (row.PlayerId == historyItem.HomePlayerId && fixture.Result.HomePlayerGoals > fixture.Result.AwayPlayerGoals);
-                positionAtGamesPlayed.IsWin = (row.PlayerId == historyItem.AwayPlayerId && fixture.Result.AwayPlayerGoals > fixture.Result.HomePlayerGoals);
+                if (row.PlayerId == historyItem.HomePlayerId)
+                    positionAtGamesPlayed.IsWin = (fixture.Result.HomePlayerGoals > fixture.Result.AwayPlayerGoals);
+                else
+                    positionAtGamesPlayed.IsWin = (fixture.Result.AwayPlayerGoals > fixture.Result.HomePlayerGoals);
 
                 positionAtGamesPlayed.IsDraw = (row.PlayerId == historyItem.HomePlayerId && fixture.Result.HomePlayerGoals == fixture.Result.AwayPlayerGoals);
 
-                positionAtGamesPlayed.IsLoss = (row.PlayerId == historyItem.HomePlayerId && fixture.Result.AwayPlayerGoals > fixture.Result.HomePlayerGoals);
-                positionAtGamesPlayed.IsLoss = (row.PlayerId == historyItem.AwayPlayerId && fixture.Result.HomePlayerGoals > fixture.Result.AwayPlayerGoals);
+                if (row.PlayerId == historyItem.HomePlayerId)
+                    positionAtGamesPlayed.IsLoss = (fixture.Result.AwayPlayerGoals > fixture.Result.HomePlayerGoals);
+                else
+                    positionAtGamesPlayed.IsLoss = (fixture.Result.HomePlayerGoals > fixture.Result.AwayPlayerGoals);
 
                 positionAtGamesPlayed.ResultDate = fixture.Result.Date;
 

@@ -166,6 +166,20 @@ namespace FIFA.Model
             AssignPositionsFromPoints(fixtureWithResult);
         }
 
+        public void ReAssignPositions()
+        {
+            var participantsOrderedByPoints
+                = Participants
+                    .OrderByDescending(p => p.Points)
+                    .ThenByDescending(p => (p.GoalsFor - p.GoalsAgainst))
+                    .ThenByDescending(p => p.GoalsFor);
+
+            int position = 1;
+
+            foreach (var participant in participantsOrderedByPoints)
+                participant.UpdatePosition(position++);
+        }
+
         private void AssignPositionsFromPoints(Fixture fixtureWithResult)
         {
             var participantsOrderedByPoints

@@ -30,6 +30,8 @@ namespace FIFAData
             //AddPlayer(":ian:", "Ian");
             //AddPlayer(":alec:", "Alec");
 
+            ReSaveLeague();
+
             Console.WriteLine("Complete.");
 
             Console.Read();
@@ -39,9 +41,9 @@ namespace FIFAData
         {
             using (var session = _documentStore.OpenSession())
             {
-                var league = session.Load<League>("leagues/385");
+                var league = session.Load<League>("leagues/641");
 
-                league.Name = "premiership";
+                league.ReAssignPositions();
 
                 session.Store(league);
                 session.SaveChanges();

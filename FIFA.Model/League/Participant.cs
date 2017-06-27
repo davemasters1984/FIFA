@@ -60,6 +60,11 @@ namespace FIFA.Model
                 GamesDrawn++;
         }
 
+        public void UpdatePosition(int position)
+        {
+            Position = position;
+        }
+
         public void UpdatePositionFromResult(int position, Fixture fixture)
         {
             Position = position;
