@@ -81,6 +81,7 @@
       <IsTransformFile>True</IsTransformFile>
     </None>
     <None Include="DataImport\fifa.csv" />
+    <None Include="DataImport\FIFADATA-18.csv" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>

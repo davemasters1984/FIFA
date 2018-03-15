@@ -27,21 +27,35 @@ namespace FIFAData
             //GetTeam();
             //ImportTeams();
             //ReSaveLeague();
-            //AddPlayer(":ian:", "Ian");
-            //AddPlayer(":alec:", "Alec");
-
-            ReSaveLeague();
+            AddPlayer(":mattf:", "Matt F");
+            AddPlayer(":jack:", "Jack");
 
             Console.WriteLine("Complete.");
-
             Console.Read();
+        }
+
+        private static void FixLiamAndJames()
+        {
+            using (var session = _documentStore.OpenSession())
+            {
+                var league = session.Load<League>("leagues/673");
+
+                league.Fixtures.Add(new Fixture
+                {
+                    HomePlayerId = "players/68",
+                    AwayPlayerId = "players/69"
+                });
+
+                session.Store(league);
+                session.SaveChanges();
+            }
         }
 
         private static void ReSaveLeague()
         {
             using (var session = _documentStore.OpenSession())
             {
-                var league = session.Load<League>("leagues/641");
+                var league = session.Load<League>("leagues/673");
 
                 league.ReAssignPositions();
 
@@ -268,7 +282,7 @@ namespace FIFAData
         private static void ImportTeams()
         {
             FIFATeamImporter.Import(_documentStore,
-                @"C:\Git\FIFA\FIFAData\DataImport\FIFA.csv");
+                @"C:\Git\FIFA\FIFAData\DataImport\FIFAData-18.csv");
         }
 
         public static void CreateDocumentStore()

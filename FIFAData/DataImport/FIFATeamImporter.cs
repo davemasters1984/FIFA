@@ -56,6 +56,14 @@ namespace FIFAData.DataImport
 
                 session.SaveChanges();
             }
+
+            Console.WriteLine("{0} teams with the same team rating", sameRatings.Count);
+
+            Console.WriteLine("{0} updated teams:", updatedTeams.Count);
+            updatedTeams.ForEach(u => Console.WriteLine(u));
+
+            Console.WriteLine("{0} new teams:", newTeams.Count);
+            newTeams.ForEach(n => Console.WriteLine(n));
         }
     }
 }
